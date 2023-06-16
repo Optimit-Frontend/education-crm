@@ -1,4 +1,4 @@
-import axios from "src/services/Axios.jsx";
+import axios from "axios";
 import httpStatusCodes from "http-status-codes";
 
 const tokenLocal = localStorage.getItem("NEW-TOKEN");
@@ -20,7 +20,9 @@ instance.interceptors.request.use((config) => {
 });
 
 instance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config ?? {};
     if (
