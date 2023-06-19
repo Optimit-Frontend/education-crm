@@ -12,7 +12,7 @@ const Login = lazy(() => {
   return import("../pages/Login/Login");
 });
 
-function index() {
+function RoutesPage() {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
@@ -26,4 +26,4 @@ function index() {
   );
 }
 
-export default index;
+export default RoutesPage;
