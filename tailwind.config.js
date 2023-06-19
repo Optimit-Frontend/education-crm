@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 const defaultTheme = require("tailwindcss/defaultTheme");
+const colors = require("tailwindcss/colors");
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
@@ -9,6 +10,7 @@ export default {
       satoshi: ["Satoshi", "sans-serif"],
     },
     colors: {
+      ...colors,
       current: "currentColor",
       transparent: "transparent",
       white: "#FFFFFF",
@@ -21,7 +23,6 @@ export default {
       primary: "#3C50E0",
       secondary: "#80CAEE",
       stroke: "#E2E8F0",
-      gray: "#EFF4FB",
       graydark: "#333A48",
       "gray-2": "#F7F9FC",
       "gray-3": "#FAFAFA",
@@ -203,6 +204,7 @@ export default {
         1: "1",
       },
       opacity: {
+        40: ".4",
         65: ".65",
       },
       backgroundImage: {

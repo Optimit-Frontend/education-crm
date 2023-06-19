@@ -44,3 +44,35 @@ instance.interceptors.response.use(
   },
 );
 export default instance;
+
+export const api = ({ dispatch }) => {
+  return (next) => {
+    return (action) => {
+      if (action.type !== "api/apiCall") {
+        next(action);
+        return;
+      }
+      next(action);
+      const { url, method, data, onSuccess, params, onFail, contentType } = action.payload;
+      instance({
+        headers: { "Content-Type": contentType || "application/json" },
+        url,
+        method,
+        data,
+        params,
+      })
+        .then((res) => {
+          dispatch({
+            type: onSuccess,
+            payload: res.data,
+          });
+        })
+        .catch((err) => {
+          dispatch({
+            type: onFail,
+            payload: { ...err?.response?.data, success: false },
+          });
+        });
+    };
+  };
+};

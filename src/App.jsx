@@ -1,11 +1,7 @@
-import DefaultLayout from "./layout/Layout";
+import Route from "./Route";
 
 function App() {
-  return (
-    <DefaultLayout>
-      <h1 className="text-4xl text-red-600">Hello World</h1>
-    </DefaultLayout>
-  );
+  return <Route />;
 }
 
 export default App;
