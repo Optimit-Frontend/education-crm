@@ -4,9 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { connect } from "react-redux";
 import { twMerge } from "tailwind-merge";
-import usersDataReducer from "../../reducer/usersDataReducer";
+import usersDataReducer, {userLogin} from "../../reducer/usersDataReducer";
 
-function Login() {
+function Login({userLogin,usersDataReducer}) {
   const navigate = useNavigate();
   const user = localStorage.getItem("user");
   const {
@@ -19,8 +19,11 @@ function Login() {
     user && navigate("/");
   });
 
-  function onSubmit() {
-    // console.log(data);
+  console.log(usersDataReducer.token)
+
+  function onSubmit(data) {
+    console.log(data);
+    userLogin({password:data.password, phoneNumber: data.phone})
     // if (data.phone === '+998 90 377 89 90' && data.password === '123456') {
     //   localStorage.setItem('user', JSON.stringify(data))
     //   navigate('/')
@@ -74,22 +77,26 @@ function Login() {
                   >
                     Telefon nomer
                   </label>
-                  <input
-                    type="text"
-                    id="phone"
-                    {...register("phone", { required: true })}
-                    placeholder="Telefon nomeringizni kiriting..."
-                    className={twMerge(
-                      classNames(
-                        "block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40",
-                        {
-                          "border-danger focus:border-danger focus:ring-danger":
-                            errors.phone?.type === "required",
-                        },
-                      ),
-                    )}
-                  />
-                  {}
+                  <div className={twMerge(
+                    classNames(
+                      "block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-md dark:placeholder-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40",
+                      {
+                        "border-danger focus:border-danger focus:ring-danger":
+                          errors.phone?.type === "required",
+                      },
+                    ),
+                  )}>
+                    <span className="prefix">+998 </span>
+                    <input
+                      type="text"
+                      prefix="+998"
+                      id="phone"
+                      {...register("phone", { required: true })}
+                      placeholder="Telefon nomeringizni kiriting..."
+                      className="border-none outline-none max-w-[250px] w-full"
+                    />
+                  </div>
+                  {errors.phone?.type === "required" && <p className="text-danger">Telefon nomeringizni kiriting</p>}
                 </div>
 
                 <div className="mt-6">
@@ -120,6 +127,7 @@ function Login() {
                       ),
                     )}
                   />
+                  {errors.password?.type === "required" && <p className="text-danger">Parolingizni kiriting</p>}
                 </div>
 
                 <div className="mt-6">
@@ -139,4 +147,4 @@ function Login() {
   );
 }
 
-export default connect(usersDataReducer, {})(Login);
+export default connect(usersDataReducer, {userLogin})(Login);
