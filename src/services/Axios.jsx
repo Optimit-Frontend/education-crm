@@ -2,7 +2,7 @@ import axios from "axios";
 import httpStatusCodes from "http-status-codes";
 
 const tokenLocal = localStorage.getItem("NEW-TOKEN");
-const BASE_URL = import.meta.env.REACT_APP_BASE_URL;
+const BASE_URL = import.meta.env.VITE_API_KEY;
 
 const instance = axios.create({
   baseURL: `${BASE_URL}/`,
@@ -15,7 +15,10 @@ const instance = axios.create({
 
 instance.interceptors.request.use((config) => {
   config.headers = config.headers ?? {};
-  config.headers.Authorization = `Bearer ${tokenLocal}`;
+  if(tokenLocal && !config.headers.Authorization) {
+    console.log(config.headers.Authorization,"config.headers.Authorization")
+    config.headers.Authorization = `Bearer ${tokenLocal}`;
+  }
   return config;
 });
 
@@ -54,7 +57,7 @@ export const api = ({ dispatch }) => {
       }
       next(action);
       const { url, method, data, onSuccess, params, onFail, contentType } = action.payload;
-      instance({
+        instance({
         headers: { "Content-Type": contentType || "application/json" },
         url,
         method,
