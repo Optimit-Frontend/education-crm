@@ -109,13 +109,12 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
             <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">MENU</h3>
 
             <ul className="mb-6 flex flex-col gap-1.5">
-
-              {/* <!-- Menu Item Calendar --> */}
+              {/* <!-- Menu Item Dashboard --> */}
               <li>
                 <NavLink
-                  to="/calendar"
+                  to="/dashboard"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes("calendar") && "bg-graydark dark:bg-meta-4"
+                    pathname.includes("dashboard") && "bg-graydark dark:bg-meta-4"
                   }`}
                 >
                   <svg
@@ -146,12 +145,12 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                   Dashboard
                 </NavLink>
               </li>
-              {/* <!-- Menu Item Calendar --> */}
+              {/* <!-- Menu Item Dashboard --> */}
 
               {/* <!-- Menu Item Calendar --> */}
               <li>
                 <NavLink
-                  to="/calendar"
+                  to="/addUser"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                     pathname.includes("calendar") && "bg-graydark dark:bg-meta-4"
                   }`}
@@ -169,7 +168,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                       fill=""
                     />
                   </svg>
-                  Calendar
+                  <p>Hodim qo`shish</p>
                 </NavLink>
               </li>
               {/* <!-- Menu Item Calendar --> */}
