@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {apiCall} from "../api.js";
+import { apiCall } from "../api";
 
 export const slice = createSlice({
   name: "usersData",
@@ -10,27 +10,28 @@ export const slice = createSlice({
     logout: false,
   },
   reducers: {
-    logOutUser: (state,action) => {
+    logOutUser: (state, action) => {
       state.logout = true;
     },
-    getUser: (state,action) => {
-      if (action.payload.data.success){
+    getUser: (state, action) => {
+      if (action.payload.data.success) {
         state.userToken = action.payload?.data?.accessToken;
         state.logout = false;
         state.userData = action.payload?.data?.userResponseDto;
-
       }
     },
   },
 });
 
-export const userLogin = (data) => apiCall({
-  url: '/user/login',
-  method: 'post',
-  data,
-  onSuccess: slice.actions.getUser.type,
-  onFail: slice.actions.getUser.type
-})
+export const userLogin = (data) => {
+  return apiCall({
+    url: "/user/login",
+    method: "post",
+    data,
+    onSuccess: slice.actions.getUser.type,
+    onFail: slice.actions.getUser.type,
+  });
+};
 
 export const { logOutUser } = slice.actions;
 export default slice.reducer;

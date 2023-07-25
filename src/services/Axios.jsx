@@ -15,8 +15,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use((config) => {
   config.headers = config.headers ?? {};
-  if(tokenLocal && !config.headers.Authorization) {
-    console.log(config.headers.Authorization,"config.headers.Authorization")
+  if (tokenLocal && !config.headers.Authorization) {
     config.headers.Authorization = `Bearer ${tokenLocal}`;
   }
   return config;
@@ -57,7 +56,7 @@ export const api = ({ dispatch }) => {
       }
       next(action);
       const { url, method, data, onSuccess, params, onFail, contentType } = action.payload;
-        instance({
+      instance({
         headers: { "Content-Type": contentType || "application/json" },
         url,
         method,
