@@ -26,7 +26,7 @@ module.exports = {
     quotes: [ERROR, "double"],
     "implicit-arrow-linebreak": [ERROR, "below"],
     "arrow-body-style": [ERROR, "always"],
-    "import/extensions": [WARN, "ignorePackages", {"js": "never", "jsx": "never",}],
+    "import/extensions": [OFF],
     "no-unused-vars": [WARN, {args: "all"}],
     "react/jsx-filename-extension": [ERROR, {extensions: [".js", ".jsx"]}],
     "space-before-function-paren": [ERROR],
@@ -45,6 +45,7 @@ module.exports = {
     "no-param-reassign": [OFF],
     "import/prefer-default-export": [OFF],
     "react/jsx-props-no-spreading": [OFF],
+    "react/no-unstable-nested-components":[OFF],
     "no-shadow": [OFF],
   },
 };

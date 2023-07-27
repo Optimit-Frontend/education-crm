@@ -1,5 +1,11 @@
+import { Button } from "../../components/ui/button";
+
 function Dashboard() {
-  return <div className="text-4xl text-primary">Salom</div>;
+  return (
+    <div className="">
+      <Button variant="secondary">Click me</Button>
+    </div>
+  );
 }
 
 export default Dashboard;

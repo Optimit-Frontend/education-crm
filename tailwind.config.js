@@ -4,11 +4,7 @@ const colors = require("tailwindcss/colors");
 
 module.exports = {
   darkMode: ["class"],
-  content: [
-    './src/pages/**/*.{js,jsx}',
-    './src/components/**/*.{js,jsx}',
-    './src/**/*.{js,jsx}',
-	],
+  content: ["./src/pages/**/*.{js,jsx}", "./src/components/**/*.{js,jsx}", "./src/**/*.{js,jsx}"],
   theme: {
     fontFamily: {
       satoshi: ["Satoshi", "sans-serif"],
@@ -24,8 +20,8 @@ module.exports = {
       bodydark: "#AEB7C0",
       bodydark1: "#DEE4EE",
       bodydark2: "#8A99AF",
-      primary: "#3C50E0",
-      secondary: "#80CAEE",
+      // primary: "#3C50E0",
+      // secondary: "#80CAEE",
       stroke: "#E2E8F0",
       graydark: "#333A48",
       "gray-2": "#F7F9FC",
@@ -295,7 +291,6 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: 0 },
         },
-
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -309,4 +304,4 @@ module.exports = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

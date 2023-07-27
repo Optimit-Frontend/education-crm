@@ -13,25 +13,20 @@ export const slice = createSlice({
     logOutUser: (state, action) => {
       state.logout = true;
     },
-    getUser: (state, action) => {
-      if (action.payload.data.success) {
-        state.userToken = action.payload?.data?.accessToken;
+    saveUser: (state, action) => {
+      if (action.payload.success) {
+        console.log(action.payload);
+        localStorage.setItem("EducationCRM", action.payload?.message);
+        localStorage.setItem("userDataCRM", JSON.stringify(action.payload?.object));
+        state.userToken = action.payload?.message;
         state.logout = false;
-        state.userData = action.payload?.data?.userResponseDto;
+        state.userData = action.payload?.object;
+      } else {
+        state.logout = true;
       }
     },
   },
 });
 
-export const userLogin = (data) => {
-  return apiCall({
-    url: "/user/login",
-    method: "post",
-    data,
-    onSuccess: slice.actions.getUser.type,
-    onFail: slice.actions.getUser.type,
-  });
-};
-
-export const { logOutUser } = slice.actions;
+export const { logOutUser, saveUser } = slice.actions;
 export default slice.reducer;
