@@ -56,7 +56,7 @@ export const slice = createSlice({
 
 export const getAllBranch = () => {
   return apiCall({
-    url: "branch/getAll",
+    url: "/branch/getAll",
     method: "get",
     onSuccess: slice.actions.getAllFrom.type,
     onFail: slice.actions.getAllFrom.type,
@@ -65,7 +65,7 @@ export const getAllBranch = () => {
 
 export const getBusinessBranch = (data) => {
   return apiCall({
-    url: `branch/getByBusinessId/${data}`,
+    url: `/branch/getByBusinessId/${data}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
@@ -84,7 +84,7 @@ export const saveBranch = (data) => {
 
 export const editBranch = (data) => {
   return apiCall({
-    url: "branch/update",
+    url: "/branch/update",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,

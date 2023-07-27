@@ -1,43 +1,30 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import { Col, Form, Input, Modal, Row } from "antd";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
-import businessReducer, {
-  deleteBusiness,
-  editBusiness,
-  getAllBusiness,
-  saveBusiness,
-} from "../../reducer/businessReducer";
 import useKeyPress from "../../hooks/UseKeyPress";
+import usersDataReducer from "../../reducer/usersDataReducer";
+import roomTypeReducer, {
+  deleteRoomType,
+  editRoomType,
+  getAllRoomType,
+  saveRoomType
+} from "../../reducer/roomTypeReducer";
 
 const columns = [
   {
     title: "Bizness",
     dataIndex: "name",
     key: "name",
-    width: "30%",
+    width: "60%",
     search: true,
-  },
-  {
-    title: "Telefon nomeri",
-    dataIndex: "phoneNumber",
-    key: "phoneNumber",
-    width: "25%",
-    search: false,
-  },
-  {
-    title: "Qisqa ma'lumot",
-    dataIndex: "description",
-    key: "description",
-    width: "30%",
-    search: false,
   },
   {
     title: "Holati",
     dataIndex: "active",
     key: "active",
-    width: "15%",
+    width: "40%",
     search: false,
     render: (eski) => {
       return eski ? (
@@ -49,74 +36,44 @@ const columns = [
   },
 ];
 
-function BusinessesData({
-  saveBusiness,
-  getAllBusiness,
-  businessReducer,
-  deleteBusiness,
-  editBusiness,
+function RoomType({
+  deleteRoomType,
+  editRoomType,
+  saveRoomType,
+  getAllRoomType,
+  usersDataReducer,
+  roomTypeReducer
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const location = useLocation();
   const navigate = useNavigate();
-  const searchParams = new URLSearchParams(location.search);
-  const page = searchParams.get("page");
-  const size = searchParams.get("size");
+  const size = localStorage.getItem("PageSize") || 10;
   const [pageData, setPageData] = useState({
-    page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
-    size: size ? parseInt(size, 10) : 10,
+    page: 1,
+    size,
     loading: false,
   });
 
   useEffect(() => {
-    getAllBusiness({ page: pageData.page, size: pageData.size });
+    getAllRoomType(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
-  }, [businessReducer?.businesesChange]);
-
-  useEffect(() => {
-    const pageSize = parseInt(size, 10);
-    const pageCount = parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1;
-    if (pageSize >= 100) {
-      setPageData((prev) => {
-        return { ...prev, size: 100 };
-      });
-      navigate(`/businesses?page=${pageCount}&size=100`);
-    } else if (pageSize >= 50) {
-      setPageData((prev) => {
-        return { ...prev, size: 50 };
-      });
-      navigate(`/businesses?page=${pageCount}&size=50`);
-    } else if (pageSize >= 20) {
-      setPageData((prev) => {
-        return { ...prev, size: 20 };
-      });
-      navigate(`/businesses?page=${pageCount}&size=20`);
-    } else {
-      setPageData((prev) => {
-        return { ...prev, size: 10 };
-      });
-      navigate(`/businesses?page=${pageCount}&size=10`);
-    }
-  }, []);
+  }, [roomTypeReducer?.changeData]);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteBusiness(item);
+      deleteRoomType(item);
       return null;
     });
   };
 
   const onChange = (pageNumber, page) => {
     setPageData({ size: page, page: pageNumber, loading: false });
-    searchParams.set("size", page);
-    searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
-    navigate(`/businesses?page=${pageNumber}&size=${page}`);
+    navigate("/settings/roomType");
   };
 
   const formValidate = () => {
@@ -124,7 +81,7 @@ function BusinessesData({
       form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editBusiness({ ...values, id: selectedRowKeys[1][0]?.id });
+          selectedRowKeys[1][0]?.id && editRoomType({ ...values, id: selectedRowKeys[1][0]?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -133,7 +90,7 @@ function BusinessesData({
       form
         .validateFields()
         .then((values) => {
-          saveBusiness(values);
+          saveRoomType({ name: values.name, comingBranchId: usersDataReducer?.branch?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -147,7 +104,7 @@ function BusinessesData({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Hamma biznesslar</h3>
+      <h3 className="text-2xl font-bold mb-5">Xona turlari</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -155,8 +112,6 @@ function BusinessesData({
               setOnedit(true);
               setVisible(true);
               form.setFieldValue("name", selectedRowKeys[1][0]?.name);
-              form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
-              form.setFieldValue("description", selectedRowKeys[1][0]?.description);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -226,8 +181,8 @@ function BusinessesData({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Bizness
-            {onedit ? "ni taxrirlash" : " qo'shish"}
+            Xona turi
+            {onedit ? "ni taxrirlash" : "ni qo'shish"}
           </h3>
         )}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
@@ -248,41 +203,15 @@ function BusinessesData({
               <Form.Item
                 key="name"
                 name="name"
-                label={<span className="text-base font-medium">Bizness nomi</span>}
+                label={<span className="text-base font-medium">Xona turi</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Bizness nomini kiriting",
+                    message: "Xona turini kiriting",
                   },
                 ]}
               >
-                <Input placeholder="Bizness nomini kiriting..." />
-              </Form.Item>
-              <Form.Item
-                key="phoneNumber"
-                name="phoneNumber"
-                label={<span className="text-base font-medium">Bizness telefon nomeri</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Bizness telefon nomerini kiriting",
-                  },
-                ]}
-              >
-                <Input placeholder="Bizness telefon nomerini kiriting..." />
-              </Form.Item>
-              <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Bizness haqida ma&apos;lumot</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Bizness haqida ma'lumotni kiriting",
-                  },
-                ]}
-              >
-                <Input placeholder="Bizness haqida ma'lumotni kiriting..." />
+                <Input placeholder="Xona turini kiriting..." />
               </Form.Item>
             </Col>
           </Row>
@@ -293,8 +222,7 @@ function BusinessesData({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        totalItems={businessReducer?.businessTotalCount}
-        tableData={businessReducer?.business}
+        tableData={roomTypeReducer?.roomType}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
@@ -304,9 +232,4 @@ function BusinessesData({
   );
 }
 
-export default connect((businessReducer), {
-  getAllBusiness,
-  saveBusiness,
-  deleteBusiness,
-  editBusiness,
-})(BusinessesData);
+export default connect((roomTypeReducer, usersDataReducer), { deleteRoomType, editRoomType, saveRoomType, getAllRoomType })(RoomType);

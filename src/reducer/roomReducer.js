@@ -3,62 +3,62 @@ import { toast } from "react-toastify";
 import { apiCall } from "../api";
 
 export const slice = createSlice({
-  name: "businessData",
+  name: "roomData",
   initialState: {
-    business: null,
-    businessTotalCount: 0,
+    room: null,
+    roomTotalCount: 0,
     message: null,
-    businesesChange: false,
+    changeData: false,
   },
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.business = action.payload?.data?.businessesResponseDtoList;
-        state.businessTotalCount = action.payload?.data?.allSize;
+        state.room = action.payload?.data?.roomResponseDtoList;
+        state.roomTotalCount = action.payload?.data?.allSize;
       } else {
         state.message = action.payload.message;
       }
-      state.businesesChange = false;
+      state.changeData = false;
     },
     saveFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Biznes muvafaqiyatli qo'shildi");
+        toast.success("Xona muvafaqiyatli qo'shildi");
       } else {
-        toast.warning(action.payload.message || "Biznesni qo'shishda muammo bo'ldi");
+        toast.warning(action.payload.message || "Xonani qo'shishda muammo bo'ldi");
       }
-      state.businesesChange = true;
+      state.changeData = true;
     },
     editFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Biznes muvafaqiyatli taxrirlandi");
+        toast.success("Xona muvafaqiyatli taxrirlandi");
       } else {
-        toast.warning(action.payload.message || "Biznesni taxrirlashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Xonani taxrirlashda muammo bo'ldi");
       }
-      state.businesesChange = true;
+      state.changeData = true;
     },
     deleteFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Biznes muvafaqiyatli o'chirildi");
+        toast.success("Xona muvafaqiyatli o'chirildi");
       } else {
-        toast.warning("Biznesni o'chirishda muammo bo'ldi");
+        toast.warning("Xonani o'chirishda muammo bo'ldi");
       }
-      state.businesesChange = true;
+      state.changeData = true;
     },
   },
 });
 
-export const getAllBusiness = (data) => {
+export const getRoomBranch = (data) => {
   return apiCall({
-    url: `/business/getAll?page=${data.page - 1}&size=${data.size}`,
+    url: `/room/getAll?page=${data.page - 1}&size=${data.size}&branchId=${data.branchId}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
 };
 
-export const saveBusiness = (data) => {
+export const saveRoom = (data) => {
   return apiCall({
-    url: "/business/create",
+    url: "/room/create",
     method: "post",
     data,
     onSuccess: slice.actions.saveFrom.type,
@@ -66,9 +66,9 @@ export const saveBusiness = (data) => {
   });
 };
 
-export const editBusiness = (data) => {
+export const editRoom = (data) => {
   return apiCall({
-    url: "/business/update",
+    url: "/room/update",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,
@@ -76,9 +76,9 @@ export const editBusiness = (data) => {
   });
 };
 
-export const deleteBusiness = (data) => {
+export const deleteRoom = (data) => {
   return apiCall({
-    url: `/business/delete/${data}`,
+    url: `/room/delete/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,

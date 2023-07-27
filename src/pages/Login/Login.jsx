@@ -35,12 +35,12 @@ function Login({ usersDataReducer, saveUser }) {
             navigate("/");
           }, 500);
         } else {
-          toast.error(action.payload.message || "Telefon nomer ypki parol noto'g'ri kiritildi");
+          toast.error("Telefon nomer yoki parol noto'g'ri kiritildi");
         }
       })
       .catch((err) => {
         console.error(err);
-        toast.error(action.payload.message || "Telefon nomer ypki parol noto'g'ri kiritildi");
+        toast.error("Telefon nomer yoki parol noto'g'ri kiritildi");
       });
   }
 

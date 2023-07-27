@@ -13,7 +13,7 @@ import usersDataReducer from "../../reducer/usersDataReducer";
 
 const columns = [
   {
-    title: "Bizness",
+    title: "Filial nomi",
     dataIndex: "name",
     key: "name",
     width: "100%",
@@ -35,9 +35,10 @@ function BusinessBranch({
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
   const navigate = useNavigate();
+  const size = localStorage.getItem("PageSize") || 10;
   const [pageData, setPageData] = useState({
     page: 1,
-    size: 10,
+    size,
     loading: false,
   });
 
@@ -45,7 +46,7 @@ function BusinessBranch({
     getBusinessBranch(usersDataReducer?.businessId);
     setVisible(false);
     form.resetFields();
-  }, [businessBranchesReducer.businesesBranchesChange]);
+  }, [businessBranchesReducer?.businesesBranchesChange]);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
@@ -57,7 +58,7 @@ function BusinessBranch({
   const onChange = (pageNumber, page) => {
     setPageData({ size: page, page: pageNumber, loading: false });
     localStorage.setItem("PageSize", page);
-    navigate("/businesses/branches");
+    navigate("/settings/branches");
   };
 
   const formValidate = () => {
@@ -74,7 +75,7 @@ function BusinessBranch({
       form
         .validateFields()
         .then((values) => {
-          saveBranch({ name: values.name, businessId: usersDataReducer.businessId });
+          saveBranch({ name: values.name, businessId: usersDataReducer?.businessId });
           setOnedit(false);
         })
         .catch((info) => {
@@ -168,7 +169,7 @@ function BusinessBranch({
         title={(
           <h3 className="text-xl mb-3 font-semibold">
             Filial
-            {onedit ? "ni taxrirlash" : " qo&apos;shish"}
+            {onedit ? "ni taxrirlash" : " qo'shish"}
           </h3>
         )}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
@@ -178,6 +179,7 @@ function BusinessBranch({
         onCancel={() => {
           setVisible(false);
           setOnedit(false);
+          form.resetFields();
         }}
         onOk={formValidate}
         forceRender
@@ -188,7 +190,7 @@ function BusinessBranch({
               <Form.Item
                 key="name"
                 name="name"
-                label={<span className="text-base font-medium">Bizness nomi</span>}
+                label={<span className="text-base font-medium">Filial nomi</span>}
                 rules={[
                   {
                     required: true,

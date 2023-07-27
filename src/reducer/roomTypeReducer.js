@@ -3,62 +3,60 @@ import { toast } from "react-toastify";
 import { apiCall } from "../api";
 
 export const slice = createSlice({
-  name: "businessData",
+  name: "roomTypeData",
   initialState: {
-    business: null,
-    businessTotalCount: 0,
+    roomType: null,
     message: null,
-    businesesChange: false,
+    changeData: false,
   },
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.business = action.payload?.data?.businessesResponseDtoList;
-        state.businessTotalCount = action.payload?.data?.allSize;
+        state.roomType = action.payload?.data;
       } else {
         state.message = action.payload.message;
       }
-      state.businesesChange = false;
+      state.changeData = false;
     },
     saveFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Biznes muvafaqiyatli qo'shildi");
+        toast.success("Xona turi muvaffaqiyatli qo'shildi");
       } else {
-        toast.warning(action.payload.message || "Biznesni qo'shishda muammo bo'ldi");
+        toast.warning(action.payload.message || "Xona turini qo'shishda muammo bo'ldi");
       }
-      state.businesesChange = true;
+      state.changeData = true;
     },
     editFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Biznes muvafaqiyatli taxrirlandi");
+        toast.success("Xona turi muvafaqiyatli taxrirlandi");
       } else {
-        toast.warning(action.payload.message || "Biznesni taxrirlashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Xona turini taxrirlashda muammo bo'ldi");
       }
-      state.businesesChange = true;
+      state.changeData = true;
     },
     deleteFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Biznes muvafaqiyatli o'chirildi");
+        toast.success("Xona turi muvafaqiyatli o'chirildi");
       } else {
-        toast.warning("Biznesni o'chirishda muammo bo'ldi");
+        toast.warning("Xona turini o'chirishda muammo bo'ldi");
       }
-      state.businesesChange = true;
+      state.changeData = true;
     },
   },
 });
 
-export const getAllBusiness = (data) => {
+export const getAllRoomType = (data) => {
   return apiCall({
-    url: `/business/getAll?page=${data.page - 1}&size=${data.size}`,
+    url: `/roomType/getAll/${data}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
 };
 
-export const saveBusiness = (data) => {
+export const saveRoomType = (data) => {
   return apiCall({
-    url: "/business/create",
+    url: "/roomType/create",
     method: "post",
     data,
     onSuccess: slice.actions.saveFrom.type,
@@ -66,9 +64,9 @@ export const saveBusiness = (data) => {
   });
 };
 
-export const editBusiness = (data) => {
+export const editRoomType = (data) => {
   return apiCall({
-    url: "/business/update",
+    url: "/roomType/update",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,
@@ -76,9 +74,9 @@ export const editBusiness = (data) => {
   });
 };
 
-export const deleteBusiness = (data) => {
+export const deleteRoomType = (data) => {
   return apiCall({
-    url: `/business/delete/${data}`,
+    url: `/roomType/delete/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,

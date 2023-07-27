@@ -1,35 +1,32 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { Col, Form, Input, Modal, Row } from "antd";
+import { Col, Form, InputNumber, Modal, Row, Select } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
-import businessReducer, {
-  deleteBusiness,
-  editBusiness,
-  getAllBusiness,
-  saveBusiness,
-} from "../../reducer/businessReducer";
 import useKeyPress from "../../hooks/UseKeyPress";
+import roomReducer, {
+  deleteRoom,
+  editRoom,
+  getRoomBranch,
+  saveRoom
+} from "../../reducer/roomReducer";
+import usersDataReducer from "../../reducer/usersDataReducer";
+import roomTypeReducer, { getAllRoomType } from "../../reducer/roomTypeReducer";
+
+const { Option } = Select;
 
 const columns = [
   {
-    title: "Bizness",
-    dataIndex: "name",
-    key: "name",
-    width: "30%",
-    search: true,
-  },
-  {
-    title: "Telefon nomeri",
-    dataIndex: "phoneNumber",
-    key: "phoneNumber",
-    width: "25%",
+    title: "Xona raqami",
+    dataIndex: "roomNumber",
+    key: "roomNumber",
+    width: "40%",
     search: false,
   },
   {
-    title: "Qisqa ma'lumot",
-    dataIndex: "description",
-    key: "description",
+    title: "Xona turi",
+    dataIndex: "roomTypeName",
+    key: "roomTypeName",
     width: "30%",
     search: false,
   },
@@ -37,7 +34,7 @@ const columns = [
     title: "Holati",
     dataIndex: "active",
     key: "active",
-    width: "15%",
+    width: "30%",
     search: false,
     render: (eski) => {
       return eski ? (
@@ -49,12 +46,15 @@ const columns = [
   },
 ];
 
-function BusinessesData({
-  saveBusiness,
-  getAllBusiness,
-  businessReducer,
-  deleteBusiness,
-  editBusiness,
+function Room({
+  roomReducer,
+  roomTypeReducer,
+  usersDataReducer,
+  getRoomBranch,
+  getAllRoomType,
+  saveRoom,
+  deleteRoom,
+  editRoom
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -73,10 +73,11 @@ function BusinessesData({
   });
 
   useEffect(() => {
-    getAllBusiness({ page: pageData.page, size: pageData.size });
+    getAllRoomType(usersDataReducer?.branch?.id);
+    getRoomBranch({ page: pageData.page, size: pageData.size, branchId: usersDataReducer?.branch?.id });
     setVisible(false);
     form.resetFields();
-  }, [businessReducer?.businesesChange]);
+  }, [roomReducer?.changeData]);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -85,28 +86,28 @@ function BusinessesData({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/businesses?page=${pageCount}&size=100`);
+      navigate(`/settings/room?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/businesses?page=${pageCount}&size=50`);
+      navigate(`/settings/room?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/businesses?page=${pageCount}&size=20`);
+      navigate(`/settings/room?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/businesses?page=${pageCount}&size=10`);
+      navigate(`/settings/room?page=${pageCount}&size=10`);
     }
   }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteBusiness(item);
+      deleteRoom(item);
       return null;
     });
   };
@@ -116,7 +117,7 @@ function BusinessesData({
     searchParams.set("size", page);
     searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
-    navigate(`/businesses?page=${pageNumber}&size=${page}`);
+    navigate(`/settings/room?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
@@ -124,7 +125,7 @@ function BusinessesData({
       form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editBusiness({ ...values, id: selectedRowKeys[1][0]?.id });
+          selectedRowKeys[1][0]?.id && editRoom({ ...values, roomId: selectedRowKeys[1][0]?.id, branchId: usersDataReducer?.branch?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -133,7 +134,7 @@ function BusinessesData({
       form
         .validateFields()
         .then((values) => {
-          saveBusiness(values);
+          saveRoom({ ...values, branchId: usersDataReducer?.branch?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -147,16 +148,15 @@ function BusinessesData({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Hamma biznesslar</h3>
+      <h3 className="text-2xl font-bold mb-5">Xonalar</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
             onClick={() => {
               setOnedit(true);
               setVisible(true);
-              form.setFieldValue("name", selectedRowKeys[1][0]?.name);
-              form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
-              form.setFieldValue("description", selectedRowKeys[1][0]?.description);
+              form.setFieldValue("roomNumber", selectedRowKeys[1][0]?.roomNumber);
+              form.setFieldValue("roomTypeId", selectedRowKeys[1][0]?.roomType?.id);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -226,7 +226,7 @@ function BusinessesData({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Bizness
+            Xona
             {onedit ? "ni taxrirlash" : " qo'shish"}
           </h3>
         )}
@@ -246,43 +246,46 @@ function BusinessesData({
           <Row gutter={12}>
             <Col span={24}>
               <Form.Item
-                key="name"
-                name="name"
-                label={<span className="text-base font-medium">Bizness nomi</span>}
+                key="roomNumber"
+                name="roomNumber"
+                label={<span className="text-base font-medium">Xona raqami</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Bizness nomini kiriting",
+                    message: "Xona raqamini kiriting",
                   },
                 ]}
               >
-                <Input placeholder="Bizness nomini kiriting..." />
+                <InputNumber placeholder="Xona raqamini kiriting..." className="w-full" />
               </Form.Item>
               <Form.Item
-                key="phoneNumber"
-                name="phoneNumber"
-                label={<span className="text-base font-medium">Bizness telefon nomeri</span>}
+                key="roomTypeId"
+                name="roomTypeId"
+                label={<span className="text-base font-medium">Xona turi</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Bizness telefon nomerini kiriting",
+                    message: "Xona turini tanlang",
                   },
                 ]}
               >
-                <Input placeholder="Bizness telefon nomerini kiriting..." />
-              </Form.Item>
-              <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Bizness haqida ma&apos;lumot</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Bizness haqida ma'lumotni kiriting",
-                  },
-                ]}
-              >
-                <Input placeholder="Bizness haqida ma'lumotni kiriting..." />
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Xona turini tanlang"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => { return option.children.toLowerCase()?.includes(input.toLowerCase()); }}
+                >
+                  {roomTypeReducer?.roomType?.map((option) => {
+                    return (
+                      <Option value={option.id} key={option.id}>
+                        {option.name}
+                      </Option>
+                    );
+                  })}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
@@ -293,8 +296,10 @@ function BusinessesData({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        totalItems={businessReducer?.businessTotalCount}
-        tableData={businessReducer?.business}
+        totalItems={roomReducer?.businessTotalCount}
+        tableData={roomReducer?.room?.map((item) => {
+          return ({ ...item, roomTypeName: item?.roomType?.name });
+        })}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
@@ -304,9 +309,10 @@ function BusinessesData({
   );
 }
 
-export default connect((businessReducer), {
-  getAllBusiness,
-  saveBusiness,
-  deleteBusiness,
-  editBusiness,
-})(BusinessesData);
+export default connect((roomReducer, roomTypeReducer, usersDataReducer), {
+  getAllRoomType,
+  getRoomBranch,
+  saveRoom,
+  deleteRoom,
+  editRoom
+})(Room);

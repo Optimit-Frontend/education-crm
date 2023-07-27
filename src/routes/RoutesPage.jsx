@@ -18,6 +18,12 @@ const Business = lazy(() => {
 const BusinessBranch = lazy(() => {
   return import("../pages/Settings/BusinessBranches");
 });
+const RoomType = lazy(() => {
+  return import("../pages/Settings/RoomType");
+});
+const Room = lazy(() => {
+  return import("../pages/Settings/Room");
+});
 
 function RoutesPage() {
   return (
@@ -29,6 +35,8 @@ function RoutesPage() {
           <Route path="addUser" element={<AddUser />} />
           <Route path="businesses" element={<Business />} />
           <Route path="settings/branches" element={<BusinessBranch />} />
+          <Route path="settings/roomType" element={<RoomType />} />
+          <Route path="settings/room" element={<Room />} />
         </Route>
         <Route path="/login" element={<Login />} />
       </Routes>
