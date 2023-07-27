@@ -85,5 +85,4 @@ export const deleteBusiness = (data) => {
   });
 };
 
-export const { saveUser } = slice.actions;
 export default slice.reducer;

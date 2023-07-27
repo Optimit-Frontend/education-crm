@@ -1,122 +1,63 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import { Col, Form, Input, Modal, Row } from "antd";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
-import businessReducer, {
-  deleteBusiness,
-  editBusiness,
-  getAllBusiness,
-  saveBusiness,
-} from "../../reducer/businessReducer";
 import useKeyPress from "../../hooks/UseKeyPress";
+import businessBranchesReducer, {
+  saveBranch,
+  getBusinessBranch,
+  deleteBranch, editBranch,
+} from "../../reducer/businessBranchesReducer";
+import usersDataReducer from "../../reducer/usersDataReducer";
 
 const columns = [
   {
     title: "Bizness",
     dataIndex: "name",
     key: "name",
-    width: "30%",
+    width: "100%",
     search: true,
-  },
-  {
-    title: "Telefon nomeri",
-    dataIndex: "phoneNumber",
-    key: "phoneNumber",
-    width: "25%",
-    search: false,
-  },
-  {
-    title: "Qisqa ma'lumot",
-    dataIndex: "description",
-    key: "description",
-    width: "30%",
-    search: false,
-  },
-  {
-    title: "Holati",
-    dataIndex: "active",
-    key: "active",
-    width: "15%",
-    search: false,
-    render: (eski) => {
-      return eski ? (
-        <span className="bg-green-200 text-green-700 py-1 px-3 rounded-full text-xs">Active</span>
-      ) : (
-        <span className="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Nofaol</span>
-      );
-    },
   },
 ];
 
-function BusinessesData({
-  saveBusiness,
-  getAllBusiness,
-  businessReducer,
-  deleteBusiness,
-  editBusiness,
+function BusinessBranch({
+  getBusinessBranch,
+  businessBranchesReducer,
+  usersDataReducer,
+  saveBranch,
+  deleteBranch,
+  editBranch
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const location = useLocation();
   const navigate = useNavigate();
-  const searchParams = new URLSearchParams(location.search);
-  const page = searchParams.get("page");
-  const size = searchParams.get("size");
   const [pageData, setPageData] = useState({
-    page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
-    size: size ? parseInt(size, 10) : 10,
+    page: 1,
+    size: 10,
     loading: false,
   });
 
   useEffect(() => {
-    getAllBusiness({ page: pageData.page, size: pageData.size });
+    getBusinessBranch(usersDataReducer?.businessId);
     setVisible(false);
     form.resetFields();
-  }, [businessReducer.businesesChange]);
-
-  useEffect(() => {
-    const pageSize = parseInt(size, 10);
-    const pageCount = parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1;
-    if (pageSize >= 100) {
-      setPageData((prev) => {
-        return { ...prev, size: 100 };
-      });
-      navigate(`/businesses?page=${pageCount}&size=100`);
-    } else if (pageSize >= 50) {
-      setPageData((prev) => {
-        return { ...prev, size: 50 };
-      });
-      navigate(`/businesses?page=${pageCount}&size=50`);
-    } else if (pageSize >= 20) {
-      setPageData((prev) => {
-        return { ...prev, size: 20 };
-      });
-      navigate(`/businesses?page=${pageCount}&size=20`);
-    } else {
-      setPageData((prev) => {
-        return { ...prev, size: 10 };
-      });
-      navigate(`/businesses?page=${pageCount}&size=10`);
-    }
-  }, []);
+  }, [businessBranchesReducer.businesesBranchesChange]);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteBusiness(item);
+      deleteBranch(item);
       return null;
     });
   };
 
   const onChange = (pageNumber, page) => {
     setPageData({ size: page, page: pageNumber, loading: false });
-    searchParams.set("size", page);
-    searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
-    navigate(`/businesses?page=${pageNumber}&size=${page}`);
+    navigate("/businesses/branches");
   };
 
   const formValidate = () => {
@@ -124,7 +65,7 @@ function BusinessesData({
       form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editBusiness({ ...values, id: selectedRowKeys[1][0]?.id });
+          selectedRowKeys[1][0]?.id && editBranch({ ...values, id: selectedRowKeys[1][0]?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -133,7 +74,7 @@ function BusinessesData({
       form
         .validateFields()
         .then((values) => {
-          saveBusiness(values);
+          saveBranch({ name: values.name, businessId: usersDataReducer.businessId });
           setOnedit(false);
         })
         .catch((info) => {
@@ -147,7 +88,7 @@ function BusinessesData({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Hamma biznesslar</h3>
+      <h3 className="text-2xl font-bold mb-5">Biznes filiallari</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -224,7 +165,12 @@ function BusinessesData({
       </div>
       <Modal
         open={visible}
-        title={<h3 className="text-xl mb-3 font-semibold">Bizness qo'shish</h3>}
+        title={(
+          <h3 className="text-xl mb-3 font-semibold">
+            Filial
+            {onedit ? "ni taxrirlash" : " qo&apos;shish"}
+          </h3>
+        )}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
         okButtonProps={{ className: "bg-blue-600" }}
         cancelText="Bekor qilish"
@@ -246,37 +192,11 @@ function BusinessesData({
                 rules={[
                   {
                     required: true,
-                    message: "Bizness nomini kiriting",
+                    message: "Filial nomini kiriting",
                   },
                 ]}
               >
-                <Input placeholder="Bizness nomini kiriting..." />
-              </Form.Item>
-              <Form.Item
-                key="phoneNumber"
-                name="phoneNumber"
-                label={<span className="text-base font-medium">Bizness telefon nomeri</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Bizness telefon nomerini kiriting",
-                  },
-                ]}
-              >
-                <Input placeholder="Bizness telefon nomerini kiriting..." />
-              </Form.Item>
-              <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Bizness haqida ma'lumot</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Bizness haqida ma'lumotni kiriting",
-                  },
-                ]}
-              >
-                <Input placeholder="Bizness haqida ma'lumotni kiriting..." />
+                <Input placeholder="Filial nomini kiriting..." />
               </Form.Item>
             </Col>
           </Row>
@@ -287,8 +207,7 @@ function BusinessesData({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        totalItems={businessReducer?.businessTotalCount}
-        tableData={businessReducer?.business}
+        tableData={businessBranchesReducer?.businessBranch}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
@@ -298,9 +217,4 @@ function BusinessesData({
   );
 }
 
-export default connect(businessReducer, {
-  getAllBusiness,
-  saveBusiness,
-  deleteBusiness,
-  editBusiness,
-})(BusinessesData);
+export default connect((businessBranchesReducer, usersDataReducer), { getBusinessBranch, saveBranch, deleteBranch, editBranch })(BusinessBranch);

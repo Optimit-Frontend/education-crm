@@ -35,6 +35,7 @@ module.exports = {
     "no-confusing-arrow": [ERROR],
     "no-duplicate-imports": [ERROR],
     "comma-dangle": [ERROR, "only-multiline"],
+    "max-len": [WARN],
     "object-curly-newline": [WARN, {
       "ObjectExpression": {"multiline": true},
       "ObjectPattern": {"multiline": true},

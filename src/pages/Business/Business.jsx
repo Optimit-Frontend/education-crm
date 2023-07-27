@@ -224,7 +224,12 @@ function BusinessesData({
       </div>
       <Modal
         open={visible}
-        title={<h3 className="text-xl mb-3 font-semibold">Bizness qo'shish</h3>}
+        title={(
+          <h3 className="text-xl mb-3 font-semibold">
+            Bizness
+            {onedit ? "ni taxrirlash" : " qo&apos;shish"}
+          </h3>
+)}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
         okButtonProps={{ className: "bg-blue-600" }}
         cancelText="Bekor qilish"

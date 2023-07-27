@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { apiCall } from "../api";
 
 export const slice = createSlice({
   name: "usersData",
@@ -7,6 +6,8 @@ export const slice = createSlice({
     fullName: null,
     userToken: null,
     userData: null,
+    businessId: null,
+    branch: null,
     logout: false,
   },
   reducers: {
@@ -15,11 +16,13 @@ export const slice = createSlice({
     },
     saveUser: (state, action) => {
       if (action.payload.success) {
-        console.log(action.payload);
         localStorage.setItem("EducationCRM", action.payload?.message);
         localStorage.setItem("userDataCRM", JSON.stringify(action.payload?.object));
         state.userToken = action.payload?.message;
         state.logout = false;
+        console.log(action.payload?.object);
+        state.businessId = action.payload?.object?.businessId;
+        state.branch = action.payload?.object?.branch;
         state.userData = action.payload?.object;
       } else {
         state.logout = true;
