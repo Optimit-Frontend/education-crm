@@ -1,44 +1,52 @@
-import "./addUser.css";
 import { connect } from "react-redux";
-import { useEffect } from "react";
-// eslint-disable-next-line import/named
-import userReducer, { addUser, deleteUser, editUser, getUsers } from "../../reducer/userReducer.js";
+import { useState } from "react";
+import userReducer, { addUser, deleteUser, editUser, getUsers } from "../../reducer/userReducer";
+import CustomTable from "../../module/CustomTable";
+
+const columns = [
+  {
+    title: "FIO",
+    dataIndex: "fullName",
+    key: "fullName",
+    width: "300px",
+    search: true,
+  },
+  {
+    title: "Haqida",
+    dataIndex: "about",
+    key: "about",
+    width: "400px",
+    search: false,
+  },
+];
 
 function AddUser({ usersDataReducer }) {
-  useEffect(() => {
-  }, []);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
+  const [pageData, setPageData] = useState({
+    page: 1,
+    pageSize: 10,
+    loading: false,
+  });
+
+  const onChange = (pageNumber, page) => {
+    setPageData({ pageSize: page, page: pageNumber, loading: false });
+  };
 
   return (
     <div>
-      <h3 className="text-center">Xodim qo`shish</h3>
-      <div className="mt-3 ">
-        {/* eslint-disable-next-line react/button-has-type */}
-        <button className="justify-end rounded hover:rounded-lg btnAdd">Xodim qo`shish</button>
-      </div>
-
-      <div className="mt-4">
-        <table className="table-fixed border-2 table-row">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Name</th>
-              <th>Name</th>
-              <th>Name</th>
-              <th>Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>dasd</td>
-              <td>dasd</td>
-              <td>dasd</td>
-              <td>dasd</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <CustomTable
+        columns={columns}
+        pageSizeOptions={[10, 20, 50, 100]}
+        current={pageData.page}
+        pageSize={pageData.pageSize}
+        // tableData={subjects?.data}
+        loading={pageData.loading}
+        setSelectedRowKeys={setSelectedRowKeys}
+        selectedRowKeys={selectedRowKeys}
+        onChange={onChange}
+      />
     </div>
   );
 }
 
-export default connect((userReducer), { getUsers, addUser, editUser, deleteUser })(AddUser);
+export default connect(userReducer, { getUsers, addUser, editUser, deleteUser })(AddUser);

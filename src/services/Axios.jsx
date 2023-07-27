@@ -1,25 +1,24 @@
 import axios from "axios";
 import httpStatusCodes from "http-status-codes";
 
-const tokenLocal = localStorage.getItem("NEW-TOKEN");
+const tokenLocal = localStorage.getItem("EducationCRM");
 const BASE_URL = import.meta.env.VITE_API_KEY;
 
 const instance = axios.create({
   baseURL: `${BASE_URL}/`,
   headers: {
     "Content-Type": "application/json",
-    "Accept-Language": "en",
-    timeout: 10000,
+    timeout: 300000,
   },
 });
 
-instance.interceptors.request.use((config) => {
-  config.headers = config.headers ?? {};
-  if (tokenLocal && !config.headers.Authorization) {
-    config.headers.Authorization = `Bearer ${tokenLocal}`;
-  }
-  return config;
-});
+// instance.interceptors.request.use((config) => {
+//   config.headers = config.headers ?? {};
+//   if (tokenLocal && !config.headers.Authorization) {
+//     config.headers.Authorization = `Bearer ${tokenLocal}`;
+//   }
+//   return config;
+// });
 
 instance.interceptors.response.use(
   (response) => {
@@ -35,8 +34,8 @@ instance.interceptors.response.use(
       originalRequest.isRetry = true;
 
       if (error?.response?.status === 401) {
-        if (localStorage.getItem("NEW-TOKEN")) {
-          localStorage.removeItem("NEW-TOKEN");
+        if (localStorage.getItem("EducationCRM")) {
+          localStorage.removeItem("EducationCRM");
         }
         window.location.href = "/login";
       }
