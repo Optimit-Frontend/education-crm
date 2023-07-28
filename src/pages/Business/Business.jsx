@@ -76,6 +76,7 @@ function BusinessesData({
     getAllBusiness({ page: pageData.page, size: pageData.size });
     setVisible(false);
     form.resetFields();
+    setSelectedRowKeys([[], []]);
   }, [businessReducer?.businesesChange]);
 
   useEffect(() => {
