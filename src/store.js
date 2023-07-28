@@ -6,8 +6,17 @@ import businessReducer from "./reducer/businessReducer";
 import businessBranchesReducer from "./reducer/businessBranchesReducer";
 import roomTypeReducer from "./reducer/roomTypeReducer";
 import roomReducer from "./reducer/roomReducer";
+import subjectReducer from "./reducer/subjectReducer";
 
 export default configureStore({
-  reducer: { usersDataReducer, userReducer, businessReducer, businessBranchesReducer, roomTypeReducer, roomReducer },
+  reducer: {
+    usersDataReducer,
+    userReducer,
+    businessReducer,
+    businessBranchesReducer,
+    roomTypeReducer,
+    roomReducer,
+    subjectReducer,
+  },
   middleware: [api],
 });

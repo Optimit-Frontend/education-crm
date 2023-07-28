@@ -77,6 +77,7 @@ function Room({
     getRoomBranch({ page: pageData.page, size: pageData.size, branchId: usersDataReducer?.branch?.id });
     setVisible(false);
     form.resetFields();
+    setSelectedRowKeys([[], []]);
   }, [roomReducer?.changeData]);
 
   useEffect(() => {

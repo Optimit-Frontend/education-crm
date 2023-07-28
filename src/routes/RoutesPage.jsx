@@ -24,6 +24,9 @@ const RoomType = lazy(() => {
 const Room = lazy(() => {
   return import("../pages/Settings/Room");
 });
+const Subjects = lazy(() => {
+  return import("../pages/Settings/Subjects");
+});
 
 function RoutesPage() {
   return (
@@ -37,6 +40,7 @@ function RoutesPage() {
           <Route path="settings/branches" element={<BusinessBranch />} />
           <Route path="settings/roomType" element={<RoomType />} />
           <Route path="settings/room" element={<Room />} />
+          <Route path="settings/subjects" element={<Subjects />} />
         </Route>
         <Route path="/login" element={<Login />} />
       </Routes>
