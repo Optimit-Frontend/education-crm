@@ -9,6 +9,7 @@ import roomReducer from "./reducer/roomReducer";
 import subjectReducer from "./reducer/subjectReducer";
 import roleReducer from "./reducer/roleReducer";
 import employeeReducer from "./reducer/employeeReducer";
+import studentReducer from "./reducer/studentReducer.js";
 
 export default configureStore({
   reducer: {
@@ -20,7 +21,8 @@ export default configureStore({
     roomReducer,
     subjectReducer,
     roleReducer,
-    employeeReducer
+    employeeReducer,
+    studentReducer
   },
   middleware: [api],
 });
