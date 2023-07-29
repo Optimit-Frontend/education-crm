@@ -1,34 +1,42 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, InputNumber, Modal, Row, Select
+  Col, Form, Input, Modal, Row, Select
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
+import businessReducer from "../../reducer/businessReducer";
 import useKeyPress from "../../hooks/UseKeyPress";
-import roomReducer, {
-  deleteRoom,
-  editRoom,
-  getRoomBranch,
-  saveRoom
-} from "../../reducer/roomReducer";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import roomTypeReducer, { getAllRoomType } from "../../reducer/roomTypeReducer";
-
-const { Option } = Select;
+import classReducer, {
+  deleteClass,
+  editClass,
+  getClassById,
+  getClassesAll,
+  getClassesAllNeActive,
+  saveClass,
+} from "../../reducer/classReducer";
+import roomReducer, { getRoomBranch } from "../../reducer/roomReducer";
 
 const columns = [
   {
-    title: "Xona raqami",
-    dataIndex: "roomNumber",
-    key: "roomNumber",
-    width: "40%",
+    title: "Bizness",
+    dataIndex: "name",
+    key: "name",
+    width: "30%",
+    search: true,
+  },
+  {
+    title: "Telefon nomeri",
+    dataIndex: "phoneNumber",
+    key: "phoneNumber",
+    width: "25%",
     search: false,
   },
   {
-    title: "Xona turi",
-    dataIndex: "roomTypeName",
-    key: "roomTypeName",
+    title: "Qisqa ma'lumot",
+    dataIndex: "description",
+    key: "description",
     width: "30%",
     search: false,
   },
@@ -36,7 +44,7 @@ const columns = [
     title: "Holati",
     dataIndex: "active",
     key: "active",
-    width: "30%",
+    width: "15%",
     search: false,
     render: (eski) => {
       return eski ? (
@@ -48,15 +56,15 @@ const columns = [
   },
 ];
 
-function Room({
-  roomReducer,
-  roomTypeReducer,
+function Class({
   usersDataReducer,
-  getRoomBranch,
-  getAllRoomType,
-  saveRoom,
-  deleteRoom,
-  editRoom
+  getClassesAll,
+  saveClass,
+  editClass,
+  deleteClass,
+  classReducer,
+  roomReducer,
+  getRoomBranch
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -75,7 +83,7 @@ function Room({
   });
 
   useEffect(() => {
-    getAllRoomType(usersDataReducer?.branch?.id);
+    getClassesAll({ id: usersDataReducer.businessId, page: pageData.page, size: pageData.size });
     getRoomBranch({
       page: pageData.page,
       size: pageData.size,
@@ -84,7 +92,7 @@ function Room({
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [roomReducer?.changeData]);
+  }, []);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -93,28 +101,28 @@ function Room({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/settings/room?page=${pageCount}&size=100`);
+      navigate(`/class?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/settings/room?page=${pageCount}&size=50`);
+      navigate(`/class?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/settings/room?page=${pageCount}&size=20`);
+      navigate(`/class?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/settings/room?page=${pageCount}&size=10`);
+      navigate(`/class?page=${pageCount}&size=10`);
     }
   }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteRoom(item);
+      deleteClass(item);
       return null;
     });
   };
@@ -124,7 +132,7 @@ function Room({
     searchParams.set("size", page);
     searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
-    navigate(`/settings/room?page=${pageNumber}&size=${page}`);
+    navigate(`/businesses?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
@@ -132,11 +140,7 @@ function Room({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editRoom({
-            ...values,
-            roomId: selectedRowKeys[1][0]?.id,
-            branchId: usersDataReducer?.branch?.id
-          });
+          selectedRowKeys[1][0]?.id && editClass({ ...values, id: selectedRowKeys[1][0]?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -145,7 +149,7 @@ function Room({
       : form
         .validateFields()
         .then((values) => {
-          saveRoom({ ...values, branchId: usersDataReducer?.branch?.id });
+          saveClass(values);
           setOnedit(false);
         })
         .catch((info) => {
@@ -159,15 +163,16 @@ function Room({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Xonalar</h3>
+      <h3 className="text-2xl font-bold mb-5">Hamma Sinflar</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
             onClick={() => {
               setOnedit(true);
               setVisible(true);
-              form.setFieldValue("roomNumber", selectedRowKeys[1][0]?.roomNumber);
-              form.setFieldValue("roomTypeId", selectedRowKeys[1][0]?.roomType?.id);
+              form.setFieldValue("name", selectedRowKeys[1][0]?.name);
+              form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
+              form.setFieldValue("description", selectedRowKeys[1][0]?.description);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -237,14 +242,14 @@ function Room({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Xona
+            Talaba
             {onedit ? "ni taxrirlash" : " qo'shish"}
           </h3>
         )}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
         okButtonProps={{ className: "bg-blue-600" }}
         cancelText="Bekor qilish"
-        width={500}
+        width={600}
         onCancel={() => {
           setVisible(false);
           setOnedit(false);
@@ -254,53 +259,100 @@ function Room({
         forceRender
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
-          <Row gutter={12}>
-            <Col span={24}>
+          <Row gutter={24}>
+            <Col span={12}>
               <Form.Item
-                key="roomNumber"
-                name="roomNumber"
-                label={<span className="text-base font-medium">Xona raqami</span>}
+                key="className"
+                name="className"
+                label={<span className="text-base font-medium">Sinf nomi</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Xona raqamini kiriting",
+                    message: "Talaba nomini kiriting",
                   },
                 ]}
               >
-                <InputNumber placeholder="Xona raqamini kiriting..." className="w-full" />
+                <Input placeholder="Sinf nomi kiriting..." />
               </Form.Item>
               <Form.Item
-                key="roomTypeId"
-                name="roomTypeId"
-                label={<span className="text-base font-medium">Xona turi</span>}
+                key="startDate"
+                name="startDate"
+                label={<span className="text-base font-medium">Boshlangan sana</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Xona turini tanlang",
+                    message: "Bizness nomini kiriting",
                   },
                 ]}
               >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Xona turini tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={
-                    (input, option) => {
-                      return option.children.toLowerCase()?.includes(input.toLowerCase());
-                    }
-                  }
-                >
-                  {roomTypeReducer?.roomType?.map((option) => {
-                    return (
-                      <Option value={option.id} key={option.id}>
-                        {option.name}
-                      </Option>
-                    );
-                  })}
-                </Select>
+                <Input type="date" placeholder="Sana kiriting..." />
+              </Form.Item>
+              <Form.Item
+                key="classLeaderId"
+                name="classLeaderId"
+                label={<span className="text-base font-medium">Sinf rahbari</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "doc number",
+                  },
+                ]}
+              >
+                <Select placeholder="Coose class leader" />
+              </Form.Item>
+              <Form.Item
+                key="roomId"
+                name="roomId"
+                label={<span className="text-base font-medium">Xona</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Bizness haqida ma'lumotni kiriting",
+                  },
+                ]}
+              >
+                <Select placeholder="Choose room" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="branchId"
+                name="branchId"
+                label={<span className="text-base font-medium">Filial ( Branch )</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "username",
+                  },
+                ]}
+              >
+                <Select placeholder="Choose branch ..." />
+              </Form.Item>
+              <Form.Item
+                key="endDate"
+                name="endDate"
+                label={<span className="text-base font-medium">Tugash sana</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Talaba otasi nomini kiriting",
+                  },
+                ]}
+              >
+                <Input type="date" placeholder="Tugash sana..." />
+              </Form.Item>
+              <Form.Item
+                key="levelId"
+                name="levelId"
+                label={<span className="text-base font-medium">Sinf bosqich</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Reference",
+                  },
+                ]}
+              >
+                <Select placeholder="Choose level" />
               </Form.Item>
             </Col>
           </Row>
@@ -311,10 +363,8 @@ function Room({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        totalItems={roomReducer?.businessTotalCount}
-        tableData={roomReducer?.room?.map((item) => {
-          return ({ ...item, roomTypeName: item?.roomType?.name });
-        })}
+        totalItems={businessReducer?.businessTotalCount}
+        tableData={businessReducer?.business}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
@@ -324,10 +374,6 @@ function Room({
   );
 }
 
-export default connect((roomReducer, roomTypeReducer, usersDataReducer), {
-  getAllRoomType,
-  getRoomBranch,
-  saveRoom,
-  deleteRoom,
-  editRoom
-})(Room);
+export default connect((usersDataReducer, classReducer, roomReducer), {
+  getClassById, getClassesAll, getClassesAllNeActive, saveClass, editClass, deleteClass, getRoomBranch
+})(Class);

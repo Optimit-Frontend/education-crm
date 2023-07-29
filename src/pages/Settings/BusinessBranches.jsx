@@ -1,6 +1,8 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { Col, Form, Input, Modal, Row } from "antd";
+import {
+  Col, Form, Input, Modal, Row
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
@@ -63,8 +65,8 @@ function BusinessBranch({
   };
 
   const formValidate = () => {
-    onedit ?
-      form
+    onedit
+      ? form
         .validateFields()
         .then((values) => {
           selectedRowKeys[1][0]?.id && editBranch({ ...values, id: selectedRowKeys[1][0]?.id });
@@ -72,8 +74,8 @@ function BusinessBranch({
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
-        }) :
-      form
+        })
+      : form
         .validateFields()
         .then((values) => {
           saveBranch({ name: values.name, businessId: usersDataReducer?.businessId });
@@ -220,4 +222,6 @@ function BusinessBranch({
   );
 }
 
-export default connect((businessBranchesReducer, usersDataReducer), { getBusinessBranch, saveBranch, deleteBranch, editBranch })(BusinessBranch);
+export default connect((businessBranchesReducer, usersDataReducer), {
+  getBusinessBranch, saveBranch, deleteBranch, editBranch
+})(BusinessBranch);

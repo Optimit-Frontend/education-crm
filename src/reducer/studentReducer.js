@@ -3,9 +3,9 @@ import { toast } from "react-toastify";
 import { apiCall } from "../api";
 
 export const slice = createSlice({
-  name: "employeeData",
+  name: "students",
   initialState: {
-    employees: null,
+    students: null,
     employeesTotalCount: 0,
     message: null,
     changeData: false,
@@ -13,7 +13,7 @@ export const slice = createSlice({
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.employees = action.payload?.data?.userResponseDtoList;
+        state.students = action.payload?.data;
         state.employeesTotalCount = action.payload?.data?.allSize;
       } else {
         state.message = action.payload.message;
@@ -22,55 +22,76 @@ export const slice = createSlice({
     },
     saveFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Hodim muvafaqiyatli qo'shildi");
+        toast.success("Talaba muvafaqiyatli qo'shildi");
       } else {
-        toast.warning(action.payload.message || "Hodimni qo'shishda muammo bo'ldi");
+        toast.warning(action.payload.message || "Talaba qo'shishda muammo bo'ldi");
       }
       state.changeData = true;
     },
     editFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Hodim muvafaqiyatli taxrirlandi");
+        toast.success("Talaba muvafaqiyatli taxrirlandi");
       } else {
-        toast.warning(action.payload.message || "Hodimni taxrirlashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Talaba taxrirlashda muammo bo'ldi");
       }
       state.changeData = true;
     },
     deleteFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Hodim muvafaqiyatli o'chirildi");
+        toast.success("Talaba muvafaqiyatli o'chirildi");
       } else {
-        toast.warning("Hodimni o'chirishda muammo bo'ldi");
+        toast.warning("Talaba o'chirishda muammo bo'ldi");
       }
       state.changeData = true;
     },
   },
 });
 
-export const getEmployeeBranch = (data) => {
+export const getStudentById = (data) => {
   return apiCall({
-    url: `/user/getUserListByBranchId?page=${data.page - 1}&size=${data.size}&branchId=${
-      data.branchId
-    }`,
+    url: `/student/getById${data}`,
+    method: "get",
+    onSuccess: slice.actions.getFrom.type,
+    onFail: slice.actions.getFrom.type,
+  });
+};
+export const getStudentsAll = (data) => {
+  return apiCall({
+    url: `/student/getAll?id=${data.id}&page=${data.page - 1}&size=${data.size}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
 };
 
-export const saveEmployee = (data) => {
+export const getStudentsAllNeActive = (data) => {
+  return apiCall({
+    url: `/student/getAllNeActiveStudents?branchId=${data.branchId}&page=${data.page - 1}&size=${data.size}`,
+    method: "get",
+    onSuccess: slice.actions.getFrom.type,
+    onFail: slice.actions.getFrom.type,
+  });
+};
+export const getStudentsAllByClass = (data) => {
+  return apiCall({
+    url: `/student/getAllByClassId?branchId=${data.branchId}&page=${data.page - 1}&size=${data.size}`,
+    method: "get",
+    onSuccess: slice.actions.getFrom.type,
+    onFail: slice.actions.getFrom.type,
+  });
+};
+
+export const saveStudent = (data) => {
   return apiCall({
     url: "/user/register",
     method: "post",
-    // eslint-disable-next-line no-underscore-dangle
-    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.saveFrom.type,
     onFail: slice.actions.saveFrom.type,
   });
 };
 
-export const editRoom = (data) => {
+export const editStudent = (data) => {
   return apiCall({
     url: "/room/update",
     method: "put",
@@ -80,7 +101,7 @@ export const editRoom = (data) => {
   });
 };
 
-export const deleteEmployee = (data) => {
+export const deleteStudent = (data) => {
   return apiCall({
     url: `/user/delete/${data}`,
     method: "delete",

@@ -5,13 +5,18 @@ import {
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
-import businessReducer, {
-  deleteBusiness,
-  editBusiness,
-  getAllBusiness,
-  saveBusiness,
-} from "../../reducer/businessReducer";
+import businessReducer from "../../reducer/businessReducer";
 import useKeyPress from "../../hooks/UseKeyPress";
+import studentReducer, {
+  deleteStudent,
+  editStudent,
+  getStudentById,
+  getStudentsAll,
+  getStudentsAllByClass,
+  getStudentsAllNeActive,
+  saveStudent,
+} from "../../reducer/studentReducer";
+import usersDataReducer from "../../reducer/usersDataReducer";
 
 const columns = [
   {
@@ -51,12 +56,9 @@ const columns = [
   },
 ];
 
-function BusinessesData({
-  saveBusiness,
-  getAllBusiness,
-  businessReducer,
-  deleteBusiness,
-  editBusiness,
+function Students({
+  usersDataReducer,
+  getStudentsAllByClass, getStudentsAllNeActive, getStudentById, getStudentsAll, deleteStudent, editStudent, saveStudent
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -75,7 +77,7 @@ function BusinessesData({
   });
 
   useEffect(() => {
-    getAllBusiness({ page: pageData.page, size: pageData.size });
+    getStudentsAll({ id: usersDataReducer.businessId, page: pageData.page, size: pageData.size });
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
@@ -88,28 +90,28 @@ function BusinessesData({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/businesses?page=${pageCount}&size=100`);
+      navigate(`/students?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/businesses?page=${pageCount}&size=50`);
+      navigate(`/students?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/businesses?page=${pageCount}&size=20`);
+      navigate(`/students?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/businesses?page=${pageCount}&size=10`);
+      navigate(`/students?page=${pageCount}&size=10`);
     }
   }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteBusiness(item);
+      deleteStudent(item);
       return null;
     });
   };
@@ -119,7 +121,7 @@ function BusinessesData({
     searchParams.set("size", page);
     searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
-    navigate(`/businesses?page=${pageNumber}&size=${page}`);
+    navigate(`/students?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
@@ -127,7 +129,7 @@ function BusinessesData({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editBusiness({ ...values, id: selectedRowKeys[1][0]?.id });
+          selectedRowKeys[1][0]?.id && editStudent({ ...values, id: selectedRowKeys[1][0]?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -136,7 +138,7 @@ function BusinessesData({
       : form
         .validateFields()
         .then((values) => {
-          saveBusiness(values);
+          saveStudent(values);
           setOnedit(false);
         })
         .catch((info) => {
@@ -150,7 +152,7 @@ function BusinessesData({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Hamma biznesslar</h3>
+      <h3 className="text-2xl font-bold mb-5">Hamma Talabalar</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -229,14 +231,14 @@ function BusinessesData({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Bizness
+            Talaba
             {onedit ? "ni taxrirlash" : " qo'shish"}
           </h3>
         )}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
         okButtonProps={{ className: "bg-blue-600" }}
         cancelText="Bekor qilish"
-        width={500}
+        width={800}
         onCancel={() => {
           setVisible(false);
           setOnedit(false);
@@ -246,12 +248,25 @@ function BusinessesData({
         forceRender
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
-          <Row gutter={12}>
-            <Col span={24}>
+          <Row gutter={24}>
+            <Col span={12}>
               <Form.Item
                 key="name"
                 name="name"
-                label={<span className="text-base font-medium">Bizness nomi</span>}
+                label={<span className="text-base font-medium">Ism</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Talaba nomini kiriting",
+                  },
+                ]}
+              >
+                <Input placeholder="Talaba Familiyasini kiriting..." />
+              </Form.Item>
+              <Form.Item
+                key="name"
+                name="name"
+                label={<span className="text-base font-medium">Familiya</span>}
                 rules={[
                   {
                     required: true,
@@ -259,12 +274,38 @@ function BusinessesData({
                   },
                 ]}
               >
-                <Input placeholder="Bizness nomini kiriting..." />
+                <Input placeholder="Talaba familiya nomini kiriting..." />
+              </Form.Item>
+              <Form.Item
+                key="name"
+                name="name"
+                label={<span className="text-base font-medium">Otasi</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Talaba otasi nomini kiriting",
+                  },
+                ]}
+              >
+                <Input placeholder="Talaba familiya nomini kiriting..." />
+              </Form.Item>
+              <Form.Item
+                key="name"
+                name="name"
+                label={<span className="text-base font-medium">Tug`ilgan kun</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Talaba otasi nomini kiriting",
+                  },
+                ]}
+              >
+                <Input type="date" placeholder="Talaba familiya nomini kiriting..." />
               </Form.Item>
               <Form.Item
                 key="phoneNumber"
                 name="phoneNumber"
-                label={<span className="text-base font-medium">Bizness telefon nomeri</span>}
+                label={<span className="text-base font-medium">Filial ( Branch )</span>}
                 rules={[
                   {
                     required: true,
@@ -277,15 +318,121 @@ function BusinessesData({
               <Form.Item
                 key="description"
                 name="description"
-                label={<span className="text-base font-medium">Bizness haqida ma&apos;lumot</span>}
+                label={<span className="text-base font-medium">Med Doc photo</span>}
                 rules={[
                   {
-                    required: true,
+                    required: false,
                     message: "Bizness haqida ma'lumotni kiriting",
                   },
                 ]}
               >
                 <Input placeholder="Bizness haqida ma'lumotni kiriting..." />
+              </Form.Item>
+              <Form.Item
+                key="description"
+                name="description"
+                label={<span className="text-base font-medium">Active</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Bizness haqida ma'lumotni kiriting",
+                  },
+                ]}
+              >
+                <Input placeholder="Bizness haqida ma'lumotni kiriting..." />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="description"
+                name="description"
+                label={<span className="text-base font-medium">username</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "username",
+                  },
+                ]}
+              >
+                <Input placeholder="username ..." />
+              </Form.Item>
+              <Form.Item
+                key="description"
+                name="description"
+                label={<span className="text-base font-medium">doc number</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "doc number",
+                  },
+                ]}
+              >
+                <Input placeholder="Document num ..." />
+              </Form.Item>
+              <Form.Item
+                key="description"
+                name="description"
+                label={<span className="text-base font-medium">doc photo</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "doc photo",
+                  },
+                ]}
+              >
+                <Input placeholder="Document num ..." />
+              </Form.Item>
+              <Form.Item
+                key="description"
+                name="description"
+                label={<span className="text-base font-medium">Reference</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Reference",
+                  },
+                ]}
+              >
+                <Input placeholder="Reference" />
+              </Form.Item>
+              <Form.Item
+                key="description"
+                name="description"
+                label={<span className="text-base font-medium">Photo</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Photo",
+                  },
+                ]}
+              >
+                <Input type="file" placeholder="Photo" />
+              </Form.Item>
+              <Form.Item
+                key="description"
+                name="description"
+                label={<span className="text-base font-medium">Student class id</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Photo",
+                  },
+                ]}
+              >
+                <Input type="text" placeholder="Photo" />
+              </Form.Item>
+              <Form.Item
+                key="description"
+                name="description"
+                label={<span className="text-base font-medium">Password</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Photo",
+                  },
+                ]}
+              >
+                <Input type="text" placeholder="Password . . ." />
               </Form.Item>
             </Col>
           </Row>
@@ -307,9 +454,6 @@ function BusinessesData({
   );
 }
 
-export default connect((businessReducer), {
-  getAllBusiness,
-  saveBusiness,
-  deleteBusiness,
-  editBusiness,
-})(BusinessesData);
+export default connect((usersDataReducer, studentReducer), {
+  getStudentsAll, getStudentById, getStudentsAllNeActive, getStudentsAllByClass, deleteStudent, editStudent, saveStudent
+})(Students);
