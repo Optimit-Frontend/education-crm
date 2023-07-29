@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import Logo from "../assets/image/optimit-logo.png";
 import DarkModeSwitcher from "./DarkModeSwitcher";
-// import DropdownMessage from "./DropdownMessage";
-// import DropdownNotification from "./DropdownNotification";
 import DropdownUser from "./DropdownUser";
 
 function Header({ setSidebarOpen, sidebarOpen }) {
@@ -97,22 +95,10 @@ function Header({ setSidebarOpen, sidebarOpen }) {
 
         <div className="flex items-center gap-3 2xsm:gap-7">
           <ul className="flex items-center gap-2 2xsm:gap-4">
-            {/* <!-- Dark Mode Toggle --> */}
             <DarkModeSwitcher />
-            {/* <!-- Dark Mode Toggle --> */}
-
-            {/* <!-- Notification Menu Area --> */}
-            {/* <DropdownNotification /> */}
-            {/* <!-- Notification Menu Area --> */}
-
-            {/* <!-- Chat Notification Area --> */}
-            {/* <DropdownMessage /> */}
-            {/* <!-- Chat Notification Area --> */}
           </ul>
 
-          {/* <!-- User Area --> */}
           <DropdownUser />
-          {/* <!-- User Area --> */}
         </div>
       </div>
     </header>

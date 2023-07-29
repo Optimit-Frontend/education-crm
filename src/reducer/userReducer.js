@@ -33,7 +33,7 @@ export const slice = createSlice({
       } else {
         toast.error("User not deleted");
       }
-    }
+    },
   },
 });
 

@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { apiCall } from "../api";
 
 export const slice = createSlice({
   name: "usersData",
@@ -7,31 +6,30 @@ export const slice = createSlice({
     fullName: null,
     userToken: null,
     userData: null,
+    businessId: null,
+    branch: null,
     logout: false,
   },
   reducers: {
     logOutUser: (state, action) => {
       state.logout = true;
     },
-    getUser: (state, action) => {
-      if (action.payload.data.success) {
-        state.userToken = action.payload?.data?.accessToken;
+    saveUser: (state, action) => {
+      if (action.payload.success) {
+        localStorage.setItem("EducationCRM", action.payload?.message);
+        localStorage.setItem("userDataCRM", JSON.stringify(action.payload?.object));
+        state.userToken = action.payload?.message;
         state.logout = false;
-        state.userData = action.payload?.data?.userResponseDto;
+        console.log(action.payload?.object);
+        state.businessId = action.payload?.object?.businessId;
+        state.branch = action.payload?.object?.branch;
+        state.userData = action.payload?.object;
+      } else {
+        state.logout = true;
       }
     },
   },
 });
 
-export const userLogin = (data) => {
-  return apiCall({
-    url: "/user/login",
-    method: "post",
-    data,
-    onSuccess: slice.actions.getUser.type,
-    onFail: slice.actions.getUser.type,
-  });
-};
-
-export const { logOutUser } = slice.actions;
+export const { logOutUser, saveUser } = slice.actions;
 export default slice.reducer;

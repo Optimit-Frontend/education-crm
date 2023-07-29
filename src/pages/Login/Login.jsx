@@ -4,11 +4,12 @@ import { Link, useNavigate } from "react-router-dom";
 import classNames from "classnames";
 import { connect } from "react-redux";
 import { twMerge } from "tailwind-merge";
-import usersDataReducer, { userLogin } from "../../reducer/usersDataReducer";
+import { toast } from "react-toastify";
+import usersDataReducer, { saveUser } from "../../reducer/usersDataReducer";
+import instance from "../../services/Axios.jsx";
 
-function Login({ userLogin, usersDataReducer }) {
+function Login({ usersDataReducer, saveUser }) {
   const navigate = useNavigate();
-  const user = localStorage.getItem("user");
   const {
     register,
     handleSubmit,
@@ -16,15 +17,31 @@ function Login({ userLogin, usersDataReducer }) {
   } = useForm();
 
   useEffect(() => {
-    user && navigate("/");
-  });
+    usersDataReducer.userData && navigate("/");
+  }, []);
 
   function onSubmit(data) {
-    userLogin({ password: data.password, phoneNumber: data.phone });
-    // if (data.phone === '+998 90 377 89 90' && data.password === '123456') {
-    //   localStorage.setItem('user', JSON.stringify(data))
-    //   navigate('/')
-    // }
+    console.log(data);
+    instance
+      .post("/user/login", { password: data.password, phoneNumber: data.phone })
+      .then((res) => {
+        if (res.data.success) {
+          saveUser({
+            object: res.data.data?.userResponseDto,
+            message: res.data.data?.accessToken,
+            success: true,
+          });
+          setTimeout(() => {
+            navigate("/");
+          }, 500);
+        } else {
+          toast.error("Telefon nomer yoki parol noto'g'ri kiritildi");
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("Telefon nomer yoki parol noto'g'ri kiritildi");
+      });
   }
 
   return (
@@ -149,4 +166,4 @@ function Login({ userLogin, usersDataReducer }) {
   );
 }
 
-export default connect(usersDataReducer, { userLogin })(Login);
+export default connect(usersDataReducer, { saveUser })(Login);
