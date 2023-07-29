@@ -1,17 +1,24 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { Col, Form, Input, Modal, Row } from "antd";
+import { Col, Form, Input, Modal, Row, Select } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import businessReducer from "../../reducer/businessReducer";
 import useKeyPress from "../../hooks/UseKeyPress";
-import studentReducer, {
-  deleteStudent, editStudent,
-  getStudentById,
-  getStudentsAll, getStudentsAllByClass,
-  getStudentsAllNeActive, saveStudent,
-} from "../../reducer/studentReducer.js";
+
 import usersDataReducer from "../../reducer/usersDataReducer.js";
+import classReducer, {
+  // eslint-disable-next-line import/named
+  deleteClass,
+  // eslint-disable-next-line import/named
+  editClass,
+  getClassById,
+  getClassesAll,
+  getClassesAllNeActive,
+  // eslint-disable-next-line import/named
+  saveClass,
+} from "../../reducer/classReducer.js";
+import roomReducer, { getRoomBranch } from "../../reducer/roomReducer.js";
 
 const columns = [
   {
@@ -51,9 +58,9 @@ const columns = [
   },
 ];
 
-function Students({
+function Class({
   usersDataReducer,
-  getStudentsAllByClass, getStudentsAllNeActive, getStudentById, getStudentsAll, deleteStudent, editStudent, saveStudent
+  getClassById, getClassesAll, getClassesAllNeActive, saveClass, editClass, deleteClass, classReducer, roomReducer, getRoomBranch
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -72,11 +79,16 @@ function Students({
   });
 
   useEffect(() => {
-    getStudentsAll({ id: usersDataReducer.businessId, page: pageData.page, size: pageData.size });
+    getClassesAll({ id: usersDataReducer.businessId, page: pageData.page, size: pageData.size });
+    getRoomBranch({
+      page: pageData.page,
+      size: pageData.size,
+      branchId: usersDataReducer?.branch?.id
+    });
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [businessReducer?.businesesChange]);
+  }, []);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -85,28 +97,28 @@ function Students({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/students?page=${pageCount}&size=100`);
+      navigate(`/class?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/students?page=${pageCount}&size=50`);
+      navigate(`/class?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/students?page=${pageCount}&size=20`);
+      navigate(`/class?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/students?page=${pageCount}&size=10`);
+      navigate(`/class?page=${pageCount}&size=10`);
     }
   }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteStudent(item);
+      deleteClass(item);
       return null;
     });
   };
@@ -124,7 +136,7 @@ function Students({
       form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editStudent({ ...values, id: selectedRowKeys[1][0]?.id });
+          selectedRowKeys[1][0]?.id && editClass({ ...values, id: selectedRowKeys[1][0]?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -133,7 +145,7 @@ function Students({
       form
         .validateFields()
         .then((values) => {
-          saveStudent(values);
+          saveClass(values);
           setOnedit(false);
         })
         .catch((info) => {
@@ -147,7 +159,7 @@ function Students({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Hamma Talabalar</h3>
+      <h3 className="text-2xl font-bold mb-5">Hamma Sinflar</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -233,7 +245,7 @@ function Students({
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
         okButtonProps={{ className: "bg-blue-600" }}
         cancelText="Bekor qilish"
-        width={800}
+        width={600}
         onCancel={() => {
           setVisible(false);
           setOnedit(false);
@@ -246,9 +258,9 @@ function Students({
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item
-                key="name"
-                name="name"
-                label={<span className="text-base font-medium">Ism</span>}
+                key="className"
+                name="className"
+                label={<span className="text-base font-medium">Sinf nomi</span>}
                 rules={[
                   {
                     required: true,
@@ -256,12 +268,12 @@ function Students({
                   },
                 ]}
               >
-                <Input placeholder="Talaba Familiyasini kiriting..." />
+                <Input placeholder="Sinf nomi kiriting..." />
               </Form.Item>
               <Form.Item
-                key="name"
-                name="name"
-                label={<span className="text-base font-medium">Familiya</span>}
+                key="startDate"
+                name="startDate"
+                label={<span className="text-base font-medium">Boshlangan sana</span>}
                 rules={[
                   {
                     required: true,
@@ -269,51 +281,25 @@ function Students({
                   },
                 ]}
               >
-                <Input placeholder="Talaba familiya nomini kiriting..." />
+                <Input type="date" placeholder="Sana kiriting..." />
               </Form.Item>
               <Form.Item
-                key="name"
-                name="name"
-                label={<span className="text-base font-medium">Otasi</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Talaba otasi nomini kiriting",
-                  },
-                ]}
-              >
-                <Input placeholder="Talaba familiya nomini kiriting..." />
-              </Form.Item>
-              <Form.Item
-                key="name"
-                name="name"
-                label={<span className="text-base font-medium">Tug`ilgan kun</span>}
+                key="classLeaderId"
+                name="classLeaderId"
+                label={<span className="text-base font-medium">Sinf rahbari</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Talaba otasi nomini kiriting",
+                    message: "doc number",
                   },
                 ]}
               >
-                <Input type="date" placeholder="Talaba familiya nomini kiriting..." />
+                <Select placeholder="Coose class leader" />
               </Form.Item>
               <Form.Item
-                key="phoneNumber"
-                name="phoneNumber"
-                label={<span className="text-base font-medium">Filial ( Branch )</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Bizness telefon nomerini kiriting",
-                  },
-                ]}
-              >
-                <Input placeholder="Bizness telefon nomerini kiriting..." />
-              </Form.Item>
-              <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Med Doc photo</span>}
+                key="roomId"
+                name="roomId"
+                label={<span className="text-base font-medium">Xona</span>}
                 rules={[
                   {
                     required: false,
@@ -321,27 +307,14 @@ function Students({
                   },
                 ]}
               >
-                <Input placeholder="Bizness haqida ma'lumotni kiriting..." />
-              </Form.Item>
-              <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Active</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Bizness haqida ma'lumotni kiriting",
-                  },
-                ]}
-              >
-                <Input placeholder="Bizness haqida ma'lumotni kiriting..." />
+                <Select placeholder="Choose room" />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">username</span>}
+                key="branchId"
+                name="branchId"
+                label={<span className="text-base font-medium">Filial ( Branch )</span>}
                 rules={[
                   {
                     required: true,
@@ -349,38 +322,25 @@ function Students({
                   },
                 ]}
               >
-                <Input placeholder="username ..." />
+                <Select placeholder="Choose branch ..." />
               </Form.Item>
               <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">doc number</span>}
+                key="endDate"
+                name="endDate"
+                label={<span className="text-base font-medium">Tugash sana</span>}
                 rules={[
                   {
                     required: false,
-                    message: "doc number",
+                    message: "Talaba otasi nomini kiriting",
                   },
                 ]}
               >
-                <Input placeholder="Document num ..." />
+                <Input type="date" placeholder="Tugash sana..." />
               </Form.Item>
               <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">doc photo</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "doc photo",
-                  },
-                ]}
-              >
-                <Input placeholder="Document num ..." />
-              </Form.Item>
-              <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Reference</span>}
+                key="levelId"
+                name="levelId"
+                label={<span className="text-base font-medium">Sinf bosqich</span>}
                 rules={[
                   {
                     required: false,
@@ -388,46 +348,7 @@ function Students({
                   },
                 ]}
               >
-                <Input placeholder="Reference" />
-              </Form.Item>
-              <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Photo</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Photo",
-                  },
-                ]}
-              >
-                <Input type="file" placeholder="Photo" />
-              </Form.Item>
-              <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Student class id</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Photo",
-                  },
-                ]}
-              >
-                <Input type="text" placeholder="Photo" />
-              </Form.Item>
-              <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Password</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Photo",
-                  },
-                ]}
-              >
-                <Input type="text" placeholder="Password . . ." />
+                <Select placeholder="Choose level" />
               </Form.Item>
             </Col>
           </Row>
@@ -449,4 +370,4 @@ function Students({
   );
 }
 
-export default connect((usersDataReducer, studentReducer), { getStudentsAll, getStudentById, getStudentsAllNeActive, getStudentsAllByClass, deleteStudent, editStudent, saveStudent })(Students);
+export default connect((usersDataReducer, classReducer, roomReducer), { getClassById, getClassesAll, getClassesAllNeActive, saveClass, editClass, deleteClass, getRoomBranch })(Class);
