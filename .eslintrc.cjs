@@ -31,16 +31,11 @@ module.exports = {
     "react/jsx-filename-extension": [ERROR, {extensions: [".js", ".jsx"]}],
     "space-before-function-paren": [ERROR],
     "react/self-closing-comp": [ERROR],
-    "operator-linebreak": [ERROR, "after"],
-    "no-confusing-arrow": [ERROR],
+    // "operator-linebreak": [ERROR, "after"],
+    // "no-confusing-arrow": [ERROR],
     "no-duplicate-imports": [ERROR],
     "comma-dangle": [ERROR, "only-multiline"],
     "max-len": [WARN],
-    "object-curly-newline": [WARN, {
-      "ObjectExpression": {"multiline": true},
-      "ObjectPattern": {"multiline": true},
-      "ExportDeclaration": "never"
-    }],
     "jsx-a11y/label-has-associated-control": [OFF],
     "react/prop-types": [OFF],
     "no-param-reassign": [OFF],

@@ -49,7 +49,9 @@ export const slice = createSlice({
 
 export const getEmployeeBranch = (data) => {
   return apiCall({
-    url: `/user/getUserList?branchId=${data.branchId}&page=${data.page - 1}&size=${data.size}`,
+    url: `/user/getUserListByBranchId?page=${data.page - 1}&size=${data.size}&branchId=${
+      data.branchId
+    }`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
@@ -60,6 +62,8 @@ export const saveEmployee = (data) => {
   return apiCall({
     url: "/user/register",
     method: "post",
+    // eslint-disable-next-line no-underscore-dangle
+    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.saveFrom.type,
     onFail: slice.actions.saveFrom.type,

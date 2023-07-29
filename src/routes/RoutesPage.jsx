@@ -1,7 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import DefaultLayout from "../layout/Layout";
-import AddUser from "../pages/Users/addUser";
 
 const Loading = lazy(() => {
   return import("../components/Loading/Loading");
@@ -41,7 +40,6 @@ function RoutesPage() {
         <Route path="/" element={<DefaultLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="addUser" element={<AddUser />} />
           <Route path="businesses" element={<Business />} />
           <Route path="settings/branches" element={<BusinessBranch />} />
           <Route path="settings/roomType" element={<RoomType />} />

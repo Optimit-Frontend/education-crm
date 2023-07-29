@@ -27,9 +27,9 @@ instance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config ?? {};
     if (
-      (error.response?.status === httpStatusCodes.FORBIDDEN ||
-        error.response?.status === httpStatusCodes.UNAUTHORIZED) &&
-      !originalRequest.isRetry
+      (error.response?.status === httpStatusCodes.FORBIDDEN
+        || error.response?.status === httpStatusCodes.UNAUTHORIZED)
+      && !originalRequest.isRetry
     ) {
       originalRequest.isRetry = true;
 
@@ -54,7 +54,9 @@ export const api = ({ dispatch }) => {
         return;
       }
       next(action);
-      const { url, method, data, onSuccess, params, onFail, contentType } = action.payload;
+      const {
+        url, method, data, onSuccess, params, onFail, contentType
+      } = action.payload;
       instance({
         headers: { "Content-Type": contentType || "application/json" },
         url,

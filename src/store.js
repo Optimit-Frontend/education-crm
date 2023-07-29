@@ -1,7 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { api } from "./services/Axios";
 import usersDataReducer from "./reducer/usersDataReducer";
-import userReducer from "./reducer/userReducer";
 import businessReducer from "./reducer/businessReducer";
 import businessBranchesReducer from "./reducer/businessBranchesReducer";
 import roomTypeReducer from "./reducer/roomTypeReducer";
@@ -13,14 +12,13 @@ import employeeReducer from "./reducer/employeeReducer";
 export default configureStore({
   reducer: {
     usersDataReducer,
-    userReducer,
     businessReducer,
     businessBranchesReducer,
     roomTypeReducer,
     roomReducer,
     subjectReducer,
     roleReducer,
-    employeeReducer
+    employeeReducer,
   },
   middleware: [api],
 });

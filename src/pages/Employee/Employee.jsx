@@ -1,17 +1,32 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { Col, Form, Input, InputNumber, Modal, Row, Select } from "antd";
+import {
+  Button,
+  Col,
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Radio,
+  Row,
+  Select,
+  Upload,
+} from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
+import moment from "moment";
+import { UploadOutlined } from "@ant-design/icons";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
 import employeeReducer, {
   deleteEmployee,
   getEmployeeBranch,
-  saveEmployee
+  saveEmployee,
 } from "../../reducer/employeeReducer";
 import roleReducer, { getAllRoleByBranch } from "../../reducer/roleReducer";
 
+const { TextArea } = Input;
 const { Option } = Select;
 
 const columns = [
@@ -66,12 +81,14 @@ function Employee({
   getAllRoleByBranch,
   getEmployeeBranch,
   saveEmployee,
-  deleteEmployee
+  deleteEmployee,
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
+  const [birthday, setBirthday] = useState("");
+  const [file, setFile] = useState(null);
   const enter = useKeyPress("Enter");
   const location = useLocation();
   const navigate = useNavigate();
@@ -89,9 +106,11 @@ function Employee({
     getEmployeeBranch({
       page: pageData.page,
       size: pageData.size,
-      branchId: usersDataReducer?.branch?.id
+      branchId: usersDataReducer?.branch?.id,
     });
     setVisible(false);
+    setFile(null);
+    setBirthday("");
     form.resetFields();
     setSelectedRowKeys([[], []]);
   }, [employeeReducer?.changeData]);
@@ -138,8 +157,8 @@ function Employee({
   };
 
   const formValidate = () => {
-    onedit ?
-      form
+    onedit
+      ? form
         .validateFields()
         .then((values) => {
           // selectedRowKeys[1][0]?.id && editRoom({
@@ -151,11 +170,29 @@ function Employee({
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
-        }) :
-      form
+        })
+      : form
         .validateFields()
         .then((values) => {
-          saveEmployee({ ...values, branchId: usersDataReducer?.branch?.id });
+          const fmData = new FormData();
+          file && fmData.append("file", file);
+          fmData.append("email", values?.email);
+          fmData.append("phoneNumber", values?.phoneNumber);
+          fmData.append("fatherName", values?.fatherName);
+          fmData.append("surname", values?.surname);
+          fmData.append("name", values?.name);
+          fmData.append("birthDate", birthday.substring(0, 10));
+          fmData.append("biography", values?.biography);
+          fmData.append("inps", values?.inps);
+          fmData.append("inn", values?.inn);
+          fmData.append("password", values?.password);
+          fmData.append("branchId", usersDataReducer?.branch?.id);
+          fmData.append("married", values?.married);
+          fmData.append("roleId", values?.roleId);
+          fmData.append("profilePhoto", file);
+          fmData.append("gender", values?.gender);
+          fmData.append("workDays", values?.workDays);
+          saveEmployee(fmData);
           setOnedit(false);
         })
         .catch((info) => {
@@ -169,8 +206,8 @@ function Employee({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Hodimlar</h3>
-      <div className="flex items-center justify-end gap-5 mb-3">
+      <h3 className="mb-5 text-2xl font-bold">Hodimlar</h3>
+      <div className="mb-3 flex items-center justify-end gap-5">
         {selectedRowKeys[0].length === 1 && (
           <button
             onClick={() => {
@@ -180,7 +217,7 @@ function Employee({
               form.setFieldValue("roomTypeId", selectedRowKeys[1][0]?.roomType?.id);
             }}
             type="button"
-            className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
+            className="flex items-center gap-2 rounded-lg bg-yellow-600 px-4 py-[6px] text-white"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -188,7 +225,7 @@ function Employee({
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-5 h-5"
+              className="h-5 w-5"
             >
               <path
                 strokeLinecap="round"
@@ -204,7 +241,7 @@ function Employee({
             setVisible(true);
           }}
           type="button"
-          className="flex items-center gap-2 px-4 py-[6px] bg-blue-600 text-white rounded-lg"
+          className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-[6px] text-white"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -212,7 +249,7 @@ function Employee({
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
+            className="h-5 w-5"
           >
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
@@ -224,7 +261,7 @@ function Employee({
             setSelectedRowKeys([[], []]);
           }}
           type="button"
-          className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
+          className="flex items-center gap-2 rounded-lg bg-red-600 px-4 py-[6px] text-white"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -232,7 +269,7 @@ function Employee({
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
+            className="h-5 w-5"
           >
             <path
               strokeLinecap="round"
@@ -246,7 +283,7 @@ function Employee({
       <Modal
         open={visible}
         title={(
-          <h3 className="text-xl mb-3 font-semibold">
+          <h3 className="mb-3 text-xl font-semibold">
             Hodim
             {onedit ? "ni taxrirlash" : " qo'shish"}
           </h3>
@@ -257,6 +294,8 @@ function Employee({
         width={700}
         onCancel={() => {
           setVisible(false);
+          setFile(null);
+          setBirthday("");
           setOnedit(false);
           form.resetFields();
         }}
@@ -322,7 +361,30 @@ function Employee({
                   },
                 ]}
               >
-                <Input placeholder="Hodim nomerini kiriting..." />
+                <InputNumber
+                  className="w-full"
+                  addonBefore="+998"
+                  maxLength={9}
+                  placeholder="Hodim nomerini kiriting..."
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="married"
+                name="married"
+                label={<span className="text-base font-medium">Turmush qurganmi</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Turmush qurganmi",
+                  },
+                ]}
+              >
+                <Radio.Group>
+                  <Radio value="true"> Turmush qurgan </Radio>
+                  <Radio value="false"> Turmush qurmagan </Radio>
+                </Radio.Group>
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -332,6 +394,7 @@ function Employee({
                 label={<span className="text-base font-medium">Hodim emaili</span>}
                 rules={[
                   {
+                    type: "email",
                     required: true,
                     message: "Hodim emailini kiriting",
                   },
@@ -342,20 +405,118 @@ function Employee({
             </Col>
             <Col span={12}>
               <Form.Item
-                key="roomTypeId"
-                name="roomTypeId"
-                label={<span className="text-base font-medium">Xona turi</span>}
+                key="password"
+                name="password"
+                label={<span className="text-base font-medium">Parol</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Xona turini tanlang",
+                    message: "Parolni kiriting",
+                  },
+                  {
+                    min: 6,
+                    message: "Parol kamida 6ta belgidan iborat bo'lishi kerak!",
+                  },
+                ]}
+              >
+                <Input placeholder="Parolni kiriting..." />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="inn"
+                name="inn"
+                label={<span className="text-base font-medium">Hodim INNsi</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Hodim INNsini kiriting",
+                  },
+                ]}
+              >
+                <InputNumber className="w-full" placeholder="Hodim INNsini kiriting..." />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="inps"
+                name="inps"
+                label={<span className="text-base font-medium">Hodim INPSi</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Hodim INPSini kiriting",
+                  },
+                ]}
+              >
+                <InputNumber className="w-full" placeholder="Hodim INPSini kiriting..." />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="birthDate"
+                name="birthDate"
+                label={<span className="text-base font-medium">Hodim tug&apos;ilgan kuni</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Hodim tug'ilgan kunini kiriting",
+                  },
+                ]}
+              >
+                <DatePicker
+                  onChange={(e) => {
+                    return setBirthday(moment(e).toISOString());
+                  }}
+                  className="w-full"
+                  placeholder="Hodim tug'ilgan kunini kiriting..."
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="gender"
+                name="gender"
+                label={<span className="text-base font-medium">Hodim jinsi</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Hodim jinsini tanlang",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Xona turini tanlang"
+                  placeholder="Hodim jinsini tanlang"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  <Option value="ERKAK">Erkak</Option>
+                  <Option value="AYOL">Ayol</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="roleId"
+                name="roleId"
+                label={<span className="text-base font-medium">Lavozimi</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Lavozimni tanlang",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Lavozimni tanlang"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -373,6 +534,69 @@ function Employee({
                 </Select>
               </Form.Item>
             </Col>
+            <Col span={12}>
+              <Form.Item
+                key="workDays"
+                name="workDays"
+                label={<span className="text-base font-medium">Bir oyda necha kun ishlashi</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Bir oyda necha kun ishlashini kiriting",
+                  },
+                ]}
+              >
+                <InputNumber
+                  className="w-full"
+                  placeholder="Bir oyda necha kun ishlashini kiriting..."
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="profilePhoto"
+                name="profilePhoto"
+                label={<span className="text-base font-medium">Hodim rasmi</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Hodim rasmini kiriting",
+                  },
+                ]}
+              >
+                <Upload
+                  customRequest={async (options) => {
+                    const { onSuccess, file } = options;
+                    setFile(file);
+                    onSuccess(file);
+                  }}
+                  listType="picture"
+                  multiple={false}
+                  maxCount={1}
+                  accept="image/*"
+                  className="w-full"
+                >
+                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
+                    Yuklash
+                  </Button>
+                </Upload>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="biography"
+                name="biography"
+                label={<span className="text-base font-medium">Hodim haqida ma&apos;lumot</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Hodim haqida ma'lumot kiriting",
+                  },
+                ]}
+              >
+                <TextArea rows={3} placeholder="Hodim haqida ma'lumot kiriting..." />
+              </Form.Item>
+            </Col>
           </Row>
         </Form>
       </Modal>
@@ -383,10 +607,10 @@ function Employee({
         pageSize={pageData?.size}
         totalItems={employeeReducer?.employeesTotalCount}
         tableData={employeeReducer?.employees?.map((employee) => {
-          return ({
+          return {
             ...employee,
             fio: `${employee?.surname} ${employee?.name} ${employee?.fatherName}`,
-          });
+          };
         })}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
@@ -401,5 +625,5 @@ export default connect((employeeReducer, roleReducer, usersDataReducer), {
   getAllRoleByBranch,
   getEmployeeBranch,
   saveEmployee,
-  deleteEmployee
+  deleteEmployee,
 })(Employee);
