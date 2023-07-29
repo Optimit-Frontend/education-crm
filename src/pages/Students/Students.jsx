@@ -1,17 +1,22 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { Col, Form, Input, Modal, Row } from "antd";
+import {
+  Col, Form, Input, Modal, Row
+} from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import businessReducer from "../../reducer/businessReducer";
 import useKeyPress from "../../hooks/UseKeyPress";
 import studentReducer, {
-  deleteStudent, editStudent,
+  deleteStudent,
+  editStudent,
   getStudentById,
-  getStudentsAll, getStudentsAllByClass,
-  getStudentsAllNeActive, saveStudent,
-} from "../../reducer/studentReducer.js";
-import usersDataReducer from "../../reducer/usersDataReducer.js";
+  getStudentsAll,
+  getStudentsAllByClass,
+  getStudentsAllNeActive,
+  saveStudent,
+} from "../../reducer/studentReducer";
+import usersDataReducer from "../../reducer/usersDataReducer";
 
 const columns = [
   {
@@ -116,12 +121,12 @@ function Students({
     searchParams.set("size", page);
     searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
-    navigate(`/businesses?page=${pageNumber}&size=${page}`);
+    navigate(`/students?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
-    onedit ?
-      form
+    onedit
+      ? form
         .validateFields()
         .then((values) => {
           selectedRowKeys[1][0]?.id && editStudent({ ...values, id: selectedRowKeys[1][0]?.id });
@@ -129,8 +134,8 @@ function Students({
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
-        }) :
-      form
+        })
+      : form
         .validateFields()
         .then((values) => {
           saveStudent(values);
@@ -449,4 +454,6 @@ function Students({
   );
 }
 
-export default connect((usersDataReducer, studentReducer), { getStudentsAll, getStudentById, getStudentsAllNeActive, getStudentsAllByClass, deleteStudent, editStudent, saveStudent })(Students);
+export default connect((usersDataReducer, studentReducer), {
+  getStudentsAll, getStudentById, getStudentsAllNeActive, getStudentsAllByClass, deleteStudent, editStudent, saveStudent
+})(Students);

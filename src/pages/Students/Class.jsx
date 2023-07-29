@@ -1,24 +1,22 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { Col, Form, Input, Modal, Row, Select } from "antd";
+import {
+  Col, Form, Input, Modal, Row, Select
+} from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import businessReducer from "../../reducer/businessReducer";
 import useKeyPress from "../../hooks/UseKeyPress";
-
-import usersDataReducer from "../../reducer/usersDataReducer.js";
+import usersDataReducer from "../../reducer/usersDataReducer";
 import classReducer, {
-  // eslint-disable-next-line import/named
   deleteClass,
-  // eslint-disable-next-line import/named
   editClass,
   getClassById,
   getClassesAll,
   getClassesAllNeActive,
-  // eslint-disable-next-line import/named
   saveClass,
-} from "../../reducer/classReducer.js";
-import roomReducer, { getRoomBranch } from "../../reducer/roomReducer.js";
+} from "../../reducer/classReducer";
+import roomReducer, { getRoomBranch } from "../../reducer/roomReducer";
 
 const columns = [
   {
@@ -60,7 +58,13 @@ const columns = [
 
 function Class({
   usersDataReducer,
-  getClassById, getClassesAll, getClassesAllNeActive, saveClass, editClass, deleteClass, classReducer, roomReducer, getRoomBranch
+  getClassesAll,
+  saveClass,
+  editClass,
+  deleteClass,
+  classReducer,
+  roomReducer,
+  getRoomBranch
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -132,8 +136,8 @@ function Class({
   };
 
   const formValidate = () => {
-    onedit ?
-      form
+    onedit
+      ? form
         .validateFields()
         .then((values) => {
           selectedRowKeys[1][0]?.id && editClass({ ...values, id: selectedRowKeys[1][0]?.id });
@@ -141,8 +145,8 @@ function Class({
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
-        }) :
-      form
+        })
+      : form
         .validateFields()
         .then((values) => {
           saveClass(values);
@@ -370,4 +374,6 @@ function Class({
   );
 }
 
-export default connect((usersDataReducer, classReducer, roomReducer), { getClassById, getClassesAll, getClassesAllNeActive, saveClass, editClass, deleteClass, getRoomBranch })(Class);
+export default connect((usersDataReducer, classReducer, roomReducer), {
+  getClassById, getClassesAll, getClassesAllNeActive, saveClass, editClass, deleteClass, getRoomBranch
+})(Class);
