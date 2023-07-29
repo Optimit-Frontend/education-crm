@@ -61,6 +61,7 @@ function RoomType({
     getAllRoomType(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
+    setSelectedRowKeys([[], []]);
   }, [roomTypeReducer?.changeData]);
 
   const handleDelete = (arr) => {

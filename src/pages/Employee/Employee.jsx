@@ -1,60 +1,72 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { Col, Form, Input, Modal, Row } from "antd";
+import { Col, Form, Input, InputNumber, Modal, Row, Select } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
-import businessReducer, {
-  deleteBusiness,
-  editBusiness,
-  getAllBusiness,
-  saveBusiness,
-} from "../../reducer/businessReducer";
 import useKeyPress from "../../hooks/UseKeyPress";
+import usersDataReducer from "../../reducer/usersDataReducer";
+import employeeReducer, {
+  deleteEmployee,
+  getEmployeeBranch,
+  saveEmployee
+} from "../../reducer/employeeReducer";
+import roleReducer, { getAllRoleByBranch } from "../../reducer/roleReducer";
+
+const { Option } = Select;
 
 const columns = [
   {
-    title: "Bizness",
-    dataIndex: "name",
-    key: "name",
+    title: "FIO",
+    dataIndex: "fio",
+    key: "fio",
     width: "30%",
-    search: true,
+    search: false,
   },
   {
     title: "Telefon nomeri",
     dataIndex: "phoneNumber",
     key: "phoneNumber",
-    width: "25%",
+    width: "20%",
     search: false,
   },
   {
-    title: "Qisqa ma'lumot",
-    dataIndex: "description",
-    key: "description",
-    width: "30%",
-    search: false,
-  },
-  {
-    title: "Holati",
-    dataIndex: "active",
-    key: "active",
+    title: "Tug'ilgan kuni",
+    dataIndex: "birthDate",
+    key: "birthDate",
     width: "15%",
     search: false,
-    render: (eski) => {
-      return eski ? (
-        <span className="bg-green-200 text-green-700 py-1 px-3 rounded-full text-xs">Active</span>
-      ) : (
-        <span className="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Nofaol</span>
-      );
-    },
+  },
+  {
+    title: "Email",
+    dataIndex: "emailAddress",
+    key: "emailAddress",
+    width: "15%",
+    search: false,
+  },
+  {
+    title: "INN",
+    dataIndex: "inn",
+    key: "inn",
+    width: "10%",
+    search: false,
+  },
+  {
+    title: "INPS",
+    dataIndex: "inps",
+    key: "inps",
+    width: "10%",
+    search: false,
   },
 ];
 
-function BusinessesData({
-  saveBusiness,
-  getAllBusiness,
-  businessReducer,
-  deleteBusiness,
-  editBusiness,
+function Employee({
+  employeeReducer,
+  roleReducer,
+  usersDataReducer,
+  getAllRoleByBranch,
+  getEmployeeBranch,
+  saveEmployee,
+  deleteEmployee
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -73,11 +85,16 @@ function BusinessesData({
   });
 
   useEffect(() => {
-    getAllBusiness({ page: pageData.page, size: pageData.size });
+    getAllRoleByBranch(usersDataReducer?.branch?.id);
+    getEmployeeBranch({
+      page: pageData.page,
+      size: pageData.size,
+      branchId: usersDataReducer?.branch?.id
+    });
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [businessReducer?.businesesChange]);
+  }, [employeeReducer?.changeData]);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -86,28 +103,28 @@ function BusinessesData({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/businesses?page=${pageCount}&size=100`);
+      navigate(`/employee?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/businesses?page=${pageCount}&size=50`);
+      navigate(`/employee?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/businesses?page=${pageCount}&size=20`);
+      navigate(`/employee?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/businesses?page=${pageCount}&size=10`);
+      navigate(`/employee?page=${pageCount}&size=10`);
     }
   }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteBusiness(item);
+      deleteEmployee(item);
       return null;
     });
   };
@@ -117,7 +134,7 @@ function BusinessesData({
     searchParams.set("size", page);
     searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
-    navigate(`/businesses?page=${pageNumber}&size=${page}`);
+    navigate(`/employee?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
@@ -125,7 +142,11 @@ function BusinessesData({
       form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editBusiness({ ...values, id: selectedRowKeys[1][0]?.id });
+          // selectedRowKeys[1][0]?.id && editRoom({
+          //   ...values,
+          //   roomId: selectedRowKeys[1][0]?.id,
+          //   branchId: usersDataReducer?.branch?.id
+          // });
           setOnedit(false);
         })
         .catch((info) => {
@@ -134,7 +155,7 @@ function BusinessesData({
       form
         .validateFields()
         .then((values) => {
-          saveBusiness(values);
+          saveEmployee({ ...values, branchId: usersDataReducer?.branch?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -148,16 +169,15 @@ function BusinessesData({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Hamma biznesslar</h3>
+      <h3 className="text-2xl font-bold mb-5">Hodimlar</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
             onClick={() => {
               setOnedit(true);
               setVisible(true);
-              form.setFieldValue("name", selectedRowKeys[1][0]?.name);
-              form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
-              form.setFieldValue("description", selectedRowKeys[1][0]?.description);
+              form.setFieldValue("roomNumber", selectedRowKeys[1][0]?.roomNumber);
+              form.setFieldValue("roomTypeId", selectedRowKeys[1][0]?.roomType?.id);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -227,14 +247,14 @@ function BusinessesData({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Bizness
+            Hodim
             {onedit ? "ni taxrirlash" : " qo'shish"}
           </h3>
         )}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
         okButtonProps={{ className: "bg-blue-600" }}
         cancelText="Bekor qilish"
-        width={500}
+        width={700}
         onCancel={() => {
           setVisible(false);
           setOnedit(false);
@@ -245,45 +265,112 @@ function BusinessesData({
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
           <Row gutter={12}>
-            <Col span={24}>
+            <Col span={12}>
               <Form.Item
                 key="name"
                 name="name"
-                label={<span className="text-base font-medium">Bizness nomi</span>}
+                label={<span className="text-base font-medium">Hodim ismi</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Bizness nomini kiriting",
+                    message: "Hodim ismini kiriting",
                   },
                 ]}
               >
-                <Input placeholder="Bizness nomini kiriting..." />
+                <Input placeholder="Hodim ismini kiriting..." />
               </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="surname"
+                name="surname"
+                label={<span className="text-base font-medium">Hodim familiyasi</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Hodim familiyasini kiriting",
+                  },
+                ]}
+              >
+                <Input placeholder="Hodim familiyasini kiriting..." />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="fatherName"
+                name="fatherName"
+                label={<span className="text-base font-medium">Hodim sharifi</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Hodim sharifini kiriting",
+                  },
+                ]}
+              >
+                <Input placeholder="Hodim sharifini kiriting..." />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item
                 key="phoneNumber"
                 name="phoneNumber"
-                label={<span className="text-base font-medium">Bizness telefon nomeri</span>}
+                label={<span className="text-base font-medium">Hodim nomeri</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Bizness telefon nomerini kiriting",
+                    message: "Hodim nomerini kiriting",
                   },
                 ]}
               >
-                <Input placeholder="Bizness telefon nomerini kiriting..." />
+                <Input placeholder="Hodim nomerini kiriting..." />
               </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Bizness haqida ma&apos;lumot</span>}
+                key="email"
+                name="email"
+                label={<span className="text-base font-medium">Hodim emaili</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Bizness haqida ma'lumotni kiriting",
+                    message: "Hodim emailini kiriting",
                   },
                 ]}
               >
-                <Input placeholder="Bizness haqida ma'lumotni kiriting..." />
+                <Input placeholder="Hodim emailini kiriting..." />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="roomTypeId"
+                name="roomTypeId"
+                label={<span className="text-base font-medium">Xona turi</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Xona turini tanlang",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Xona turini tanlang"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {roleReducer?.allRole?.map((option) => {
+                    return (
+                      <Option value={option.id} key={option.id}>
+                        {option.name}
+                      </Option>
+                    );
+                  })}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
@@ -294,8 +381,13 @@ function BusinessesData({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        totalItems={businessReducer?.businessTotalCount}
-        tableData={businessReducer?.business}
+        totalItems={employeeReducer?.employeesTotalCount}
+        tableData={employeeReducer?.employees?.map((employee) => {
+          return ({
+            ...employee,
+            fio: `${employee?.surname} ${employee?.name} ${employee?.fatherName}`,
+          });
+        })}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
@@ -305,9 +397,9 @@ function BusinessesData({
   );
 }
 
-export default connect((businessReducer), {
-  getAllBusiness,
-  saveBusiness,
-  deleteBusiness,
-  editBusiness,
-})(BusinessesData);
+export default connect((employeeReducer, roleReducer, usersDataReducer), {
+  getAllRoleByBranch,
+  getEmployeeBranch,
+  saveEmployee,
+  deleteEmployee
+})(Employee);

@@ -46,6 +46,7 @@ function BusinessBranch({
     getBusinessBranch(usersDataReducer?.businessId);
     setVisible(false);
     form.resetFields();
+    setSelectedRowKeys([[], []]);
   }, [businessBranchesReducer?.businesesBranchesChange]);
 
   const handleDelete = (arr) => {

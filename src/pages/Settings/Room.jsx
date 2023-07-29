@@ -74,9 +74,14 @@ function Room({
 
   useEffect(() => {
     getAllRoomType(usersDataReducer?.branch?.id);
-    getRoomBranch({ page: pageData.page, size: pageData.size, branchId: usersDataReducer?.branch?.id });
+    getRoomBranch({
+      page: pageData.page,
+      size: pageData.size,
+      branchId: usersDataReducer?.branch?.id
+    });
     setVisible(false);
     form.resetFields();
+    setSelectedRowKeys([[], []]);
   }, [roomReducer?.changeData]);
 
   useEffect(() => {
@@ -125,7 +130,11 @@ function Room({
       form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editRoom({ ...values, roomId: selectedRowKeys[1][0]?.id, branchId: usersDataReducer?.branch?.id });
+          selectedRowKeys[1][0]?.id && editRoom({
+            ...values,
+            roomId: selectedRowKeys[1][0]?.id,
+            branchId: usersDataReducer?.branch?.id
+          });
           setOnedit(false);
         })
         .catch((info) => {
@@ -276,7 +285,11 @@ function Room({
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
-                  filterOption={(input, option) => { return option.children.toLowerCase()?.includes(input.toLowerCase()); }}
+                  filterOption={
+                    (input, option) => {
+                      return option.children.toLowerCase()?.includes(input.toLowerCase());
+                    }
+                  }
                 >
                   {roomTypeReducer?.roomType?.map((option) => {
                     return (
