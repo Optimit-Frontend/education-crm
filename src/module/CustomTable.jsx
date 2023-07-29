@@ -1,5 +1,7 @@
 import { useState, useRef } from "react";
-import { Table, Button, Input, Space } from "antd";
+import {
+  Table, Button, Input, Space
+} from "antd";
 import Highlighter from "react-highlight-words";
 import { SearchOutlined } from "@ant-design/icons";
 
@@ -33,7 +35,9 @@ function CustomTable(props) {
 
   const getColumnSearchProps = (dataIndex, title) => {
     return {
-      filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+      filterDropdown: ({
+        setSelectedKeys, selectedKeys, confirm, clearFilters
+      }) => {
         return (
           <div style={{ padding: 8 }}>
             <Input
@@ -151,9 +155,9 @@ function CustomTable(props) {
   };
 
   const arr = columns?.map((item) => {
-    return item.search === true ?
-      { ...item, ...getColumnSearchProps(item.dataIndex, item.title) } :
-      { ...item };
+    return item.search === true
+      ? { ...item, ...getColumnSearchProps(item.dataIndex, item.title) }
+      : { ...item };
   });
   arr?.map((item) => {
     return delete item.search;

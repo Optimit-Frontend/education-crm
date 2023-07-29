@@ -1,6 +1,8 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { Col, Form, Input, Modal, Row } from "antd";
+import {
+  Col, Form, Input, Modal, Row
+} from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import businessReducer, {
@@ -121,8 +123,8 @@ function BusinessesData({
   };
 
   const formValidate = () => {
-    onedit ?
-      form
+    onedit
+      ? form
         .validateFields()
         .then((values) => {
           selectedRowKeys[1][0]?.id && editBusiness({ ...values, id: selectedRowKeys[1][0]?.id });
@@ -130,8 +132,8 @@ function BusinessesData({
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
-        }) :
-      form
+        })
+      : form
         .validateFields()
         .then((values) => {
           saveBusiness(values);

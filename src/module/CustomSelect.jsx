@@ -29,7 +29,9 @@ function CustomSelect({
       defaultValue={DValue}
       onChange={(e) => { return onChange(e); }}
       key="id"
-      filterOption={(input, option) => { return option.children.toLowerCase().includes(input.toLowerCase()); }}
+      filterOption={(input, option) => {
+        return option.children.toLowerCase().includes(input.toLowerCase());
+      }}
       disabled={disabled}
     >
       {options}

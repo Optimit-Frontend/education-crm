@@ -11,16 +11,12 @@ export const slice = createSlice({
     logout: false,
   },
   reducers: {
-    logOutUser: (state, action) => {
-      state.logout = true;
-    },
     saveUser: (state, action) => {
       if (action.payload.success) {
         localStorage.setItem("EducationCRM", action.payload?.message);
         localStorage.setItem("userDataCRM", JSON.stringify(action.payload?.object));
         state.userToken = action.payload?.message;
         state.logout = false;
-        console.log(action.payload?.object);
         state.businessId = action.payload?.object?.businessId;
         state.branch = action.payload?.object?.branch;
         state.userData = action.payload?.object;
@@ -31,5 +27,5 @@ export const slice = createSlice({
   },
 });
 
-export const { logOutUser, saveUser } = slice.actions;
+export const { saveUser } = slice.actions;
 export default slice.reducer;

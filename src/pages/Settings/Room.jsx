@@ -1,6 +1,8 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { Col, Form, InputNumber, Modal, Row, Select } from "antd";
+import {
+  Col, Form, InputNumber, Modal, Row, Select
+} from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
@@ -126,8 +128,8 @@ function Room({
   };
 
   const formValidate = () => {
-    onedit ?
-      form
+    onedit
+      ? form
         .validateFields()
         .then((values) => {
           selectedRowKeys[1][0]?.id && editRoom({
@@ -139,8 +141,8 @@ function Room({
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
-        }) :
-      form
+        })
+      : form
         .validateFields()
         .then((values) => {
           saveRoom({ ...values, branchId: usersDataReducer?.branch?.id });

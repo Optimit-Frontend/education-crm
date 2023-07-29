@@ -1,6 +1,8 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { Col, Form, Input, Modal, Row } from "antd";
+import {
+  Col, Form, Input, Modal, Row
+} from "antd";
 import { useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
@@ -78,8 +80,8 @@ function Subjects({
   };
 
   const formValidate = () => {
-    onedit ?
-      form
+    onedit
+      ? form
         .validateFields()
         .then((values) => {
           selectedRowKeys[1][0]?.id && editSubject({ ...values, id: selectedRowKeys[1][0]?.id });
@@ -87,8 +89,8 @@ function Subjects({
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
-        }) :
-      form
+        })
+      : form
         .validateFields()
         .then((values) => {
           saveSubject({ name: values.name, branchId: usersDataReducer?.branch?.id });

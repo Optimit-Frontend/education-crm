@@ -1,8 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import DefaultLayout from "../layout/Layout";
-import AddUser from "../pages/Users/addUser";
-import Class from "../pages/Students/Class.jsx";
 
 const Loading = lazy(() => {
   return import("../components/Loading/Loading");
@@ -35,7 +33,10 @@ const Employee = lazy(() => {
   return import("../pages/Employee/Employee");
 });
 const Students = lazy(() => {
-  return import("../pages/Students/Students.jsx");
+  return import("../pages/Students/Students");
+});
+const Class = lazy(() => {
+  return import("../pages/Students/Class");
 });
 
 function RoutesPage() {
@@ -45,7 +46,6 @@ function RoutesPage() {
         <Route path="/" element={<DefaultLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="addUser" element={<AddUser />} />
           <Route path="businesses" element={<Business />} />
           <Route path="settings/branches" element={<BusinessBranch />} />
           <Route path="settings/roomType" element={<RoomType />} />

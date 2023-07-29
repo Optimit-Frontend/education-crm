@@ -16,7 +16,9 @@ const DropdownMenuSub = DropdownMenuPrimitive.Sub;
 
 const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
 
-const DropdownMenuSubTrigger = React.forwardRef(({ className, inset, children, ...props }, ref) => {
+const DropdownMenuSubTrigger = React.forwardRef(({
+  className, inset, children, ...props
+}, ref) => {
   return (
     <DropdownMenuPrimitive.SubTrigger
       ref={ref}
@@ -81,7 +83,9 @@ const DropdownMenuItem = React.forwardRef(({ className, inset, ...props }, ref) 
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
 
 const DropdownMenuCheckboxItem = React.forwardRef(
-  ({ className, children, checked, ...props }, ref) => {
+  ({
+    className, children, checked, ...props
+  }, ref) => {
     return (
       <DropdownMenuPrimitive.CheckboxItem
         ref={ref}
@@ -154,7 +158,8 @@ function DropdownMenuShortcut({ className, ...props }) {
 }
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut";
 
-export { DropdownMenu,
+export {
+  DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -168,4 +173,5 @@ export { DropdownMenu,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuRadioGroup };
+  DropdownMenuRadioGroup
+};
