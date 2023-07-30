@@ -1,10 +1,8 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {
   Col, Form, Input, Modal, Row, Select
 } from "antd";
-import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import businessReducer from "../../reducer/businessReducer";
 import useKeyPress from "../../hooks/UseKeyPress";
@@ -18,42 +16,53 @@ import classReducer, {
   saveClass,
 } from "../../reducer/classReducer";
 import roomReducer, { getRoomBranch } from "../../reducer/roomReducer";
+import levelReducer, { getLevels } from "../../reducer/levelReducer";
+import employeeReducer, { getEmployeeBranch } from "../../reducer/employeeReducer";
+
+const { Option } = Select;
 
 const columns = [
   {
-    title: "Bizness",
-    dataIndex: "name",
-    key: "name",
+    title: "Sinf",
+    dataIndex: "className",
+    key: "className",
     width: "30%",
     search: true,
   },
   {
-    title: "Telefon nomeri",
-    dataIndex: "phoneNumber",
-    key: "phoneNumber",
+    title: "Filial",
+    dataIndex: "branchName",
+    key: "branchName",
     width: "25%",
     search: false,
   },
   {
-    title: "Qisqa ma'lumot",
-    dataIndex: "description",
-    key: "description",
+    title: "Sinf rahbar",
+    dataIndex: "classLeaderName",
+    key: "classLeaderName",
     width: "30%",
     search: false,
   },
   {
-    title: "Holati",
-    dataIndex: "active",
-    key: "active",
-    width: "15%",
+    title: "Boshlangan sana",
+    dataIndex: "startDate",
+    key: "startDate",
+    width: "20%",
+    search: false,
+  },
+  {
+    title: "Amallar",
+    dataIndex: "getOneId",
+    key: "getOneId",
+    width: "30%",
     search: false,
     render: (eski) => {
-      return eski ? (
-        <span className="bg-green-200 text-green-700 py-1 px-3 rounded-full text-xs">Active</span>
-      ) : (
-        <span className="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Nofaol</span>
+      return (
+        <button style={{ background: "gold", padding: "5px", borderRadius: "5px" }} type="button" onClick={() => { return console.log(eski); }}>
+          Ko`rish
+        </button>
       );
-    },
+    }
   },
 ];
 
@@ -65,26 +74,31 @@ function Class({
   deleteClass,
   classReducer,
   roomReducer,
-  getRoomBranch
+  getRoomBranch,
+  levelReducer,
+  getLevels,
+  getEmployeeBranch, employeeReducer
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const location = useLocation();
-  const navigate = useNavigate();
-  const searchParams = new URLSearchParams(location.search);
-  const page = searchParams.get("page");
-  const size = searchParams.get("size");
+  const size = localStorage.getItem("PageSize") || 10;
   const [pageData, setPageData] = useState({
-    page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
-    size: size ? parseInt(size, 10) : 10,
+    page: 1,
+    size,
     loading: false,
   });
 
   useEffect(() => {
-    getClassesAll({ id: usersDataReducer.businessId, page: pageData.page, size: pageData.size });
+    getClassesAll({ id: usersDataReducer?.branch?.id });
+    getLevels();
+    getEmployeeBranch({
+      page: pageData.page,
+      size: pageData.size,
+      branchId: usersDataReducer?.branch?.id
+    });
     getRoomBranch({
       page: pageData.page,
       size: pageData.size,
@@ -93,33 +107,7 @@ function Class({
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, []);
-
-  useEffect(() => {
-    const pageSize = parseInt(size, 10);
-    const pageCount = parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1;
-    if (pageSize >= 100) {
-      setPageData((prev) => {
-        return { ...prev, size: 100 };
-      });
-      navigate(`/class?page=${pageCount}&size=100`);
-    } else if (pageSize >= 50) {
-      setPageData((prev) => {
-        return { ...prev, size: 50 };
-      });
-      navigate(`/class?page=${pageCount}&size=50`);
-    } else if (pageSize >= 20) {
-      setPageData((prev) => {
-        return { ...prev, size: 20 };
-      });
-      navigate(`/class?page=${pageCount}&size=20`);
-    } else {
-      setPageData((prev) => {
-        return { ...prev, size: 10 };
-      });
-      navigate(`/class?page=${pageCount}&size=10`);
-    }
-  }, []);
+  }, [classReducer?.changeData]);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
@@ -130,10 +118,7 @@ function Class({
 
   const onChange = (pageNumber, page) => {
     setPageData({ size: page, page: pageNumber, loading: false });
-    searchParams.set("size", page);
-    searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
-    navigate(`/businesses?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
@@ -152,6 +137,7 @@ function Class({
         .then((values) => {
           saveClass(values);
           setOnedit(false);
+          console.log(values);
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -171,9 +157,14 @@ function Class({
             onClick={() => {
               setOnedit(true);
               setVisible(true);
-              form.setFieldValue("name", selectedRowKeys[1][0]?.name);
-              form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
-              form.setFieldValue("description", selectedRowKeys[1][0]?.description);
+              console.log(selectedRowKeys[1][0]);
+              form.setFieldValue("className", selectedRowKeys[1][0]?.className);
+              form.setFieldValue("startDate", selectedRowKeys[1][0]?.startDate);
+              form.setFieldValue("endDate", selectedRowKeys[1][0]?.endDate);
+              form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
+              form.setFieldValue("classLeaderId", selectedRowKeys[1][0]?.classLeader?.id);
+              form.setFieldValue("roomId", selectedRowKeys[1][0]?.room?.id);
+              form.setFieldValue("levelId", selectedRowKeys[1][0]?.level?.id);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -269,7 +260,7 @@ function Class({
                 rules={[
                   {
                     required: true,
-                    message: "Talaba nomini kiriting",
+                    message: "Sinf nomini kiriting",
                   },
                 ]}
               >
@@ -282,7 +273,7 @@ function Class({
                 rules={[
                   {
                     required: true,
-                    message: "Bizness nomini kiriting",
+                    message: "Sanani kiriting",
                   },
                 ]}
               >
@@ -295,24 +286,56 @@ function Class({
                 rules={[
                   {
                     required: true,
-                    message: "doc number",
+                    message: "Rahbarni kiriting",
                   },
                 ]}
               >
-                <Select placeholder="Coose class leader" />
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Xona tanlang"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {employeeReducer?.employees?.map((room) => {
+                    return (
+                      <Option value={room.id} key={room.id}>{room?.name}</Option>
+                    );
+                  })}
+                </Select>
               </Form.Item>
               <Form.Item
-                key="roomId"
+                key="roomIdroomId"
                 name="roomId"
                 label={<span className="text-base font-medium">Xona</span>}
                 rules={[
                   {
                     required: false,
-                    message: "Bizness haqida ma'lumotni kiriting",
+                    message: "Xona kiriting",
                   },
                 ]}
               >
-                <Select placeholder="Choose room" />
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Xona tanlang"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {roomReducer?.room?.map((room) => {
+                    return (
+                      <Option value={room.id} key={room.id}>{room?.roomNumber}</Option>
+                    );
+                  })}
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -322,12 +345,26 @@ function Class({
                 label={<span className="text-base font-medium">Filial ( Branch )</span>}
                 rules={[
                   {
-                    required: true,
-                    message: "username",
+                    required: false,
+                    message: "filial tanlang",
                   },
                 ]}
               >
-                <Select placeholder="Choose branch ..." />
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Xona tanlang"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  return (
+                  <Option value={1} key={1}>1</Option>
+                  );
+                </Select>
               </Form.Item>
               <Form.Item
                 key="endDate"
@@ -336,7 +373,7 @@ function Class({
                 rules={[
                   {
                     required: false,
-                    message: "Talaba otasi nomini kiriting",
+                    message: "Sanani kiriting",
                   },
                 ]}
               >
@@ -349,11 +386,27 @@ function Class({
                 rules={[
                   {
                     required: false,
-                    message: "Reference",
+                    message: "Level tanlang",
                   },
                 ]}
               >
-                <Select placeholder="Choose level" />
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Xona tanlang"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {levelReducer?.level?.map((room) => {
+                    return (
+                      <Option value={room.id} key={room.id}>{room?.level}</Option>
+                    );
+                  })}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
@@ -364,8 +417,16 @@ function Class({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        totalItems={businessReducer?.businessTotalCount}
-        tableData={businessReducer?.business}
+        tableData={classReducer?.class?.map((item) => {
+          return ({
+            ...item,
+            branchName: item.branch?.name,
+            classLeaderName: item.classLeader.name,
+            getOneId: item.id
+          });
+        })
+          // eslint-disable-next-line react/jsx-curly-newline
+      }
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
@@ -375,6 +436,6 @@ function Class({
   );
 }
 
-export default connect((usersDataReducer, classReducer, roomReducer), {
-  getClassById, getClassesAll, getClassesAllNeActive, saveClass, editClass, deleteClass, getRoomBranch
+export default connect((usersDataReducer, classReducer, roomReducer, levelReducer, employeeReducer), {
+  getClassById, getClassesAll, getClassesAllNeActive, saveClass, editClass, deleteClass, getRoomBranch, getLevels, getEmployeeBranch
 })(Class);

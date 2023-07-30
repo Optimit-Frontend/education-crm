@@ -6,7 +6,6 @@ export const slice = createSlice({
   name: "classes",
   initialState: {
     class: null,
-    employeesTotalCount: 0,
     message: null,
     changeData: false,
   },
@@ -14,7 +13,6 @@ export const slice = createSlice({
     getFrom: (state, action) => {
       if (action.payload.success) {
         state.class = action.payload?.data;
-        state.employeesTotalCount = action.payload?.data?.allSize;
       } else {
         state.message = action.payload.message;
       }
@@ -57,7 +55,7 @@ export const getClassById = (data) => {
 };
 export const getClassesAll = (data) => {
   return apiCall({
-    url: `/class/getAllActiveClasses?id=${data.id}&page=${data.page - 1}&size=${data.size}`,
+    url: `/class/getAllActiveClasses/${data.id}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
@@ -75,7 +73,7 @@ export const getClassesAllNeActive = (data) => {
 
 export const saveClass = (data) => {
   return apiCall({
-    url: "/class/register",
+    url: "/class/create",
     method: "post",
     data,
     onSuccess: slice.actions.saveFrom.type,
@@ -85,7 +83,7 @@ export const saveClass = (data) => {
 
 export const editClass = (data) => {
   return apiCall({
-    url: "/room/update",
+    url: "/class/update",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,
@@ -95,7 +93,7 @@ export const editClass = (data) => {
 
 export const deleteClass = (data) => {
   return apiCall({
-    url: `/user/delete/${data}`,
+    url: `/class/delete/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,
