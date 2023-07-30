@@ -1,5 +1,6 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {
   Col, Form, Input, Modal, Row, Select
 } from "antd";

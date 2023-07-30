@@ -2,7 +2,9 @@ import { useState, useRef } from "react";
 import {
   Table, Button, Input, Space
 } from "antd";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import Highlighter from "react-highlight-words";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { SearchOutlined } from "@ant-design/icons";
 
 function CustomTable(props) {

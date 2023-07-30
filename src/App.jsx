@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ConfigProvider, theme } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
