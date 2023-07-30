@@ -364,7 +364,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           </li>
                           <li>
                             <NavLink
-                              to={`/class?page=1&size=${pageSize}`}
+                              to="/class"
                               onClick={() => {
                                 return setSidebarOpen(false);
                               }}

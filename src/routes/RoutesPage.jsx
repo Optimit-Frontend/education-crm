@@ -61,6 +61,7 @@ function RoutesPage() {
           <Route path="class" element={<Class />} />
         </Route>
         <Route path="/login" element={<Login />} />
+        {/* <Route path='*' element={<Error404 />} /> */}
       </Routes>
     </Suspense>
   );
