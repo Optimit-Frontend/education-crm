@@ -17,6 +17,8 @@ export const slice = createSlice({
         state.employeesTotalCount = action.payload?.data?.allSize;
       } else {
         state.message = action.payload.message;
+        toast.warning(action.payload.message || "Hodimlarni yuklashda muammo bo'ldi");
+        state.employees = null;
       }
       state.changeData = false;
     },

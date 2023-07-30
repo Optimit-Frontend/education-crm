@@ -17,6 +17,8 @@ export const slice = createSlice({
         state.roomTotalCount = action.payload?.data?.allSize;
       } else {
         state.message = action.payload.message;
+        toast.warning(action.payload.message || "Xonalarni yuklashda muammo bo'ldi");
+        state.room = null;
       }
       state.changeData = false;
     },
