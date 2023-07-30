@@ -10,6 +10,7 @@ import roleReducer from "./reducer/roleReducer";
 import employeeReducer from "./reducer/employeeReducer";
 import studentReducer from "./reducer/studentReducer";
 import classReducer from "./reducer/classReducer";
+import achievementReducer from "./reducer/achievementReducer";
 
 export default configureStore({
   reducer: {
@@ -21,6 +22,7 @@ export default configureStore({
     subjectReducer,
     roleReducer,
     employeeReducer,
+    achievementReducer,
     studentReducer,
     classReducer
   },

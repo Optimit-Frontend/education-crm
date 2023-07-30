@@ -38,6 +38,9 @@ const Students = lazy(() => {
 const Class = lazy(() => {
   return import("../pages/Students/Class");
 });
+const Achievement = lazy(() => {
+  return import("../pages/Employee/Achievement");
+});
 
 function RoutesPage() {
   return (
@@ -53,6 +56,7 @@ function RoutesPage() {
           <Route path="settings/subjects" element={<Subjects />} />
           <Route path="employee/role" element={<Role />} />
           <Route path="employee" element={<Employee />} />
+          <Route path="employee/achievement" element={<Achievement />} />
           <Route path="students" element={<Students />} />
           <Route path="class" element={<Class />} />
         </Route>

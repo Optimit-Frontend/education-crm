@@ -16,14 +16,18 @@ export const slice = createSlice({
         state.businessBranch = action.payload?.data;
       } else {
         state.message = action.payload.message;
+        toast.warning(action.payload.message || "Filialni yuklashda muammo bo'ldi");
+        state.businessBranch = null;
       }
       state.businesesBranchesChange = false;
     },
     getAllFrom: (state, action) => {
       if (action.payload.success) {
-        state.businessBranch = action.payload?.data?.businessesResponseDtoList;
+        state.allBranch = action.payload?.data?.businessesResponseDtoList;
       } else {
         state.message = action.payload.message;
+        toast.warning(action.payload.message || "Filiallarni yuklashda muammo bo'ldi");
+        state.allBranch = null;
       }
       state.businesesBranchesChange = false;
     },

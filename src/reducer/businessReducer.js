@@ -17,6 +17,8 @@ export const slice = createSlice({
         state.businessTotalCount = action.payload?.data?.allSize;
       } else {
         state.message = action.payload.message;
+        toast.warning(action.payload.message || "Bizneslarni yuklashda muammo bo'ldi");
+        state.business = null;
       }
       state.businesesChange = false;
     },

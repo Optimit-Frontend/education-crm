@@ -3,72 +3,74 @@ import { toast } from "react-toastify";
 import { apiCall } from "../api";
 
 export const slice = createSlice({
-  name: "roomTypeData",
+  name: "achievement",
   initialState: {
-    roomType: null,
+    achievement: null,
     message: null,
     changeData: false,
   },
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.roomType = action.payload?.data;
+        state.achievement = action.payload?.data;
       } else {
         state.message = action.payload.message;
-        toast.warning(action.payload.message || "Xona turlarini yuklashda muammo bo'ldi");
-        state.roomType = null;
+        toast.warning(action.payload.message || "Hodim yutug'larini yuklashda muammo bo'ldi");
+        state.achievement = null;
       }
       state.changeData = false;
     },
     saveFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Xona turi muvaffaqiyatli qo'shildi");
+        toast.success("Hodim yutug'i muvaffaqiyatli qo'shildi");
       } else {
-        toast.warning(action.payload.message || "Xona turini qo'shishda muammo bo'ldi");
+        toast.warning(action.payload.message || "Hodim yutug'ini qo'shishda muammo bo'ldi");
       }
       state.changeData = true;
     },
     editFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Xona turi muvafaqiyatli taxrirlandi");
+        toast.success("Hodim yutug'i muvafaqiyatli taxrirlandi");
       } else {
-        toast.warning(action.payload.message || "Xona turini taxrirlashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Hodim yutug'ini taxrirlashda muammo bo'ldi");
       }
       state.changeData = true;
     },
     deleteFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Xona turi muvafaqiyatli o'chirildi");
+        toast.success("Hodim yutug'i muvafaqiyatli o'chirildi");
       } else {
-        toast.warning("Xona turini o'chirishda muammo bo'ldi");
+        toast.warning("Hodim yutug'ini o'chirishda muammo bo'ldi");
       }
       state.changeData = true;
     },
   },
 });
 
-export const getAllRoomType = (data) => {
+export const getAchievementUserId = (data) => {
   return apiCall({
-    url: `/roomType/getAll/${data}`,
+    url: `/achievement/getByUserId/${data}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
 };
 
-export const saveRoomType = (data) => {
+export const saveAchievement = (data) => {
   return apiCall({
-    url: "/roomType/create",
+    url: "/achievement/create",
     method: "post",
+    // eslint-disable-next-line no-underscore-dangle
+    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.saveFrom.type,
     onFail: slice.actions.saveFrom.type,
   });
 };
 
-export const editRoomType = (data) => {
+export const editAchievement = (data) => {
   return apiCall({
-    url: "/roomType/update",
+    url: "/achievement/update",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,
@@ -76,9 +78,9 @@ export const editRoomType = (data) => {
   });
 };
 
-export const deleteRoomType = (data) => {
+export const deleteAchievement = (data) => {
   return apiCall({
-    url: `/roomType/delete/${data}`,
+    url: `/achievement/delete/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,

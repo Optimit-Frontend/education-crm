@@ -5,9 +5,9 @@ import { apiCall } from "../api";
 export const slice = createSlice({
   name: "roleData",
   initialState: {
-    role: [],
+    role: null,
     roleTotalCount: 0,
-    allRole: [],
+    allRole: null,
     message: null,
     changeData: false,
   },
@@ -18,6 +18,8 @@ export const slice = createSlice({
         state.roleTotalCount = action.payload?.data?.allSize;
       } else {
         state.message = action.payload.message;
+        toast.warning(action.payload.message || "Lavozimlarni yuklashda muammo bo'ldi");
+        state.role = null;
       }
       state.changeData = false;
     },
@@ -26,6 +28,8 @@ export const slice = createSlice({
         state.allRole = action.payload?.data;
       } else {
         state.message = action.payload.message;
+        toast.warning(action.payload.message || "Lavozimlarni yuklashda muammo bo'ldi");
+        state.allRole = null;
       }
       state.changeData = false;
     },
