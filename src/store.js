@@ -10,6 +10,7 @@ import roleReducer from "./reducer/roleReducer";
 import employeeReducer from "./reducer/employeeReducer";
 import studentReducer from "./reducer/studentReducer";
 import classReducer from "./reducer/classReducer";
+import levelReducer from "./reducer/levelReducer";
 
 export default configureStore({
   reducer: {
@@ -22,7 +23,8 @@ export default configureStore({
     roleReducer,
     employeeReducer,
     studentReducer,
-    classReducer
+    classReducer,
+    levelReducer
   },
   middleware: [api],
 });
