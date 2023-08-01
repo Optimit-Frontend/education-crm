@@ -15,6 +15,7 @@ import {
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import moment from "moment";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { UploadOutlined } from "@ant-design/icons";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
