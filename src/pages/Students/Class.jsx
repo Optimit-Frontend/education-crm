@@ -4,7 +4,6 @@ import {
   Col, Form, Input, Modal, Row, Select
 } from "antd";
 import CustomTable from "../../module/CustomTable";
-import businessReducer from "../../reducer/businessReducer";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
 import classReducer, {
@@ -17,7 +16,8 @@ import classReducer, {
 } from "../../reducer/classReducer";
 import roomReducer, { getRoomBranch } from "../../reducer/roomReducer";
 import levelReducer, { getLevels } from "../../reducer/levelReducer";
-import employeeReducer, { getEmployeeBranch } from "../../reducer/employeeReducer";
+import employeeReducer, { getEmployeeBranchId } from "../../reducer/employeeReducer";
+import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer";
 
 const { Option } = Select;
 
@@ -77,7 +77,10 @@ function Class({
   getRoomBranch,
   levelReducer,
   getLevels,
-  getEmployeeBranch, employeeReducer
+  getEmployeeBranchId,
+  getBusinessBranch,
+  employeeReducer,
+  businessBranchesReducer
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -93,12 +96,9 @@ function Class({
 
   useEffect(() => {
     getClassesAll({ id: usersDataReducer?.branch?.id });
+    getBusinessBranch(usersDataReducer?.businessId);
     getLevels();
-    getEmployeeBranch({
-      page: pageData.page,
-      size: pageData.size,
-      branchId: usersDataReducer?.branch?.id
-    });
+    getEmployeeBranchId(usersDataReducer?.branch?.id);
     getRoomBranch({
       page: pageData.page,
       size: pageData.size,
@@ -137,7 +137,6 @@ function Class({
         .then((values) => {
           saveClass(values);
           setOnedit(false);
-          console.log(values);
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -157,7 +156,6 @@ function Class({
             onClick={() => {
               setOnedit(true);
               setVisible(true);
-              console.log(selectedRowKeys[1][0]);
               form.setFieldValue("className", selectedRowKeys[1][0]?.className);
               form.setFieldValue("startDate", selectedRowKeys[1][0]?.startDate);
               form.setFieldValue("endDate", selectedRowKeys[1][0]?.endDate);
@@ -346,14 +344,14 @@ function Class({
                 rules={[
                   {
                     required: false,
-                    message: "filial tanlang",
+                    message: "Filialni tanlang",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Xona tanlang"
+                  placeholder="Filialni tanlang"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -361,9 +359,15 @@ function Class({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  return (
-                  <Option value={1} key={1}>1</Option>
-                  );
+                  {
+                    businessBranchesReducer?.businessBranch?.map((barnch) => {
+                      return (
+                        <Option value={barnch?.id} key={barnch?.id}>
+                          {barnch?.name}
+                        </Option>
+                      );
+                    })
+                  }
                 </Select>
               </Form.Item>
               <Form.Item
@@ -424,9 +428,7 @@ function Class({
             classLeaderName: item.classLeader.name,
             getOneId: item.id
           });
-        })
-          // eslint-disable-next-line react/jsx-curly-newline
-      }
+        })}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
@@ -436,6 +438,24 @@ function Class({
   );
 }
 
-export default connect((usersDataReducer, classReducer, roomReducer, levelReducer, employeeReducer), {
-  getClassById, getClassesAll, getClassesAllNeActive, saveClass, editClass, deleteClass, getRoomBranch, getLevels, getEmployeeBranch
-})(Class);
+export default connect(
+  (
+    usersDataReducer,
+    classReducer,
+    roomReducer,
+    levelReducer,
+    employeeReducer,
+    businessBranchesReducer
+  ), {
+    getClassById,
+    getClassesAll,
+    getClassesAllNeActive,
+    saveClass,
+    editClass,
+    deleteClass,
+    getRoomBranch,
+    getLevels,
+    getEmployeeBranchId,
+    getBusinessBranch
+  }
+)(Class);

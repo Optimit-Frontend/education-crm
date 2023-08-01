@@ -14,6 +14,7 @@ import roomReducer, {
 } from "../../reducer/roomReducer";
 import usersDataReducer from "../../reducer/usersDataReducer";
 import roomTypeReducer, { getAllRoomType } from "../../reducer/roomTypeReducer";
+import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer";
 
 const { Option } = Select;
 
@@ -51,8 +52,10 @@ const columns = [
 function Room({
   roomReducer,
   roomTypeReducer,
+  businessBranchesReducer,
   usersDataReducer,
   getRoomBranch,
+  getBusinessBranch,
   getAllRoomType,
   saveRoom,
   deleteRoom,
@@ -76,6 +79,7 @@ function Room({
 
   useEffect(() => {
     getAllRoomType(usersDataReducer?.branch?.id);
+    getBusinessBranch(usersDataReducer?.businessId);
     getRoomBranch({
       page: pageData.page,
       size: pageData.size,
@@ -302,6 +306,39 @@ function Room({
                   })}
                 </Select>
               </Form.Item>
+              <Form.Item
+                key="branchId"
+                name="branchId"
+                label={<span className="text-base font-medium">Filial</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Filialni tanlang",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Filialni tanlang"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {
+                    businessBranchesReducer?.businessBranch?.map((barnch) => {
+                      return (
+                        <Option value={barnch?.id} key={barnch?.id}>
+                          {barnch?.name}
+                        </Option>
+                      );
+                    })
+                  }
+                </Select>
+              </Form.Item>
             </Col>
           </Row>
         </Form>
@@ -324,8 +361,9 @@ function Room({
   );
 }
 
-export default connect((roomReducer, roomTypeReducer, usersDataReducer), {
+export default connect((roomReducer, roomTypeReducer, businessBranchesReducer, usersDataReducer), {
   getAllRoomType,
+  getBusinessBranch,
   getRoomBranch,
   saveRoom,
   deleteRoom,
