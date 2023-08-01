@@ -31,8 +31,6 @@ module.exports = {
     "react/jsx-filename-extension": [ERROR, {extensions: [".js", ".jsx"]}],
     "space-before-function-paren": [ERROR],
     "react/self-closing-comp": [ERROR],
-    // "operator-linebreak": [ERROR, "after"],
-    // "no-confusing-arrow": [ERROR],
     "no-duplicate-imports": [ERROR],
     "comma-dangle": [ERROR, "only-multiline"],
     "max-len": [WARN],
