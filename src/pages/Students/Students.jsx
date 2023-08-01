@@ -1,9 +1,15 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, Modal, Row
+  Button,
+  Col, DatePicker, Form, Input, Modal, Row, Select, Upload,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { UploadOutlined } from "@ant-design/icons";
+import moment from "moment";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import dayjs from "dayjs";
 import CustomTable from "../../module/CustomTable";
 import businessReducer from "../../reducer/businessReducer";
 import useKeyPress from "../../hooks/UseKeyPress";
@@ -17,26 +23,44 @@ import studentReducer, {
   saveStudent,
 } from "../../reducer/studentReducer";
 import usersDataReducer from "../../reducer/usersDataReducer";
+import classReducer, { getClassesAll } from "../../reducer/classReducer.js";
+
+const { Option } = Select;
 
 const columns = [
   {
-    title: "Bizness",
-    dataIndex: "name",
-    key: "name",
+    title: "Ismi",
+    dataIndex: "firstName",
+    key: "firstName",
     width: "30%",
     search: true,
   },
   {
-    title: "Telefon nomeri",
-    dataIndex: "phoneNumber",
-    key: "phoneNumber",
+    title: "Sinf",
+    dataIndex: "studentClass",
+    key: "studentClass",
     width: "25%",
     search: false,
   },
   {
-    title: "Qisqa ma'lumot",
-    dataIndex: "description",
-    key: "description",
+    title: "Tug`ilgan kuni",
+    dataIndex: "birthDate",
+    key: "birthDate",
+    width: "25%",
+    search: false,
+  },
+  {
+    title: "Passport raqami",
+    dataIndex: "docNumber",
+    key: "docNumber",
+    width: "30%",
+    search: false,
+  },
+  {
+    title: "Photo",
+    dataIndex: "photo",
+    render: (photo) => { return <img alt="3333" src={photo} />, console.log(photo); },
+    key: "photo",
     width: "30%",
     search: false,
   },
@@ -57,7 +81,7 @@ const columns = [
 ];
 
 function Students({
-  usersDataReducer,
+  usersDataReducer, getClassesAll, classReducer, studentReducer,
   getStudentsAllByClass, getStudentsAllNeActive, getStudentById, getStudentsAll, deleteStudent, editStudent, saveStudent
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
@@ -75,13 +99,22 @@ function Students({
     size: size ? parseInt(size, 10) : 10,
     loading: false,
   });
+  const [file, setFile] = useState(null);
+  const [reference, setReference] = useState(null);
+  const [medDocPhoto, setMedDocPhoto] = useState(null);
+  const [docPhoto, setDocPhoto] = useState([]);
 
   useEffect(() => {
-    getStudentsAll({ id: usersDataReducer.businessId, page: pageData.page, size: pageData.size });
+    getStudentsAll({ branchId: usersDataReducer.branch?.id, page: pageData.page, size: pageData.size });
+    getClassesAll({ id: usersDataReducer?.branch?.id });
     setVisible(false);
+    setFile(null);
+    setDocPhoto([]);
+    setReference(null);
+    setMedDocPhoto(null);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [businessReducer?.businesesChange]);
+  }, [studentReducer?.changeData]);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -130,6 +163,25 @@ function Students({
         .validateFields()
         .then((values) => {
           selectedRowKeys[1][0]?.id && editStudent({ ...values, id: selectedRowKeys[1][0]?.id });
+          // const fmData = new FormData();
+          // file && fmData.append("file", file);
+          // fmData.append("firstName", values?.firstName);
+          // fmData.append("lastName", values?.lastName);
+          // fmData.append("fatherName", values?.fatherName);
+          // fmData.append("birthDate", new Date(values?.birthDate).toISOString().substring(0, 10));
+          // fmData.append("docNumber", values?.docNumber);
+          // docPhoto.map((item) => {
+          //   return fmData.append("docPhoto", item);
+          // });
+          // fmData.append("reference", file);
+          // fmData.append("photo", file);
+          // fmData.append("studentClassId", values?.studentClassId);
+          // fmData.append("branchId", usersDataReducer?.branch?.id);
+          // fmData.append("active", true);
+          // fmData.append("medDocPhoto", medDocPhoto);
+          // fmData.append("username", values?.username);
+          // fmData.append("password", values?.password);
+          // editStudent(fmData);
           setOnedit(false);
         })
         .catch((info) => {
@@ -138,14 +190,32 @@ function Students({
       : form
         .validateFields()
         .then((values) => {
-          saveStudent(values);
+          const fmData = new FormData();
+          file && fmData.append("file", file);
+          fmData.append("firstName", values?.firstName);
+          fmData.append("lastName", values?.lastName);
+          fmData.append("fatherName", values?.fatherName);
+          fmData.append("birthDate", new Date(values?.birthDate).toISOString().substring(0, 10));
+          fmData.append("docNumber", values?.docNumber);
+          docPhoto.map((item) => {
+            return fmData.append("docPhoto", item);
+          });
+          fmData.append("reference", file);
+          fmData.append("photo", file);
+          fmData.append("studentClassId", values?.studentClassId);
+          fmData.append("branchId", usersDataReducer?.branch?.id);
+          fmData.append("active", true);
+          fmData.append("medDocPhoto", medDocPhoto);
+          fmData.append("username", values?.username);
+          fmData.append("password", values?.password);
+          saveStudent(fmData);
+          console.log(values, docPhoto);
           setOnedit(false);
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
         });
   };
-
   if (enter && visible) {
     formValidate();
   }
@@ -159,9 +229,15 @@ function Students({
             onClick={() => {
               setOnedit(true);
               setVisible(true);
-              form.setFieldValue("name", selectedRowKeys[1][0]?.name);
-              form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
-              form.setFieldValue("description", selectedRowKeys[1][0]?.description);
+              form.setFieldValue("firstName", selectedRowKeys[1][0]?.firstName);
+              form.setFieldValue("lastName", selectedRowKeys[1][0]?.lastName);
+              form.setFieldValue("fatherName", selectedRowKeys[1][0]?.fatherName);
+              form.setFieldValue("username", selectedRowKeys[1][0]?.username);
+              form.setFieldValue("docNumber", selectedRowKeys[1][0]?.docNumber);
+              form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClass);
+              form.setFieldValue("photo", selectedRowKeys[1][0]?.photo);
+              form.setFieldValue("branchId", usersDataReducer?.branch?.id);
+              form.setFieldValue("birthDate", dayjs(selectedRowKeys[1][0]?.birthDate));
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -251,8 +327,8 @@ function Students({
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item
-                key="name"
-                name="name"
+                key="firstName"
+                name="firstName"
                 label={<span className="text-base font-medium">Ism</span>}
                 rules={[
                   {
@@ -264,8 +340,8 @@ function Students({
                 <Input placeholder="Talaba Familiyasini kiriting..." />
               </Form.Item>
               <Form.Item
-                key="name"
-                name="name"
+                key="lastName"
+                name="lastName"
                 label={<span className="text-base font-medium">Familiya</span>}
                 rules={[
                   {
@@ -277,8 +353,8 @@ function Students({
                 <Input placeholder="Talaba familiya nomini kiriting..." />
               </Form.Item>
               <Form.Item
-                key="name"
-                name="name"
+                key="fatherName"
+                name="fatherName"
                 label={<span className="text-base font-medium">Otasi</span>}
                 rules={[
                   {
@@ -290,8 +366,8 @@ function Students({
                 <Input placeholder="Talaba familiya nomini kiriting..." />
               </Form.Item>
               <Form.Item
-                key="name"
-                name="name"
+                key="birthDate"
+                name="birthDate"
                 label={<span className="text-base font-medium">Tug`ilgan kun</span>}
                 rules={[
                   {
@@ -300,11 +376,15 @@ function Students({
                   },
                 ]}
               >
-                <Input type="date" placeholder="Talaba familiya nomini kiriting..." />
+                <DatePicker
+                  className="w-full"
+                  placeholder="Hodim tug'ilgan kunini kiriting..."
+                />
+                {/* <Input type="date" placeholder="Talaba familiya nomini kiriting..." /> */}
               </Form.Item>
               <Form.Item
-                key="phoneNumber"
-                name="phoneNumber"
+                key="branchId"
+                name="branchId"
                 label={<span className="text-base font-medium">Filial ( Branch )</span>}
                 rules={[
                   {
@@ -316,36 +396,51 @@ function Students({
                 <Input placeholder="Bizness telefon nomerini kiriting..." />
               </Form.Item>
               <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Med Doc photo</span>}
+                key="docPhoto"
+                name="docPhoto"
+                label={<span className="text-base font-medium">Passport rasm</span>}
                 rules={[
                   {
                     required: false,
-                    message: "Bizness haqida ma'lumotni kiriting",
+                    message: "Passport rasm",
                   },
                 ]}
               >
-                <Input placeholder="Bizness haqida ma'lumotni kiriting..." />
+                <Upload
+                  customRequest={async (options) => {
+                    const { onSuccess, file } = options;
+                    docPhoto.push(file);
+                    onSuccess(file);
+                  }}
+                  listType="picture"
+                  multiple
+                  maxCount={1}
+                  accept="image/*"
+                  className="w-full"
+                >
+                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
+                    Yuklash
+                  </Button>
+                </Upload>
               </Form.Item>
               <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Active</span>}
+                key="password"
+                name="password"
+                label={<span className="text-base font-medium">Password</span>}
                 rules={[
                   {
                     required: false,
-                    message: "Bizness haqida ma'lumotni kiriting",
+                    message: "password kiriting",
                   },
                 ]}
               >
-                <Input placeholder="Bizness haqida ma'lumotni kiriting..." />
+                <Input type="text" placeholder="Password . . ." />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                key="description"
-                name="description"
+                key="username"
+                name="username"
                 label={<span className="text-base font-medium">username</span>}
                 rules={[
                   {
@@ -357,35 +452,50 @@ function Students({
                 <Input placeholder="username ..." />
               </Form.Item>
               <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">doc number</span>}
+                key="docNumber"
+                name="docNumber"
+                label={<span className="text-base font-medium">Passport raqami</span>}
                 rules={[
                   {
                     required: false,
-                    message: "doc number",
+                    message: "Passport raqami . . .",
                   },
                 ]}
               >
-                <Input placeholder="Document num ..." />
+                <Input placeholder="Passport raqami ..." />
               </Form.Item>
               <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">doc photo</span>}
+                key="medDocPhoto"
+                name="medDocPhoto"
+                label={<span className="text-base font-medium">0/83 Yoki 0/86</span>}
                 rules={[
                   {
                     required: false,
-                    message: "doc photo",
+                    message: "0/83 yoki 0/86",
                   },
                 ]}
               >
-                <Input placeholder="Document num ..." />
+                <Upload
+                  customRequest={async (options) => {
+                    const { onSuccess, file } = options;
+                    setMedDocPhoto(file);
+                    onSuccess(file);
+                  }}
+                  listType="picture"
+                  multiple={false}
+                  maxCount={1}
+                  accept="image/*"
+                  className="w-full"
+                >
+                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
+                    Yuklash
+                  </Button>
+                </Upload>
               </Form.Item>
               <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Reference</span>}
+                key="reference"
+                name="reference"
+                label={<span className="text-base font-medium">Ota - ona ish ma`lumotnoma</span>}
                 rules={[
                   {
                     required: false,
@@ -393,12 +503,27 @@ function Students({
                   },
                 ]}
               >
-                <Input placeholder="Reference" />
+                <Upload
+                  customRequest={async (options) => {
+                    const { onSuccess, file } = options;
+                    setReference(file);
+                    onSuccess(file);
+                  }}
+                  listType="picture"
+                  multiple={false}
+                  maxCount={1}
+                  accept="image/*"
+                  className="w-full"
+                >
+                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
+                    Yuklash ( Ota - ona ish ma`lumotnoma )
+                  </Button>
+                </Upload>
               </Form.Item>
               <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Photo</span>}
+                key="photo"
+                name="photo"
+                label={<span className="text-base font-medium">Photo 3X4</span>}
                 rules={[
                   {
                     required: false,
@@ -406,33 +531,51 @@ function Students({
                   },
                 ]}
               >
-                <Input type="file" placeholder="Photo" />
+                <Upload
+                  customRequest={async (options) => {
+                    const { onSuccess, file } = options;
+                    setFile(file);
+                    onSuccess(file);
+                  }}
+                  listType="picture"
+                  multiple={false}
+                  maxCount={1}
+                  accept="image/*"
+                  className="w-full"
+                >
+                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
+                    Yuklash
+                  </Button>
+                </Upload>
               </Form.Item>
               <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Student class id</span>}
+                key="studentClassId"
+                name="studentClassId"
+                label={<span className="text-base font-medium">Student sinf</span>}
                 rules={[
                   {
                     required: false,
-                    message: "Photo",
+                    message: "Sinf kiritng",
                   },
                 ]}
               >
-                <Input type="text" placeholder="Photo" />
-              </Form.Item>
-              <Form.Item
-                key="description"
-                name="description"
-                label={<span className="text-base font-medium">Password</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Photo",
-                  },
-                ]}
-              >
-                <Input type="text" placeholder="Password . . ." />
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Xona tanlang"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {classReducer?.class?.map((room) => {
+                    return (
+                      <Option value={room.id} key={room.id}>{room?.className}</Option>
+                    );
+                  })}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
@@ -443,8 +586,15 @@ function Students({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        totalItems={businessReducer?.businessTotalCount}
-        tableData={businessReducer?.business}
+        totalItems={studentReducer?.studentsTotalCount}
+        tableData={studentReducer?.students?.studentResponseDtoList?.map((student) => {
+          return {
+            ...student,
+            studentClass: student?.studentClass?.className,
+            photo: student?.photo,
+            Ismi: `${student?.firstName} ${student?.lastName} ${student?.fatherName}`,
+          };
+        })}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
@@ -454,6 +604,6 @@ function Students({
   );
 }
 
-export default connect((usersDataReducer, studentReducer), {
-  getStudentsAll, getStudentById, getStudentsAllNeActive, getStudentsAllByClass, deleteStudent, editStudent, saveStudent
+export default connect((usersDataReducer, studentReducer, classReducer), {
+  getStudentsAll, getStudentById, getStudentsAllNeActive, getStudentsAllByClass, deleteStudent, editStudent, saveStudent, getClassesAll
 })(Students);

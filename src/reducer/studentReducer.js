@@ -6,7 +6,7 @@ export const slice = createSlice({
   name: "students",
   initialState: {
     students: null,
-    employeesTotalCount: 0,
+    studentsTotalCount: 0,
     message: null,
     changeData: false,
   },
@@ -14,7 +14,7 @@ export const slice = createSlice({
     getFrom: (state, action) => {
       if (action.payload.success) {
         state.students = action.payload?.data;
-        state.employeesTotalCount = action.payload?.data?.allSize;
+        state.studentsTotalCount = action.payload?.data?.allSize;
       } else {
         state.message = action.payload.message;
       }
@@ -57,7 +57,7 @@ export const getStudentById = (data) => {
 };
 export const getStudentsAll = (data) => {
   return apiCall({
-    url: `/student/getAll?id=${data.id}&page=${data.page - 1}&size=${data.size}`,
+    url: `/student/getAll?branchId=${data.branchId}&page=${data.page - 1}&size=${data.size}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
@@ -83,8 +83,10 @@ export const getStudentsAllByClass = (data) => {
 
 export const saveStudent = (data) => {
   return apiCall({
-    url: "/user/register",
+    url: "/student/create",
     method: "post",
+    // eslint-disable-next-line no-underscore-dangle
+    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.saveFrom.type,
     onFail: slice.actions.saveFrom.type,
@@ -93,7 +95,7 @@ export const saveStudent = (data) => {
 
 export const editStudent = (data) => {
   return apiCall({
-    url: "/room/update",
+    url: "/student/update",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,
@@ -103,7 +105,7 @@ export const editStudent = (data) => {
 
 export const deleteStudent = (data) => {
   return apiCall({
-    url: `/user/delete/${data}`,
+    url: `/student/delete/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,
