@@ -3,86 +3,82 @@ import { toast } from "react-toastify";
 import { apiCall } from "../api";
 
 export const slice = createSlice({
-  name: "achievement",
+  name: "workExpirence",
   initialState: {
-    achievement: null,
+    workExpirence: null,
     message: null,
     changeData: false,
   },
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.achievement = action.payload?.data;
+        state.workExpirence = action.payload?.data;
       } else {
         state.message = action.payload.message;
-        toast.warning(action.payload.message || "Hodim yutug'larini yuklashda muammo bo'ldi");
-        state.achievement = null;
+        toast.warning(action.payload.message || "Hodim ish tajribasini yuklashda muammo bo'ldi");
+        state.workExpirence = null;
       }
       state.changeData = false;
     },
     saveFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Hodim yutug'i muvaffaqiyatli qo'shildi");
+        toast.success("Hodim ish tajribasi muvaffaqiyatli qo'shildi");
       } else {
-        toast.warning(action.payload.message || "Hodim yutug'ini qo'shishda muammo bo'ldi");
+        toast.warning(action.payload.message || "Hodim ish tajribasini qo'shishda muammo bo'ldi");
       }
       state.changeData = true;
     },
     editFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Hodim yutug'i muvafaqiyatli taxrirlandi");
+        toast.success("Hodim ish tajribasi muvafaqiyatli taxrirlandi");
       } else {
-        toast.warning(action.payload.message || "Hodim yutug'ini taxrirlashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Hodim ish tajribasini taxrirlashda muammo bo'ldi");
       }
       state.changeData = true;
     },
     deleteFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Hodim yutug'i muvafaqiyatli o'chirildi");
+        toast.success("Hodim ish tajribasi muvafaqiyatli o'chirildi");
       } else {
-        toast.warning("Hodim yutug'ini o'chirishda muammo bo'ldi");
+        toast.warning("Hodim ish tajribasini o'chirishda muammo bo'ldi");
       }
       state.changeData = true;
     },
   },
 });
 
-export const getAchievementUserId = (data) => {
+export const getWorkExperienceByUserId = (data) => {
   return apiCall({
-    url: `/achievement/getByUserId/${data}`,
+    url: `/workExperience/getAllByUserId/${data}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
 };
 
-export const saveAchievement = (data) => {
+export const saveWorkExperience = (data) => {
   return apiCall({
-    url: "/achievement/save",
+    url: "/workExperience/save",
     method: "post",
-    // eslint-disable-next-line no-underscore-dangle
-    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.saveFrom.type,
     onFail: slice.actions.saveFrom.type,
   });
 };
 
-export const editAchievement = (data) => {
+export const editWorkExperience = (data) => {
   return apiCall({
-    url: "/achievement/update",
+    url: "/workExperience/update",
     method: "put",
-    // eslint-disable-next-line no-underscore-dangle
-    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.editFrom.type,
     onFail: slice.actions.editFrom.type,
   });
 };
 
-export const deleteAchievement = (data) => {
+export const deleteWorkExperience = (data) => {
   return apiCall({
-    url: `/achievement/delete/${data}`,
+    url: `/workExperience/delete/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,

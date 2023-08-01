@@ -6,6 +6,7 @@ export const slice = createSlice({
   name: "employeeData",
   initialState: {
     employees: null,
+    employeesAllBranch: null,
     employeesTotalCount: 0,
     message: null,
     changeData: false,
@@ -19,6 +20,16 @@ export const slice = createSlice({
         state.message = action.payload.message;
         toast.warning(action.payload.message || "Hodimlarni yuklashda muammo bo'ldi");
         state.employees = null;
+      }
+      state.changeData = false;
+    },
+    getFromAll: (state, action) => {
+      if (action.payload.success) {
+        state.employeesAllBranch = action.payload?.data;
+      } else {
+        state.message = action.payload.message;
+        toast.warning(action.payload.message || "Hodimlarni yuklashda muammo bo'ldi");
+        state.employeesAllBranch = null;
       }
       state.changeData = false;
     },
@@ -57,6 +68,15 @@ export const getEmployeeBranch = (data) => {
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
+  });
+};
+
+export const getEmployeeBranchId = (data) => {
+  return apiCall({
+    url: `/user/getUserListByBranchId/${data}`,
+    method: "get",
+    onSuccess: slice.actions.getFromAll.type,
+    onFail: slice.actions.getFromAll.type,
   });
 };
 

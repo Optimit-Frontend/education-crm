@@ -3,86 +3,82 @@ import { toast } from "react-toastify";
 import { apiCall } from "../api";
 
 export const slice = createSlice({
-  name: "achievement",
+  name: "balanceData",
   initialState: {
-    achievement: null,
+    balance: null,
     message: null,
     changeData: false,
   },
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.achievement = action.payload?.data;
+        state.balance = action.payload?.data;
       } else {
         state.message = action.payload.message;
-        toast.warning(action.payload.message || "Hodim yutug'larini yuklashda muammo bo'ldi");
-        state.achievement = null;
+        toast.warning(action.payload.message || "Balanslarini yuklashda muammo bo'ldi");
+        state.balance = null;
       }
       state.changeData = false;
     },
     saveFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Hodim yutug'i muvaffaqiyatli qo'shildi");
+        toast.success("Balans muvaffaqiyatli qo'shildi");
       } else {
-        toast.warning(action.payload.message || "Hodim yutug'ini qo'shishda muammo bo'ldi");
+        toast.warning(action.payload.message || "Balansni qo'shishda muammo bo'ldi");
       }
       state.changeData = true;
     },
     editFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Hodim yutug'i muvafaqiyatli taxrirlandi");
+        toast.success("Balans muvafaqiyatli taxrirlandi");
       } else {
-        toast.warning(action.payload.message || "Hodim yutug'ini taxrirlashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Balansni taxrirlashda muammo bo'ldi");
       }
       state.changeData = true;
     },
     deleteFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Hodim yutug'i muvafaqiyatli o'chirildi");
+        toast.success("Balans muvafaqiyatli o'chirildi");
       } else {
-        toast.warning("Hodim yutug'ini o'chirishda muammo bo'ldi");
+        toast.warning("Balansni o'chirishda muammo bo'ldi");
       }
       state.changeData = true;
     },
   },
 });
 
-export const getAchievementUserId = (data) => {
+export const getAllBalanceBranch = (data) => {
   return apiCall({
-    url: `/achievement/getByUserId/${data}`,
+    url: `/mainBalance/getByBranchId/${data}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
 };
 
-export const saveAchievement = (data) => {
+export const saveBalance = (data) => {
   return apiCall({
-    url: "/achievement/save",
+    url: "/mainBalance/create",
     method: "post",
-    // eslint-disable-next-line no-underscore-dangle
-    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.saveFrom.type,
     onFail: slice.actions.saveFrom.type,
   });
 };
 
-export const editAchievement = (data) => {
+export const editBalance = (data) => {
   return apiCall({
-    url: "/achievement/update",
+    url: "/mainBalance/update",
     method: "put",
-    // eslint-disable-next-line no-underscore-dangle
-    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.editFrom.type,
     onFail: slice.actions.editFrom.type,
   });
 };
 
-export const deleteAchievement = (data) => {
+export const deleteBalance = (data) => {
   return apiCall({
-    url: `/achievement/delete/${data}`,
+    url: `/mainBalance/delete/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,

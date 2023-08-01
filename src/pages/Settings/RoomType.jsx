@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import {
   Col, Form, Input, Modal, Row
 } from "antd";
-import { useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -51,7 +50,6 @@ function RoomType({
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const navigate = useNavigate();
   const size = localStorage.getItem("PageSize") || 10;
   const [pageData, setPageData] = useState({
     page: 1,
@@ -76,7 +74,6 @@ function RoomType({
   const onChange = (pageNumber, page) => {
     setPageData({ size: page, page: pageNumber, loading: false });
     localStorage.setItem("PageSize", page);
-    navigate("/settings/roomType");
   };
 
   const formValidate = () => {
