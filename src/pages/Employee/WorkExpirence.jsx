@@ -4,6 +4,7 @@ import {
   Col, DatePicker, Form, Input, Modal, Row, Select
 } from "antd";
 import dayjs from "dayjs";
+import moment from "moment";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -107,8 +108,9 @@ function WorkExpirence({
         .then((values) => {
           selectedRowKeys[1][0]?.id && editWorkExperience({
             ...values,
-            startDate: new Date(values?.startDate).toISOString().substring(0, 10),
-            endDate: new Date(values?.endDate).toISOString().substring(0, 10)
+            id: selectedRowKeys[1][0]?.id,
+            startDate: moment(new Date(values?.startDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
+            endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
           });
         })
         .catch((info) => {
@@ -119,8 +121,8 @@ function WorkExpirence({
         .then((values) => {
           saveWorkExperience({
             ...values,
-            startDate: new Date(values?.startDate).toISOString().substring(0, 10),
-            endDate: new Date(values?.endDate).toISOString().substring(0, 10)
+            startDate: moment(new Date(values?.startDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
+            endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
           });
           setOnedit(false);
         })

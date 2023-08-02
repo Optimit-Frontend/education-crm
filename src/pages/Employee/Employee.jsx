@@ -14,9 +14,8 @@ import {
   Upload,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
-import moment from "moment";
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { UploadOutlined } from "@ant-design/icons";
+import moment from "moment";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -88,7 +87,6 @@ function Employee({
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
-  const [birthday, setBirthday] = useState("");
   const [file, setFile] = useState(null);
   const enter = useKeyPress("Enter");
   const location = useLocation();
@@ -111,7 +109,6 @@ function Employee({
     });
     setVisible(false);
     setFile(null);
-    setBirthday("");
     form.resetFields();
     setSelectedRowKeys([[], []]);
   }, [employeeReducer?.changeData]);
@@ -182,7 +179,10 @@ function Employee({
           fmData.append("fatherName", values?.fatherName);
           fmData.append("surname", values?.surname);
           fmData.append("name", values?.name);
-          fmData.append("birthDate", birthday.substring(0, 10));
+          fmData.append(
+            "birthDate",
+            moment(new Date(values?.birthDate)?.toLocaleDateString()).format("YYYY-MM-DD")
+          );
           fmData.append("biography", values?.biography);
           fmData.append("inps", values?.inps);
           fmData.append("inn", values?.inn);
@@ -296,7 +296,6 @@ function Employee({
         onCancel={() => {
           setVisible(false);
           setFile(null);
-          setBirthday("");
           setOnedit(false);
           form.resetFields();
         }}
@@ -466,9 +465,6 @@ function Employee({
                 ]}
               >
                 <DatePicker
-                  onChange={(e) => {
-                    return setBirthday(moment(e).toISOString());
-                  }}
                   className="w-full"
                   placeholder="Hodim tug'ilgan kunini kiriting..."
                 />
