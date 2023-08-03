@@ -18,7 +18,7 @@ import studentReducer, {
   saveStudent,
 } from "../../reducer/studentReducer";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import classReducer, { getClassesAll } from "../../reducer/classReducer.js";
+import classReducer, { getClassesAll } from "../../reducer/classReducer";
 
 const { Option } = Select;
 
