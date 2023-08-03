@@ -75,7 +75,7 @@ function Transaction({
   saveTransaction,
   editTransaction,
   transactionReducer,
-  balanceReducer, getEmployeeBranch, employeeReducer
+  balanceReducer, getEmployeeBranch, employeeReducer, deleteTransaction,
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -181,13 +181,15 @@ function Transaction({
             onClick={() => {
               setOnedit(true);
               setVisible(true);
-              form.setFieldValue("className", selectedRowKeys[1][0]?.className);
-              form.setFieldValue("startDate", selectedRowKeys[1][0]?.startDate);
-              form.setFieldValue("endDate", selectedRowKeys[1][0]?.endDate);
-              form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
-              form.setFieldValue("classLeaderId", selectedRowKeys[1][0]?.classLeader?.id);
-              form.setFieldValue("roomId", selectedRowKeys[1][0]?.room?.id);
-              form.setFieldValue("levelId", selectedRowKeys[1][0]?.level?.id);
+              form.setFieldValue("moneyAmount", selectedRowKeys[1][0]?.moneyAmount);
+              form.setFieldValue("comment", selectedRowKeys[1][0]?.comment);
+              form.setFieldValue("expenseType", selectedRowKeys[1][0]?.expenseType);
+              form.setFieldValue("branchId", selectedRowKeys[1][0]?.branchId);
+              form.setFieldValue("paymentType", selectedRowKeys[1][0]?.paymentType);
+              form.setFieldValue("takerId", selectedRowKeys[1][0]?.takerId);
+              form.setFieldValue("accountNumber", selectedRowKeys[1][0]?.accountNumber);
+              form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalanceId);
+              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -337,7 +339,7 @@ function Transaction({
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Hisobdagi pul"
+                  placeholder="Hisobd raqam"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -405,7 +407,6 @@ function Transaction({
               >
                 <Input type="text" placeholder="qisqa eslatma..." />
               </Form.Item>
-              {console.log(transactionReducer?.transaction)}
               <Form.Item
                 key="paymentType"
                 name="paymentType"
@@ -498,6 +499,7 @@ export default connect(
     saveTransaction,
     editTransaction,
     getAllBalanceBranch,
-    getEmployeeBranch
+    getEmployeeBranch,
+    deleteTransaction
   }
 )(Transaction);

@@ -13,7 +13,7 @@ export const slice = createSlice({
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.trasaction = action.payload?.data;
+        state.transaction = action.payload?.data;
       } else {
         state.message = action.payload.message;
       }
