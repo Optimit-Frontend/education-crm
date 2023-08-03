@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import DefaultLayout from "../layout/Layout";
+import Transaction from "../pages/Transaction/Transaction.jsx";
 
 const Loading = lazy(() => {
   return import("../components/Loading/Loading");
@@ -67,6 +68,7 @@ function RoutesPage() {
           <Route path="employee/workExpirence" element={<WorkExpirence />} />
           <Route path="students" element={<Students />} />
           <Route path="class" element={<Class />} />
+          <Route path="transactions" element={<Transaction />} />
         </Route>
         <Route path="/login" element={<Login />} />
         {/* <Route path='*' element={<Error404 />} /> */}
