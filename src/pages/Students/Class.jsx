@@ -1,8 +1,10 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, Modal, Row, Select
+  Col, DatePicker, Form, Input, Modal, Row, Select
 } from "antd";
+import dayjs from "dayjs";
+import moment from "moment";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -14,7 +16,7 @@ import classReducer, {
   getClassesAllNeActive,
   saveClass,
 } from "../../reducer/classReducer";
-import roomReducer, { getRoomBranch } from "../../reducer/roomReducer";
+import roomReducer, { getAllRoomBranch } from "../../reducer/roomReducer";
 import levelReducer, { getLevels } from "../../reducer/levelReducer";
 import employeeReducer, { getEmployeeBranchId } from "../../reducer/employeeReducer";
 import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer";
@@ -74,7 +76,7 @@ function Class({
   deleteClass,
   classReducer,
   roomReducer,
-  getRoomBranch,
+  getAllRoomBranch,
   levelReducer,
   getLevels,
   getEmployeeBranchId,
@@ -99,11 +101,7 @@ function Class({
     getBusinessBranch(usersDataReducer?.businessId);
     getLevels();
     getEmployeeBranchId(usersDataReducer?.branch?.id);
-    getRoomBranch({
-      page: pageData.page,
-      size: pageData.size,
-      branchId: usersDataReducer?.branch?.id
-    });
+    getAllRoomBranch(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
@@ -126,7 +124,14 @@ function Class({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editClass({ ...values, id: selectedRowKeys[1][0]?.id });
+          selectedRowKeys[1][0]?.id && editClass({
+            ...values,
+            id: selectedRowKeys[1][0]?.id,
+            startDate: moment(
+              new Date(values?.startDate)?.toLocaleDateString()
+            ).format("YYYY-MM-DD"),
+            endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
+          });
           setOnedit(false);
         })
         .catch((info) => {
@@ -135,7 +140,13 @@ function Class({
       : form
         .validateFields()
         .then((values) => {
-          saveClass(values);
+          saveClass({
+            ...values,
+            startDate: moment(
+              new Date(values?.startDate)?.toLocaleDateString()
+            ).format("YYYY-MM-DD"),
+            endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
+          });
           setOnedit(false);
         })
         .catch((info) => {
@@ -157,8 +168,8 @@ function Class({
               setOnedit(true);
               setVisible(true);
               form.setFieldValue("className", selectedRowKeys[1][0]?.className);
-              form.setFieldValue("startDate", selectedRowKeys[1][0]?.startDate);
-              form.setFieldValue("endDate", selectedRowKeys[1][0]?.endDate);
+              form.setFieldValue("startDate", dayjs(selectedRowKeys[1][0]?.startDate));
+              form.setFieldValue("endDate", dayjs(selectedRowKeys[1][0]?.endDate));
               form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
               form.setFieldValue("classLeaderId", selectedRowKeys[1][0]?.classLeader?.id);
               form.setFieldValue("roomId", selectedRowKeys[1][0]?.room?.id);
@@ -275,7 +286,10 @@ function Class({
                   },
                 ]}
               >
-                <Input type="date" placeholder="Sana kiriting..." />
+                <DatePicker
+                  className="w-full"
+                  placeholder="Boshlagan sanasini kiriting..."
+                />
               </Form.Item>
               <Form.Item
                 key="classLeaderId"
@@ -328,7 +342,7 @@ function Class({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  {roomReducer?.room?.map((room) => {
+                  {roomReducer?.roomAllBarnch?.map((room) => {
                     return (
                       <Option value={room.id} key={room.id}>{room?.roomNumber}</Option>
                     );
@@ -381,7 +395,10 @@ function Class({
                   },
                 ]}
               >
-                <Input type="date" placeholder="Tugash sana..." />
+                <DatePicker
+                  className="w-full"
+                  placeholder="Tugash sanasini kiriting..."
+                />
               </Form.Item>
               <Form.Item
                 key="levelId"
@@ -453,7 +470,7 @@ export default connect(
     saveClass,
     editClass,
     deleteClass,
-    getRoomBranch,
+    getAllRoomBranch,
     getLevels,
     getEmployeeBranchId,
     getBusinessBranch
