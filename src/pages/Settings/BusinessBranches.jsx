@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import {
   Col, Form, Input, Modal, Row
 } from "antd";
-import { useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import businessBranchesReducer, {
@@ -18,7 +17,14 @@ const columns = [
     title: "Filial nomi",
     dataIndex: "name",
     key: "name",
-    width: "100%",
+    width: "40%",
+    search: true,
+  },
+  {
+    title: "Filial manzili",
+    dataIndex: "address",
+    key: "address",
+    width: "60%",
     search: true,
   },
 ];
@@ -36,7 +42,6 @@ function BusinessBranch({
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const navigate = useNavigate();
   const size = localStorage.getItem("PageSize") || 10;
   const [pageData, setPageData] = useState({
     page: 1,
@@ -47,6 +52,7 @@ function BusinessBranch({
   useEffect(() => {
     getBusinessBranch(usersDataReducer?.businessId);
     setVisible(false);
+    setOnedit(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
   }, [businessBranchesReducer?.businesesBranchesChange]);
@@ -61,7 +67,6 @@ function BusinessBranch({
   const onChange = (pageNumber, page) => {
     setPageData({ size: page, page: pageNumber, loading: false });
     localStorage.setItem("PageSize", page);
-    navigate("/settings/branches");
   };
 
   const formValidate = () => {
@@ -69,8 +74,11 @@ function BusinessBranch({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editBranch({ ...values, id: selectedRowKeys[1][0]?.id });
-          setOnedit(false);
+          selectedRowKeys[1][0]?.id && editBranch({
+            ...values,
+            id: selectedRowKeys[1][0]?.id,
+            businessId: usersDataReducer?.businessId
+          });
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -78,7 +86,11 @@ function BusinessBranch({
       : form
         .validateFields()
         .then((values) => {
-          saveBranch({ name: values.name, businessId: usersDataReducer?.businessId });
+          saveBranch({
+            name: values.name,
+            address: values.address,
+            businessId: usersDataReducer?.businessId
+          });
           setOnedit(false);
         })
         .catch((info) => {
@@ -100,8 +112,7 @@ function BusinessBranch({
               setOnedit(true);
               setVisible(true);
               form.setFieldValue("name", selectedRowKeys[1][0]?.name);
-              form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
-              form.setFieldValue("description", selectedRowKeys[1][0]?.description);
+              form.setFieldValue("address", selectedRowKeys[1][0]?.address);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -202,6 +213,21 @@ function BusinessBranch({
                 ]}
               >
                 <Input placeholder="Filial nomini kiriting..." />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                key="address"
+                name="address"
+                label={<span className="text-base font-medium">Filial manzili</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Filial manzilini kiriting",
+                  },
+                ]}
+              >
+                <Input placeholder="Filial manzilini kiriting..." />
               </Form.Item>
             </Col>
           </Row>

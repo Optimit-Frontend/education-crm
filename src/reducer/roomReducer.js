@@ -6,6 +6,7 @@ export const slice = createSlice({
   name: "roomData",
   initialState: {
     room: null,
+    roomAllBarnch: null,
     roomTotalCount: 0,
     message: null,
     changeData: false,
@@ -19,6 +20,16 @@ export const slice = createSlice({
         state.message = action.payload.message;
         toast.warning(action.payload.message || "Xonalarni yuklashda muammo bo'ldi");
         state.room = null;
+      }
+      state.changeData = false;
+    },
+    getAllFrom: (state, action) => {
+      if (action.payload.success) {
+        state.roomAllBarnch = action.payload?.data;
+      } else {
+        state.message = action.payload.message;
+        toast.warning(action.payload.message || "Xonalarni yuklashda muammo bo'ldi");
+        state.roomAllBarnch = null;
       }
       state.changeData = false;
     },
@@ -55,6 +66,15 @@ export const getRoomBranch = (data) => {
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
+  });
+};
+
+export const getAllRoomBranch = (data) => {
+  return apiCall({
+    url: `/room/getAll/${data}`,
+    method: "get",
+    onSuccess: slice.actions.getAllFrom.type,
+    onFail: slice.actions.getAllFrom.type,
   });
 };
 
