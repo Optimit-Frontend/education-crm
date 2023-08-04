@@ -37,6 +37,13 @@ const columns = [
     search: false,
   },
   {
+    title: "Otkazma turi",
+    dataIndex: "expenseType",
+    key: "expenseType",
+    width: "25%",
+    search: false,
+  },
+  {
     title: "Sana",
     dataIndex: "date",
     key: "date",
@@ -151,7 +158,7 @@ function Transaction({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editTransaction({ ...values, id: selectedRowKeys[1][0]?.id });
+          selectedRowKeys[1][0]?.id && editTransaction({ ...values, id: selectedRowKeys[1][0].id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -181,14 +188,14 @@ function Transaction({
             onClick={() => {
               setOnedit(true);
               setVisible(true);
+              // form.setFieldValue("moneyAmount", parseFloat(selectedRowKeys[1][0]?.moneyAmount));
               form.setFieldValue("moneyAmount", selectedRowKeys[1][0]?.moneyAmount);
               form.setFieldValue("comment", selectedRowKeys[1][0]?.comment);
               form.setFieldValue("expenseType", selectedRowKeys[1][0]?.expenseType);
-              form.setFieldValue("branchId", selectedRowKeys[1][0]?.branchId);
+              form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
               form.setFieldValue("paymentType", selectedRowKeys[1][0]?.paymentType);
-              form.setFieldValue("takerId", selectedRowKeys[1][0]?.takerId);
               form.setFieldValue("accountNumber", selectedRowKeys[1][0]?.accountNumber);
-              form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalanceId);
+              form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalanceResponse?.accountNumber);
               console.log(selectedRowKeys[1][0]);
             }}
             type="button"
@@ -234,6 +241,7 @@ function Transaction({
           onClick={() => {
             handleDelete(selectedRowKeys[0]);
             setSelectedRowKeys([[], []]);
+            console.log(selectedRowKeys);
           }}
           type="button"
           className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
@@ -328,18 +336,18 @@ function Transaction({
               <Form.Item
                 key="mainBalanceId"
                 name="mainBalanceId"
-                label={<span className="text-base font-medium">Hisob raqam tanlash</span>}
+                label={<span className="text-base font-medium">Balance raqam tanlash</span>}
                 rules={[
                   {
                     required: false,
-                    message: "Hisobdagi pulni kiriting",
+                    message: "Balance pulni kiriting",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Hisobd raqam"
+                  placeholder="Balance raqam"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -354,19 +362,19 @@ function Transaction({
                   })}
                 </Select>
               </Form.Item>
-              <Form.Item
-                key="accountNumber"
-                name="accountNumber"
-                label={<span className="text-base font-medium">Hisob raqam</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Hisob raqamni kiritng",
-                  },
-                ]}
-              >
-                <Input type="number" placeholder="Hisob raqamni kiriting..." />
-              </Form.Item>
+              {/* <Form.Item */}
+              {/*   key="accountNumber" */}
+              {/*   name="accountNumber" */}
+              {/*   label={<span className="text-base font-medium">Hisob raqam</span>} */}
+              {/*   rules={[ */}
+              {/*     { */}
+              {/*       required: false, */}
+              {/*       message: "Hisob raqamni kiritng", */}
+              {/*     }, */}
+              {/*   ]} */}
+              {/* > */}
+              {/*   <Input type="number" placeholder="Hisob raqamni kiriting..." /> */}
+              {/* </Form.Item> */}
             </Col>
             <Col span={12}>
               <Form.Item
@@ -433,35 +441,6 @@ function Transaction({
                   <Option value="CARD">Karta</Option>
                   <Option value="HISOBDAN_HISOBGA">Hisobdan hisobga</Option>
                   <Option value="ELEKTRON">ELEKTRON</Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="takerId"
-                name="takerId"
-                label={<span className="text-base font-medium">Qabul qiluvchi</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Qabul qiluvchi",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Tulov turini tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {employeeReducer?.employees?.map((employee) => {
-                    return (
-                      <Option value={employee.id} key={employee.id}>{employee?.name}</Option>
-                    );
-                  })}
                 </Select>
               </Form.Item>
             </Col>

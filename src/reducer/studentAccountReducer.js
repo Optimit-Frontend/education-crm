@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { apiCall } from "../api";
 
 export const slice = createSlice({
-  name: "studentAccount",
+  name: "account",
   initialState: {
     account: null,
     accountTotalCount: 0,
@@ -13,7 +13,7 @@ export const slice = createSlice({
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.transaction = action.payload?.data;
+        state.account = action.payload?.data;
       } else {
         state.message = action.payload.message;
       }

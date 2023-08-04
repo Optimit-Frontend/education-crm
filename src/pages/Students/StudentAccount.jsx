@@ -20,16 +20,23 @@ const { Option } = Select;
 
 const columns = [
   {
-    title: "Otkazma",
-    dataIndex: "moneyAmount",
-    key: "moneyAmount",
+    title: "Talaba",
+    dataIndex: "student",
+    key: "student",
     width: "30%",
     search: true,
   },
   {
-    title: "Tulov usuli",
-    dataIndex: "paymentType",
-    key: "paymentType",
+    title: "Hisob raqam",
+    dataIndex: "accountNumber",
+    key: "accountNumber",
+    width: "30%",
+    search: true,
+  },
+  {
+    title: "Filial",
+    dataIndex: "branchId",
+    key: "branchId",
     width: "25%",
     search: false,
   },
@@ -41,9 +48,9 @@ const columns = [
     search: false,
   },
   {
-    title: "Qisqa eslatma",
-    dataIndex: "comment",
-    key: "comment",
+    title: "Qarz",
+    dataIndex: "amountOfDebit",
+    key: "amountOfDebit",
     width: "20%",
     search: false,
   },
@@ -73,7 +80,8 @@ function StudentAccount({
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const [moneyAmount, setMoneyAmount] = useState(0);
+  const [newAccountNumber, setNewAccountNumber] = useState(0);
+  const [accNumber, setAccNumber] = useState(null);
   const size = localStorage.getItem("PageSize") || 10;
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -122,9 +130,10 @@ function StudentAccount({
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteStudentAccount(item);
+      deleteStudentAccount(parseInt(item?.accountNumber, 10));
       return null;
     });
+    console.log(arr);
   };
 
   const onChange = (pageNumber, page) => {
@@ -137,7 +146,13 @@ function StudentAccount({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editStudentAccount({ ...values, id: selectedRowKeys[1][0]?.id });
+          selectedRowKeys[1][0]?.id && editStudentAccount({
+            ...values,
+            // id: selectedRowKeys[1][0]?.id,
+            // accountNumber: selectedRowKeys[1][0]?.accountNumber,
+            newAccountNumber: newAccountNumber || "0",
+          });
+          console.log(selectedRowKeys);
           setOnedit(false);
         })
         .catch((info) => {
@@ -146,7 +161,10 @@ function StudentAccount({
       : form
         .validateFields()
         .then((values) => {
-          saveStudentAccount({ ...values });
+          saveStudentAccount({
+            ...values,
+            // discount: parseInt(selectedRowKeys[1][0].discount, 10)
+          });
           setOnedit(false);
         })
         .catch((info) => {
@@ -167,14 +185,11 @@ function StudentAccount({
             onClick={() => {
               setOnedit(true);
               setVisible(true);
-              form.setFieldValue("moneyAmount", selectedRowKeys[1][0]?.moneyAmount);
-              form.setFieldValue("comment", selectedRowKeys[1][0]?.comment);
-              form.setFieldValue("expenseType", selectedRowKeys[1][0]?.expenseType);
-              form.setFieldValue("branchId", selectedRowKeys[1][0]?.branchId);
-              form.setFieldValue("paymentType", selectedRowKeys[1][0]?.paymentType);
-              form.setFieldValue("takerId", selectedRowKeys[1][0]?.takerId);
               form.setFieldValue("accountNumber", selectedRowKeys[1][0]?.accountNumber);
-              form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalanceId);
+              form.setFieldValue("studentId", selectedRowKeys[1][0]?.studentId);
+              form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
+              form.setFieldValue("discount", selectedRowKeys[1][0]?.discount);
+              form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalance?.accountNumber);
               console.log(selectedRowKeys[1][0]);
             }}
             type="button"
@@ -218,8 +233,9 @@ function StudentAccount({
         </button>
         <button
           onClick={() => {
-            handleDelete(selectedRowKeys[0]);
+            handleDelete(selectedRowKeys[1]);
             setSelectedRowKeys([[], []]);
+            console.log(selectedRowKeys);
           }}
           type="button"
           className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
@@ -278,6 +294,19 @@ function StudentAccount({
                 <Input type="number" placeholder="Shot raqam kiriting" />
               </Form.Item>
               <Form.Item
+                key="discount"
+                name="discount"
+                label={<span className="text-base font-medium">Chegirma % </span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Chegirma %",
+                  },
+                ]}
+              >
+                <Input type="number" placeholder="Chegirma %" />
+              </Form.Item>
+              <Form.Item
                 key="mainBalanceId"
                 name="mainBalanceId"
                 label={<span className="text-base font-medium">Hisob raqam tanlash</span>}
@@ -308,6 +337,27 @@ function StudentAccount({
               </Form.Item>
             </Col>
             <Col span={12}>
+              { onedit
+                ? (
+                  <Form.Item
+                    key="newAccountNumber"
+                    name="newAccountNumber"
+                    label={<span className="text-base font-medium">Yangi shot raqam </span>}
+                    rules={[
+                      {
+                        required: false,
+                        message: "Hisobdagi pulni kiriting",
+                      },
+                    ]}
+                  >
+                    <Input
+                      value={newAccountNumber}
+                      onChange={(e) => { return setNewAccountNumber(e.target.value); }}
+                      type="number"
+                      placeholder="yangi shot raqam kiriting"
+                    />
+                  </Form.Item>
+                ) : ""}
               <Form.Item
                 key="branchId"
                 name="branchId"
@@ -347,7 +397,7 @@ function StudentAccount({
                 <Select
                   showSearch
                   allowClear
-                  placeholder="O`tkazma turini tanlang"
+                  placeholder="Talaba tanlash"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -373,7 +423,10 @@ function StudentAccount({
         pageSize={pageData?.size}
         tableData={studentAccountReducer?.account?.map((item) => {
           return ({
-            ...item
+            ...item,
+            branchId: item.branch?.name,
+            student: item.student?.firstName,
+            studentId: item.student?.id
           });
         })}
         loading={pageData?.loading}
