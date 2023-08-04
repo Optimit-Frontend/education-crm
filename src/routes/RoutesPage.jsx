@@ -1,12 +1,8 @@
 import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import DefaultLayout from "../layout/Layout";
-import Transaction from "../pages/Transaction/Transaction.jsx";
-import StudentAccount from "../pages/Students/StudentAccount.jsx";
+import Loading from "../components/Loading/Loading";
 
-const Loading = lazy(() => {
-  return import("../components/Loading/Loading");
-});
 const Dashboard = lazy(() => {
   return import("../pages/Dashboard/Dashboard");
 });
@@ -43,11 +39,23 @@ const Class = lazy(() => {
 const Balance = lazy(() => {
   return import("../pages/Settings/Balance");
 });
+const Measurment = lazy(() => {
+  return import("../pages/Kitchen/Measurment");
+});
+const Product = lazy(() => {
+  return import("../pages/Kitchen/Product");
+});
 const WorkExpirence = lazy(() => {
   return import("../pages/Employee/WorkExpirence");
 });
 const Achievement = lazy(() => {
   return import("../pages/Employee/Achievement");
+});
+const StudentAccount = lazy(() => {
+  return import("../pages/Students/StudentAccount");
+});
+const Transaction = lazy(() => {
+  return import("../pages/Transaction/Transaction");
 });
 
 function RoutesPage() {
@@ -63,6 +71,8 @@ function RoutesPage() {
           <Route path="settings/room" element={<Room />} />
           <Route path="settings/subjects" element={<Subjects />} />
           <Route path="settings/balance" element={<Balance />} />
+          <Route path="kitchen/product" element={<Product />} />
+          <Route path="kitchen/measurement" element={<Measurment />} />
           <Route path="employee/role" element={<Role />} />
           <Route path="employee" element={<Employee />} />
           <Route path="employee/achievement" element={<Achievement />} />
