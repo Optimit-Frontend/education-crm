@@ -6,44 +6,30 @@ import {
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import roomTypeReducer, {
-  deleteRoomType,
-  editRoomType,
-  getAllRoomType,
-  saveRoomType
-} from "../../reducer/roomTypeReducer";
+import measurmentReducer, {
+  deleteMeasurement,
+  editMeasurement,
+  getAllMeasurement,
+  saveMeasurement
+} from "../../reducer/measurmentReducer";
 
 const columns = [
   {
-    title: "Xona turi",
+    title: "O'lchov birlik nomi",
     dataIndex: "name",
     key: "name",
-    width: "60%",
+    width: "100%",
     search: true,
-  },
-  {
-    title: "Holati",
-    dataIndex: "active",
-    key: "active",
-    width: "40%",
-    search: false,
-    render: (eski) => {
-      return eski ? (
-        <span className="bg-green-200 text-green-700 py-1 px-3 rounded-full text-xs">Active</span>
-      ) : (
-        <span className="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Nofaol</span>
-      );
-    },
-  },
+  }
 ];
 
-function RoomType({
-  deleteRoomType,
-  editRoomType,
-  saveRoomType,
-  getAllRoomType,
+function Measurment({
+  deleteMeasurement,
+  editMeasurement,
+  saveMeasurement,
+  getAllMeasurement,
   usersDataReducer,
-  roomTypeReducer
+  measurmentReducer
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -58,16 +44,16 @@ function RoomType({
   });
 
   useEffect(() => {
-    getAllRoomType(usersDataReducer?.branch?.id);
+    getAllMeasurement(usersDataReducer?.branch?.id);
     setVisible(false);
     setOnedit(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [roomTypeReducer?.changeData]);
+  }, [measurmentReducer?.changeData]);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteRoomType(item);
+      deleteMeasurement(item);
       return null;
     });
   };
@@ -82,7 +68,11 @@ function RoomType({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editRoomType({ ...values, id: selectedRowKeys[1][0]?.id });
+          selectedRowKeys[1][0]?.id && editMeasurement({
+            ...values,
+            branchId: usersDataReducer?.branch?.id,
+            id: selectedRowKeys[1][0]?.id
+          });
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -90,7 +80,7 @@ function RoomType({
       : form
         .validateFields()
         .then((values) => {
-          saveRoomType({ name: values.name, comingBranchId: usersDataReducer?.branch?.id });
+          saveMeasurement({ name: values.name, branchId: usersDataReducer?.branch?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -104,7 +94,7 @@ function RoomType({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Xona turlari</h3>
+      <h3 className="text-2xl font-bold mb-5">O&apos;lchov birliklari</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -181,8 +171,8 @@ function RoomType({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Xona turi
-            {onedit ? "ni taxrirlash" : "ni qo'shish"}
+            O&apos;lchov birlik
+            {onedit ? "ni taxrirlash" : " qo'shish"}
           </h3>
         )}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
@@ -203,15 +193,15 @@ function RoomType({
               <Form.Item
                 key="name"
                 name="name"
-                label={<span className="text-base font-medium">Xona turi</span>}
+                label={<span className="text-base font-medium">O&apos;lchov birlik nomi</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Xona turini kiriting",
+                    message: "O'lchov birlik nomini kiriting",
                   },
                 ]}
               >
-                <Input placeholder="Xona turini kiriting..." />
+                <Input placeholder="O'lchov birlik nomini kiriting..." />
               </Form.Item>
             </Col>
           </Row>
@@ -222,7 +212,7 @@ function RoomType({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={roomTypeReducer?.roomType}
+        tableData={measurmentReducer?.measurment}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
@@ -232,6 +222,6 @@ function RoomType({
   );
 }
 
-export default connect((roomTypeReducer, usersDataReducer), {
-  deleteRoomType, editRoomType, saveRoomType, getAllRoomType
-})(RoomType);
+export default connect((measurmentReducer, usersDataReducer), {
+  deleteMeasurement, editMeasurement, saveMeasurement, getAllMeasurement
+})(Measurment);

@@ -11,11 +11,13 @@ import employeeReducer from "./reducer/employeeReducer";
 import studentReducer from "./reducer/studentReducer";
 import classReducer from "./reducer/classReducer";
 import achievementReducer from "./reducer/achievementReducer";
+import measurmentReducer from "./reducer/measurmentReducer";
+import productReducer from "./reducer/productReducer";
 import balanceReducer from "./reducer/balanceReducer";
 import workExpirenceReducer from "./reducer/workExpirenceReducer";
 import levelReducer from "./reducer/levelReducer";
-import transactionReducer from "./reducer/transactionReducer.js";
-import studentAccountReducer from "./reducer/studentAccountReducer.js";
+import transactionReducer from "./reducer/transactionReducer";
+import studentAccountReducer from "./reducer/studentAccountReducer";
 
 export default configureStore({
   reducer: {
@@ -30,6 +32,8 @@ export default configureStore({
     workExpirenceReducer,
     employeeReducer,
     achievementReducer,
+    measurmentReducer,
+    productReducer,
     studentReducer,
     classReducer,
     levelReducer,
