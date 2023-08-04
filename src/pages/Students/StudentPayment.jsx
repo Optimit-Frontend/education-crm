@@ -7,39 +7,36 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import employeeReducer, {
-  getEmployeeBranch,
-} from "../../reducer/employeeReducer";
-import transactionReducer, {
-  deleteTransaction,
-  editTransaction,
-  getTransactionHistoryActiveTrue,
-  getTransactionHistoryFindAllBranch,
-  getTrasactionHistoryById, saveTransaction,
-} from "../../reducer/transactionReducer";
 import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
+import studentAccountReducer, {
+  deleteStudentAccount,
+  editStudentAccount,
+  getStudentAccountByBranch,
+  getStudentAccountById, saveStudentAccount, saveStudentPayment,
+} from "../../reducer/studentAccountReducer";
+import studentReducer, { getStudentsAll } from "../../reducer/studentReducer";
 
 const { Option } = Select;
 
 const columns = [
   {
-    title: "Otkazma",
-    dataIndex: "moneyAmount",
-    key: "moneyAmount",
+    title: "Talaba",
+    dataIndex: "student",
+    key: "student",
     width: "30%",
     search: true,
   },
   {
-    title: "Tulov usuli",
-    dataIndex: "paymentType",
-    key: "paymentType",
-    width: "25%",
-    search: false,
+    title: "Hisob raqam",
+    dataIndex: "accountNumber",
+    key: "accountNumber",
+    width: "30%",
+    search: true,
   },
   {
-    title: "Otkazma turi",
-    dataIndex: "expenseType",
-    key: "expenseType",
+    title: "Filial",
+    dataIndex: "branchId",
+    key: "branchId",
     width: "25%",
     search: false,
   },
@@ -51,9 +48,9 @@ const columns = [
     search: false,
   },
   {
-    title: "Qisqa eslatma",
-    dataIndex: "comment",
-    key: "comment",
+    title: "Qarz",
+    dataIndex: "amountOfDebit",
+    key: "amountOfDebit",
     width: "20%",
     search: false,
   },
@@ -73,16 +70,10 @@ const columns = [
   },
 ];
 
-function Transaction({
+function StudentAccount({
   usersDataReducer,
-  getAllBalanceBranch,
-  getTrasactionHistoryById,
-  getTransactionHistoryFindAllBranch,
-  getTransactionHistoryActiveTrue,
-  saveTransaction,
-  editTransaction,
-  transactionReducer,
-  balanceReducer, getEmployeeBranch, employeeReducer, deleteTransaction,
+  getAllBalanceBranch, studentAccountReducer, getStudentsAll, studentReducer,
+  balanceReducer, deleteStudentAccount, editStudentAccount, saveStudentPayment, saveStudentAccount, getStudentAccountByBranch, getStudentAccountById
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -102,18 +93,13 @@ function Transaction({
   });
 
   useEffect(() => {
-    getTransactionHistoryFindAllBranch(usersDataReducer?.branch?.id);
+    getStudentAccountByBranch(usersDataReducer?.branch?.id);
     getAllBalanceBranch(usersDataReducer?.branch?.id);
-    getEmployeeBranch({
-      page: pageData.page,
-      size: pageData.size,
-      branchId: usersDataReducer?.branch?.id,
-    });
-    // getEmployeeBranchId(usersDataReducer?.branch?.id);
+    getStudentsAll({ branchId: usersDataReducer.branch?.id, page: pageData.page, size: pageData.size });
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [transactionReducer?.changeData]);
+  }, [studentAccountReducer?.changeData]);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -122,28 +108,28 @@ function Transaction({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/transactions?page=${pageCount}&size=100`);
+      navigate(`/create-payment?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/transactions?page=${pageCount}&size=50`);
+      navigate(`/create-payment?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/transactions?page=${pageCount}&size=20`);
+      navigate(`/create-payment?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/transactions?page=${pageCount}&size=10`);
+      navigate(`/create-payment?page=${pageCount}&size=10`);
     }
   }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteTransaction(item);
+      deleteStudentAccount(item);
       return null;
     });
   };
@@ -158,7 +144,7 @@ function Transaction({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editTransaction({ ...values, id: selectedRowKeys[1][0].id });
+          selectedRowKeys[1][0]?.id && editStudentAccount({ ...values, id: selectedRowKeys[1][0]?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -167,7 +153,7 @@ function Transaction({
       : form
         .validateFields()
         .then((values) => {
-          saveTransaction({ ...values });
+          saveStudentAccount({ ...values });
           setOnedit(false);
         })
         .catch((info) => {
@@ -181,21 +167,17 @@ function Transaction({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Hamma o`tkazmalar</h3>
+      <h3 className="text-2xl font-bold mb-5">Talaba hisob raqamlari</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
             onClick={() => {
               setOnedit(true);
               setVisible(true);
-              // form.setFieldValue("moneyAmount", parseFloat(selectedRowKeys[1][0]?.moneyAmount));
-              form.setFieldValue("moneyAmount", selectedRowKeys[1][0]?.moneyAmount);
-              form.setFieldValue("comment", selectedRowKeys[1][0]?.comment);
-              form.setFieldValue("expenseType", selectedRowKeys[1][0]?.expenseType);
-              form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
-              form.setFieldValue("paymentType", selectedRowKeys[1][0]?.paymentType);
               form.setFieldValue("accountNumber", selectedRowKeys[1][0]?.accountNumber);
-              form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalanceResponse?.accountNumber);
+              form.setFieldValue("studentId", selectedRowKeys[1][0]?.student);
+              form.setFieldValue("branchId", selectedRowKeys[1][0]?.branchId);
+              form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalance?.accountNumber);
               console.log(selectedRowKeys[1][0]);
             }}
             type="button"
@@ -241,7 +223,6 @@ function Transaction({
           onClick={() => {
             handleDelete(selectedRowKeys[0]);
             setSelectedRowKeys([[], []]);
-            console.log(selectedRowKeys);
           }}
           type="button"
           className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
@@ -267,7 +248,7 @@ function Transaction({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Pul o`tkazma
+            Talaba hisob raqami
             {onedit ? "ni taxrirlash" : " "}
           </h3>
         )}
@@ -287,67 +268,33 @@ function Transaction({
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item
-                key="moneyAmount"
-                name="moneyAmount"
-                label={<span className="text-base font-medium">Pul miqdori</span>}
+                key="accountNumber"
+                name="accountNumber"
+                label={<span className="text-base font-medium">Shot raqam </span>}
                 rules={[
                   {
-                    required: true,
-                    message: "So`mmani kiritng",
+                    required: false,
+                    message: "Hisobdagi pulni kiriting",
                   },
                 ]}
               >
-                <Input
-                  type="number"
-                  placeholder="So`mmani kiriting ..."
-                />
-              </Form.Item>
-              <Form.Item
-                key="expenseType"
-                name="expenseType"
-                label={<span className="text-base font-medium">O`tkazma turi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Xarajat turini kiriting",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="O`tkazma turini tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  <Option value="SALARY">Maosh</Option>
-                  <Option value="PAYMENT">Tulov</Option>
-                  <Option value="ADDITIONAL_PAYMENT">Qo`shimcha to`lov</Option>
-                  <Option value="ADDITIONAL_EXPENSE">Qo`shimcha xarajat</Option>
-                  <Option value="STUDENT_PAYMENT">Talaba to`lov</Option>
-                  <Option value="STUDENT_EXPENSE">Talaba xarajati</Option>
-                  <Option value="MEAL_EXPENSE">Oziq-ovqat xarajati</Option>
-                </Select>
+                <Input type="number" placeholder="Shot raqam kiriting" />
               </Form.Item>
               <Form.Item
                 key="mainBalanceId"
                 name="mainBalanceId"
-                label={<span className="text-base font-medium">Balance raqam tanlash</span>}
+                label={<span className="text-base font-medium">Hisob raqam tanlash</span>}
                 rules={[
                   {
                     required: false,
-                    message: "Balance pulni kiriting",
+                    message: "Hisobdagi pulni kiriting",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Balance raqam"
+                  placeholder="Hisobd raqam"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -362,19 +309,6 @@ function Transaction({
                   })}
                 </Select>
               </Form.Item>
-              {/* <Form.Item */}
-              {/*   key="accountNumber" */}
-              {/*   name="accountNumber" */}
-              {/*   label={<span className="text-base font-medium">Hisob raqam</span>} */}
-              {/*   rules={[ */}
-              {/*     { */}
-              {/*       required: false, */}
-              {/*       message: "Hisob raqamni kiritng", */}
-              {/*     }, */}
-              {/*   ]} */}
-              {/* > */}
-              {/*   <Input type="number" placeholder="Hisob raqamni kiriting..." /> */}
-              {/* </Form.Item> */}
             </Col>
             <Col span={12}>
               <Form.Item
@@ -403,33 +337,20 @@ function Transaction({
                 </Select>
               </Form.Item>
               <Form.Item
-                key="comment"
-                name="comment"
-                label={<span className="text-base font-medium">Qisqa eslatma</span>}
+                key="studentId"
+                name="studentId"
+                label={<span className="text-base font-medium">Talaba tanlash</span>}
                 rules={[
                   {
-                    required: false,
-                    message: "eslatma ni kiriting",
-                  },
-                ]}
-              >
-                <Input type="text" placeholder="qisqa eslatma..." />
-              </Form.Item>
-              <Form.Item
-                key="paymentType"
-                name="paymentType"
-                label={<span className="text-base font-medium">To`lov turi</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Tulov turini tanlang",
+                    required: true,
+                    message: "Xarajat turini kiriting",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Tulov turini tanlang"
+                  placeholder="O`tkazma turini tanlang"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -437,10 +358,11 @@ function Transaction({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  <Option value="CASH">Naqd</Option>
-                  <Option value="CARD">Karta</Option>
-                  <Option value="HISOBDAN_HISOBGA">Hisobdan hisobga</Option>
-                  <Option value="ELEKTRON">ELEKTRON</Option>
+                  {studentReducer?.students?.studentResponseDtoList?.map((student) => {
+                    return (
+                      <Option value={student.id} key={student.id}>{student?.firstName}</Option>
+                    );
+                  })}
                 </Select>
               </Form.Item>
             </Col>
@@ -452,9 +374,11 @@ function Transaction({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={transactionReducer?.transaction?.map((item) => {
+        tableData={studentAccountReducer?.account?.map((item) => {
           return ({
-            ...item
+            ...item,
+            branchId: item.branch?.name,
+            student: item.student?.firstName,
           });
         })}
         loading={pageData?.loading}
@@ -468,17 +392,15 @@ function Transaction({
 
 export default connect(
   (
-    usersDataReducer,
-    transactionReducer,
-    balanceReducer, employeeReducer
+    usersDataReducer, studentReducer, balanceReducer, studentAccountReducer
   ), {
-    getTrasactionHistoryById,
-    getTransactionHistoryFindAllBranch,
-    getTransactionHistoryActiveTrue,
-    saveTransaction,
-    editTransaction,
     getAllBalanceBranch,
-    getEmployeeBranch,
-    deleteTransaction
+    getStudentAccountById,
+    getStudentAccountByBranch,
+    saveStudentAccount,
+    saveStudentPayment,
+    editStudentAccount,
+    deleteStudentAccount,
+    getStudentsAll
   }
-)(Transaction);
+)(StudentAccount);
