@@ -16,8 +16,8 @@ import transactionReducer, {
   getTransactionHistoryActiveTrue,
   getTransactionHistoryFindAllBranch,
   getTrasactionHistoryById, saveTransaction,
-} from "../../reducer/transactionReducer.js";
-import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer.js";
+} from "../../reducer/transactionReducer";
+import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
 
 const { Option } = Select;
 

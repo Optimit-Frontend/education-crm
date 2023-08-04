@@ -7,14 +7,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer.js";
+import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
 import studentAccountReducer, {
   deleteStudentAccount,
   editStudentAccount,
   getStudentAccountByBranch,
   getStudentAccountById, saveStudentAccount, saveStudentPayment,
-} from "../../reducer/studentAccountReducer.js";
-import studentReducer, { getStudentsAll } from "../../reducer/studentReducer.js";
+} from "../../reducer/studentAccountReducer";
+import studentReducer, { getStudentsAll } from "../../reducer/studentReducer";
 
 const { Option } = Select;
 
