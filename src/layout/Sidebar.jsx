@@ -244,6 +244,21 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           </li>
                           <li>
                             <NavLink
+                              to="/employee/typeOfWork"
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Ish turlari
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
                               to="/employee/achievement"
                               onClick={() => {
                                 return setSidebarOpen(false);
@@ -743,6 +758,21 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               }}
                             >
                               Filiallar
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/settings/warehouse"
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Omborlar
                             </NavLink>
                           </li>
                           <li>

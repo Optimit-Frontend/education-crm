@@ -32,6 +32,9 @@ const Role = lazy(() => {
 const Employee = lazy(() => {
   return import("../pages/Employee/Employee");
 });
+const TypeOfWork = lazy(() => {
+  return import("../pages/Employee/TypeOfWork");
+});
 const Students = lazy(() => {
   return import("../pages/Students/Students");
 });
@@ -43,6 +46,9 @@ const Balance = lazy(() => {
 });
 const Measurment = lazy(() => {
   return import("../pages/Kitchen/Measurment");
+});
+const Warehouse = lazy(() => {
+  return import("../pages/Settings/Warehouse");
 });
 const Product = lazy(() => {
   return import("../pages/Kitchen/Product");
@@ -73,12 +79,14 @@ function RoutesPage() {
           <Route path="settings/room" element={<Room />} />
           <Route path="settings/subjects" element={<Subjects />} />
           <Route path="settings/balance" element={<Balance />} />
+          <Route path="settings/warehouse" element={<Warehouse />} />
           <Route path="kitchen/product" element={<Product />} />
           <Route path="kitchen/measurement" element={<Measurment />} />
           <Route path="employee/role" element={<Role />} />
           <Route path="employee" element={<Employee />} />
           <Route path="employee/achievement" element={<Achievement />} />
           <Route path="employee/workExpirence" element={<WorkExpirence />} />
+          <Route path="employee/typeOfWork" element={<TypeOfWork />} />
           <Route path="students" element={<Students />} />
           <Route path="class" element={<Class />} />
           <Route path="create-account" element={<StudentAccount />} />
