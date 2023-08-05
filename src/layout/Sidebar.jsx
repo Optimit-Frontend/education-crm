@@ -407,6 +407,36 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               Hisob raqam yaratish
                             </NavLink>
                           </li>
+                          <li>
+                            <NavLink
+                              to="/student-transaction"
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Talaba to`lov qilish
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/student-debts"
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Qarzdor talabalar
+                            </NavLink>
+                          </li>
                         </ul>
                       </div>
                     </>

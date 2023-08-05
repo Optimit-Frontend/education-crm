@@ -6,6 +6,7 @@ export const slice = createSlice({
   name: "account",
   initialState: {
     account: null,
+    debts: null,
     accountTotalCount: 0,
     message: null,
     changeData: false,
@@ -14,6 +15,14 @@ export const slice = createSlice({
     getFrom: (state, action) => {
       if (action.payload.success) {
         state.account = action.payload?.data;
+      } else {
+        state.message = action.payload.message;
+      }
+      state.changeData = false;
+    },
+    getFromDebt: (state, action) => {
+      if (action.payload.success) {
+        state.debts = action.payload?.data;
       } else {
         state.message = action.payload.message;
       }
@@ -60,6 +69,14 @@ export const getStudentAccountByBranch = (data) => {
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
+  });
+};
+export const getStudentDebt = (data) => {
+  return apiCall({
+    url: "/studentAccount/getAllByDebtActive",
+    method: "get",
+    onSuccess: slice.actions.getFromDebt.type,
+    onFail: slice.actions.getFromDebt.type,
   });
 };
 
