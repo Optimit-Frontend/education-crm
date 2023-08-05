@@ -97,6 +97,8 @@ export const editStudent = (data) => {
   return apiCall({
     url: "/student/update",
     method: "put",
+    // eslint-disable-next-line no-underscore-dangle
+    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.editFrom.type,
     onFail: slice.actions.editFrom.type,

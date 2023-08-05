@@ -82,9 +82,28 @@ export const saveTransaction = (data) => {
   });
 };
 
+export const saveStudentTransaction = (data) => {
+  return apiCall({
+    url: "/studentAccount/payment",
+    method: "post",
+    data,
+    onSuccess: slice.actions.saveFrom.type,
+    onFail: slice.actions.saveFrom.type,
+  });
+};
+
 export const editTransaction = (data) => {
   return apiCall({
     url: "/transactionHistory/update",
+    method: "put",
+    data,
+    onSuccess: slice.actions.editFrom.type,
+    onFail: slice.actions.editFrom.type,
+  });
+};
+export const editStudentTransaction = (data) => {
+  return apiCall({
+    url: "/studentAccount/updatePayment",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,

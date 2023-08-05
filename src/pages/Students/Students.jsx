@@ -39,6 +39,13 @@ const columns = [
     search: false,
   },
   {
+    title: "To`langan summa",
+    dataIndex: "paymentAmount",
+    key: "paymentAmount",
+    width: "25%",
+    search: false,
+  },
+  {
     title: "Tug`ilgan kuni",
     dataIndex: "birthDate",
     key: "birthDate",
@@ -219,7 +226,7 @@ function Students({
           fmData.append("branchId", usersDataReducer?.branch?.id);
           fmData.append("active", true);
           fmData.append("medDocPhoto", medDocPhoto);
-          fmData.append("username", values?.username);
+          fmData.append("phoneNumber", values?.phoneNumber);
           fmData.append("password", values?.password);
           saveStudent(fmData);
           setOnedit(false);
@@ -244,12 +251,14 @@ function Students({
               form.setFieldValue("firstName", selectedRowKeys[1][0]?.firstName);
               form.setFieldValue("lastName", selectedRowKeys[1][0]?.lastName);
               form.setFieldValue("fatherName", selectedRowKeys[1][0]?.fatherName);
-              form.setFieldValue("username", selectedRowKeys[1][0]?.username);
+              form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
               form.setFieldValue("docNumber", selectedRowKeys[1][0]?.docNumber);
-              form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClass);
+              form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
               form.setFieldValue("photo", selectedRowKeys[1][0]?.photo);
+              form.setFieldValue("paymentAmount", selectedRowKeys[1][0]?.paymentAmount);
               form.setFieldValue("branchId", usersDataReducer?.branch?.id);
               form.setFieldValue("birthDate", dayjs(selectedRowKeys[1][0]?.birthDate));
+              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -448,20 +457,33 @@ function Students({
               >
                 <Input type="text" placeholder="Password . . ." />
               </Form.Item>
-            </Col>
-            <Col span={12}>
               <Form.Item
-                key="username"
-                name="username"
-                label={<span className="text-base font-medium">username</span>}
+                key="paymentAmount"
+                name="paymentAmount"
+                label={<span className="text-base font-medium">To`lovni kiriting</span>}
                 rules={[
                   {
-                    required: true,
-                    message: "username",
+                    required: false,
+                    message: "password kiriting",
                   },
                 ]}
               >
-                <Input placeholder="username ..." />
+                <Input type="number" placeholder="T`olanadigan summa . . ." />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="phoneNumber"
+                name="phoneNumber"
+                label={<span className="text-base font-medium">Tel raqam</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "phoneNumber",
+                  },
+                ]}
+              >
+                <Input type="number" placeholder="Tel raqam ..." />
               </Form.Item>
               <Form.Item
                 key="docNumber"
@@ -603,6 +625,7 @@ function Students({
           return {
             ...student,
             studentClass: student?.studentClass?.className,
+            studentClassId: student?.studentClass?.id,
             photo: student?.photo,
             Ismi: `${student?.firstName} ${student?.lastName} ${student?.fatherName}`,
           };
