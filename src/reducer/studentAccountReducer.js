@@ -17,6 +17,7 @@ export const slice = createSlice({
         state.account = action.payload?.data;
       } else {
         state.message = action.payload.message;
+        state.account = null;
       }
       state.changeData = false;
     },
@@ -25,6 +26,7 @@ export const slice = createSlice({
         state.debts = action.payload?.data;
       } else {
         state.message = action.payload.message;
+        state.debts = null;
       }
       state.changeData = false;
     },
@@ -71,7 +73,7 @@ export const getStudentAccountByBranch = (data) => {
     onFail: slice.actions.getFrom.type,
   });
 };
-export const getStudentDebt = (data) => {
+export const getStudentDebt = () => {
   return apiCall({
     url: "/studentAccount/getAllByDebtActive",
     method: "get",
