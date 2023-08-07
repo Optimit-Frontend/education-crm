@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Button, Col, DatePicker, Form, Image, Input, Modal, Row, Select, Upload,
+  Button, Col, DatePicker, Form, Image, Input, InputNumber, Modal, Row, Select, Upload,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
@@ -84,17 +84,23 @@ const columns = [
     search: false,
     render: (eski) => {
       return eski ? (
-        <span className="bg-green-200 text-green-700 py-1 px-3 rounded-full text-xs">Active</span>
+        <span className="bg-green-200 text-green-700 py-1 px-3 whitespace-nowrap rounded-full text-xs">Active</span>
       ) : (
-        <span className="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Nofaol</span>
+        <span className="bg-red-200 text-red-600 py-1 px-3 whitespace-nowrap rounded-full text-xs">Nofaol</span>
       );
     },
   },
 ];
 
 function Students({
-  usersDataReducer, getClassesAll, classReducer, studentReducer,
-  getStudentsAllByClass, getStudentsAllNeActive, getStudentById, getStudentsAll, deleteStudent, editStudent, saveStudent
+  usersDataReducer,
+  getClassesAll,
+  classReducer,
+  studentReducer,
+  getStudentsAll,
+  deleteStudent,
+  editStudent,
+  saveStudent
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -111,10 +117,6 @@ function Students({
     size: size ? parseInt(size, 10) : 10,
     loading: false,
   });
-  const [file, setFile] = useState(null);
-  const [reference, setReference] = useState(null);
-  const [medDocPhoto, setMedDocPhoto] = useState(null);
-  const [docPhoto, setDocPhoto] = useState([]);
 
   useEffect(() => {
     getStudentsAll({
@@ -124,10 +126,6 @@ function Students({
     });
     getClassesAll({ id: usersDataReducer?.branch?.id });
     setVisible(false);
-    setFile(null);
-    setDocPhoto([]);
-    setReference(null);
-    setMedDocPhoto(null);
     form.resetFields();
     setSelectedRowKeys([[], []]);
   }, [studentReducer?.changeData]);
@@ -209,7 +207,6 @@ function Students({
         .validateFields()
         .then((values) => {
           const fmData = new FormData();
-          file && fmData.append("file", file);
           fmData.append("firstName", values?.firstName);
           fmData.append("lastName", values?.lastName);
           fmData.append("fatherName", values?.fatherName);
@@ -217,17 +214,24 @@ function Students({
             new Date(values?.birthDate)?.toLocaleDateString()
           ).format("YYYY-MM-DD"));
           fmData.append("docNumber", values?.docNumber);
-          docPhoto.map((item) => {
-            return fmData.append("docPhoto", item);
+          values?.docPhoto && values?.docPhoto?.fileList?.map((item) => {
+            return fmData.append("docPhoto", item?.response);
           });
-          fmData.append("reference", file);
-          fmData.append("photo", file);
+          values?.reference && values?.reference?.fileList?.map((item) => {
+            return fmData.append("reference", item?.response);
+          });
+          values?.photo && values?.photo?.fileList?.map((item) => {
+            return fmData.append("photo", item?.response);
+          });
           fmData.append("studentClassId", values?.studentClassId);
           fmData.append("branchId", usersDataReducer?.branch?.id);
           fmData.append("active", true);
-          fmData.append("medDocPhoto", medDocPhoto);
+          values?.medDocPhoto && values?.medDocPhoto?.fileList?.map((item) => {
+            return fmData.append("medDocPhoto", item?.response);
+          });
           fmData.append("phoneNumber", values?.phoneNumber);
           fmData.append("password", values?.password);
+          fmData.append("paymentAmount", values?.paymentAmount);
           saveStudent(fmData);
           setOnedit(false);
         })
@@ -254,11 +258,8 @@ function Students({
               form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
               form.setFieldValue("docNumber", selectedRowKeys[1][0]?.docNumber);
               form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
-              form.setFieldValue("photo", selectedRowKeys[1][0]?.photo);
               form.setFieldValue("paymentAmount", selectedRowKeys[1][0]?.paymentAmount);
-              form.setFieldValue("branchId", usersDataReducer?.branch?.id);
               form.setFieldValue("birthDate", dayjs(selectedRowKeys[1][0]?.birthDate));
-              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -360,6 +361,8 @@ function Students({
               >
                 <Input placeholder="Talaba Familiyasini kiriting..." />
               </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item
                 key="lastName"
                 name="lastName"
@@ -373,19 +376,23 @@ function Students({
               >
                 <Input placeholder="Talaba familiya nomini kiriting..." />
               </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item
                 key="fatherName"
                 name="fatherName"
                 label={<span className="text-base font-medium">Otasi</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Talaba otasi nomini kiriting",
                   },
                 ]}
               >
                 <Input placeholder="Talaba familiya nomini kiriting..." />
               </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item
                 key="birthDate"
                 name="birthDate"
@@ -401,74 +408,6 @@ function Students({
                   className="w-full"
                   placeholder="Hodim tug'ilgan kunini kiriting..."
                 />
-                {/* <Input type="date" placeholder="Talaba familiya nomini kiriting..." /> */}
-              </Form.Item>
-              <Form.Item
-                key="branchId"
-                name="branchId"
-                label={<span className="text-base font-medium">Filial ( Branch )</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Bizness telefon nomerini kiriting",
-                  },
-                ]}
-              >
-                <Input placeholder="Bizness telefon nomerini kiriting..." />
-              </Form.Item>
-              <Form.Item
-                key="docPhoto"
-                name="docPhoto"
-                label={<span className="text-base font-medium">Passport rasm</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Passport rasm",
-                  },
-                ]}
-              >
-                <Upload
-                  customRequest={async (options) => {
-                    const { onSuccess, file } = options;
-                    docPhoto.push(file);
-                    onSuccess(file);
-                  }}
-                  listType="picture"
-                  multiple
-                  maxCount={1}
-                  accept="image/*"
-                  className="w-full"
-                >
-                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
-                    Yuklash
-                  </Button>
-                </Upload>
-              </Form.Item>
-              <Form.Item
-                key="password"
-                name="password"
-                label={<span className="text-base font-medium">Password</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "password kiriting",
-                  },
-                ]}
-              >
-                <Input type="text" placeholder="Password . . ." />
-              </Form.Item>
-              <Form.Item
-                key="paymentAmount"
-                name="paymentAmount"
-                label={<span className="text-base font-medium">To`lovni kiriting</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "password kiriting",
-                  },
-                ]}
-              >
-                <Input type="number" placeholder="T`olanadigan summa . . ." />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -483,112 +422,17 @@ function Students({
                   },
                 ]}
               >
-                <Input type="number" placeholder="Tel raqam ..." />
+                <InputNumber className="w-full" placeholder="Tel raqam ..." />
               </Form.Item>
-              <Form.Item
-                key="docNumber"
-                name="docNumber"
-                label={<span className="text-base font-medium">Passport raqami</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Passport raqami . . .",
-                  },
-                ]}
-              >
-                <Input placeholder="Passport raqami ..." />
-              </Form.Item>
-              <Form.Item
-                key="medDocPhoto"
-                name="medDocPhoto"
-                label={<span className="text-base font-medium">0/83 Yoki 0/86</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "0/83 yoki 0/86",
-                  },
-                ]}
-              >
-                <Upload
-                  customRequest={async (options) => {
-                    const { onSuccess, file } = options;
-                    setMedDocPhoto(file);
-                    onSuccess(file);
-                  }}
-                  listType="picture"
-                  multiple={false}
-                  maxCount={1}
-                  accept="image/*"
-                  className="w-full"
-                >
-                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
-                    Yuklash
-                  </Button>
-                </Upload>
-              </Form.Item>
-              <Form.Item
-                key="reference"
-                name="reference"
-                label={<span className="text-base font-medium">Ota - ona ish ma`lumotnoma</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Reference",
-                  },
-                ]}
-              >
-                <Upload
-                  customRequest={async (options) => {
-                    const { onSuccess, file } = options;
-                    setReference(file);
-                    onSuccess(file);
-                  }}
-                  listType="picture"
-                  multiple={false}
-                  maxCount={1}
-                  accept="image/*"
-                  className="w-full"
-                >
-                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
-                    Yuklash ( Ota - ona ish ma`lumotnoma )
-                  </Button>
-                </Upload>
-              </Form.Item>
-              <Form.Item
-                key="photo"
-                name="photo"
-                label={<span className="text-base font-medium">Photo 3X4</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Photo",
-                  },
-                ]}
-              >
-                <Upload
-                  customRequest={async (options) => {
-                    const { onSuccess, file } = options;
-                    setFile(file);
-                    onSuccess(file);
-                  }}
-                  listType="picture"
-                  multiple={false}
-                  maxCount={1}
-                  accept="image/*"
-                  className="w-full"
-                >
-                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
-                    Yuklash
-                  </Button>
-                </Upload>
-              </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item
                 key="studentClassId"
                 name="studentClassId"
                 label={<span className="text-base font-medium">Student sinf</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Sinf kiritng",
                   },
                 ]}
@@ -610,6 +454,167 @@ function Students({
                     );
                   })}
                 </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="password"
+                name="password"
+                label={<span className="text-base font-medium">Parol</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Parolni kiriting",
+                  },
+                ]}
+              >
+                <Input placeholder="Parolni kiriting..." />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="paymentAmount"
+                name="paymentAmount"
+                label={<span className="text-base font-medium">To`lovni kiriting</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "password kiriting",
+                  },
+                ]}
+              >
+                <InputNumber className="w-full" placeholder="T`olanadigan summa . . ." />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="docNumber"
+                name="docNumber"
+                label={<span className="text-base font-medium">Passport raqami</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Passport raqami . . .",
+                  },
+                ]}
+              >
+                <Input placeholder="Passport raqami ..." />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="docPhoto"
+                name="docPhoto"
+                label={<span className="text-base font-medium">Passport rasm</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Passport rasm",
+                  },
+                ]}
+              >
+                <Upload
+                  customRequest={async (options) => {
+                    const { onSuccess, file } = options;
+                    onSuccess(file);
+                  }}
+                  listType="picture"
+                  multiple
+                  maxCount={4}
+                  accept="image/*"
+                  className="w-full"
+                >
+                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
+                    Yuklash
+                  </Button>
+                </Upload>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="medDocPhoto"
+                name="medDocPhoto"
+                label={<span className="text-base font-medium">0/83 Yoki 0/86</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "0/83 yoki 0/86",
+                  },
+                ]}
+              >
+                <Upload
+                  customRequest={async (options) => {
+                    const { onSuccess, file } = options;
+                    onSuccess(file);
+                  }}
+                  listType="picture"
+                  multiple={false}
+                  maxCount={1}
+                  accept="image/*"
+                  className="w-full"
+                >
+                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
+                    Yuklash
+                  </Button>
+                </Upload>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="reference"
+                name="reference"
+                label={<span className="text-base font-medium">Ota - ona ish ma`lumotnoma</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Reference",
+                  },
+                ]}
+              >
+                <Upload
+                  customRequest={async (options) => {
+                    const { onSuccess, file } = options;
+                    onSuccess(file);
+                  }}
+                  listType="picture"
+                  multiple={false}
+                  maxCount={1}
+                  accept="image/*"
+                  className="w-full"
+                >
+                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
+                    Yuklash ( Ota - ona ish ma`lumotnoma )
+                  </Button>
+                </Upload>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                key="photo"
+                name="photo"
+                label={<span className="text-base font-medium">Photo 3X4</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Photo",
+                  },
+                ]}
+              >
+                <Upload
+                  customRequest={async (options) => {
+                    const { onSuccess, file } = options;
+                    onSuccess(file);
+                  }}
+                  listType="picture"
+                  multiple={false}
+                  maxCount={1}
+                  accept="image/*"
+                  className="w-full"
+                >
+                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
+                    Yuklash
+                  </Button>
+                </Upload>
               </Form.Item>
             </Col>
           </Row>
