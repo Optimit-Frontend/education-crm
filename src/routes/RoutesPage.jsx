@@ -2,8 +2,6 @@ import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import DefaultLayout from "../layout/Layout";
 import Loading from "../components/Loading/Loading";
-import StudentPayment from "../pages/Students/StudentPayment.jsx";
-import StudentDebt from "../pages/Students/StudentDebt.jsx";
 
 const Dashboard = lazy(() => {
   return import("../pages/Dashboard/Dashboard");
@@ -25,6 +23,9 @@ const Room = lazy(() => {
 });
 const Subjects = lazy(() => {
   return import("../pages/Settings/Subjects");
+});
+const SubjectForLevel = lazy(() => {
+  return import("../pages/Settings/SubjectForLevel");
 });
 const Role = lazy(() => {
   return import("../pages/Employee/Role");
@@ -56,6 +57,12 @@ const Product = lazy(() => {
 const WorkExpirence = lazy(() => {
   return import("../pages/Employee/WorkExpirence");
 });
+const StudentDebt = lazy(() => {
+  return import("../pages/Students/StudentDebt");
+});
+const StudentPayment = lazy(() => {
+  return import("../pages/Students/StudentPayment");
+});
 const Achievement = lazy(() => {
   return import("../pages/Employee/Achievement");
 });
@@ -78,6 +85,7 @@ function RoutesPage() {
           <Route path="settings/roomType" element={<RoomType />} />
           <Route path="settings/room" element={<Room />} />
           <Route path="settings/subjects" element={<Subjects />} />
+          <Route path="settings/subjectsForLevel" element={<SubjectForLevel />} />
           <Route path="settings/balance" element={<Balance />} />
           <Route path="settings/warehouse" element={<Warehouse />} />
           <Route path="kitchen/product" element={<Product />} />

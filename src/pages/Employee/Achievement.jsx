@@ -73,7 +73,6 @@ function Achievement({
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
-  const [file, setFile] = useState(null);
   const enter = useKeyPress("Enter");
   const size = localStorage.getItem("PageSize") || 10;
   const [pageData, setPageData] = useState({
@@ -92,7 +91,6 @@ function Achievement({
     setVisible(false);
     setOnedit(false);
     form.resetFields();
-    setFile(null);
     setSelectedRowKeys([[], []]);
   }, [achievementReducer?.changeData]);
 
@@ -116,7 +114,9 @@ function Achievement({
           const fmData = new FormData();
           fmData.append("name", values?.name);
           fmData.append("aboutAchievement", values?.aboutAchievement);
-          file && fmData.append("photoCertificate", file);
+          values?.photoCertificate && values?.photoCertificate?.fileList?.map((item) => {
+            return fmData.append("photoCertificate", item?.response);
+          });
           fmData.append("userId", values?.userId);
           fmData.append("id", selectedRowKeys[1][0]?.id);
           selectedRowKeys[1][0]?.id && editAchievement(fmData);
@@ -130,7 +130,9 @@ function Achievement({
           const fmData = new FormData();
           fmData.append("name", values?.name);
           fmData.append("aboutAchievement", values?.aboutAchievement);
-          file && fmData.append("photoCertificate", file);
+          values?.photoCertificate && values?.photoCertificate?.fileList?.map((item) => {
+            return fmData.append("photoCertificate", item?.response);
+          });
           fmData.append("userId", values?.userId);
           saveAchievement(fmData);
           setOnedit(false);
@@ -236,7 +238,6 @@ function Achievement({
         onCancel={() => {
           setVisible(false);
           setOnedit(false);
-          setFile(null);
           form.resetFields();
         }}
         onOk={formValidate}
@@ -283,7 +284,6 @@ function Achievement({
                 <Upload
                   customRequest={async (options) => {
                     const { onSuccess, file } = options;
-                    setFile(file);
                     onSuccess(file);
                   }}
                   listType="picture"

@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import {
   Col, Form, Input, Modal, Row
 } from "antd";
-import { useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -16,7 +15,7 @@ import subjectReducer, {
 
 const columns = [
   {
-    title: "Bizness",
+    title: "Fan nomi",
     dataIndex: "name",
     key: "name",
     width: "60%",
@@ -51,7 +50,6 @@ function Subjects({
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const navigate = useNavigate();
   const size = localStorage.getItem("PageSize") || 10;
   const [pageData, setPageData] = useState({
     page: 1,
@@ -62,6 +60,7 @@ function Subjects({
   useEffect(() => {
     getSubject(usersDataReducer?.branch?.id);
     setVisible(false);
+    setOnedit(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
   }, [subjectReducer?.changeData]);
@@ -76,7 +75,6 @@ function Subjects({
   const onChange = (pageNumber, page) => {
     setPageData({ size: page, page: pageNumber, loading: false });
     localStorage.setItem("PageSize", page);
-    navigate("/settings/roomType");
   };
 
   const formValidate = () => {
@@ -84,8 +82,11 @@ function Subjects({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editSubject({ ...values, id: selectedRowKeys[1][0]?.id });
-          setOnedit(false);
+          selectedRowKeys[1][0]?.id && editSubject({
+            ...values,
+            branchId: usersDataReducer?.branch?.id,
+            id: selectedRowKeys[1][0]?.id
+          });
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -235,12 +236,9 @@ function Subjects({
   );
 }
 
-export default connect(
-  (subjectReducer, usersDataReducer),
-  {
-    deleteSubject,
-    editSubject,
-    saveSubject,
-    getSubject
-  }
-)(Subjects);
+export default connect((subjectReducer, usersDataReducer), {
+  deleteSubject,
+  editSubject,
+  saveSubject,
+  getSubject
+})(Subjects);
