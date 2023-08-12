@@ -87,7 +87,6 @@ function Employee({
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
-  const [file, setFile] = useState(null);
   const enter = useKeyPress("Enter");
   const location = useLocation();
   const navigate = useNavigate();
@@ -108,7 +107,6 @@ function Employee({
       branchId: usersDataReducer?.branch?.id,
     });
     setVisible(false);
-    setFile(null);
     form.resetFields();
     setSelectedRowKeys([[], []]);
   }, [employeeReducer?.changeData]);
@@ -173,7 +171,9 @@ function Employee({
         .validateFields()
         .then((values) => {
           const fmData = new FormData();
-          file && fmData.append("file", file);
+          values?.file && values?.file?.fileList?.map((item) => {
+            return fmData.append("file", item?.response);
+          });
           fmData.append("email", values?.email);
           fmData.append("phoneNumber", values?.phoneNumber);
           fmData.append("fatherName", values?.fatherName);
@@ -190,7 +190,9 @@ function Employee({
           fmData.append("branchId", usersDataReducer?.branch?.id);
           fmData.append("married", values?.married);
           fmData.append("roleId", values?.roleId);
-          fmData.append("profilePhoto", file);
+          values?.profilePhoto && values?.profilePhoto?.fileList?.map((item) => {
+            return fmData.append("profilePhoto", item?.response);
+          });
           fmData.append("gender", values?.gender);
           fmData.append("workDays", values?.workDays);
           saveEmployee(fmData);
@@ -295,7 +297,6 @@ function Employee({
         width={700}
         onCancel={() => {
           setVisible(false);
-          setFile(null);
           setOnedit(false);
           form.resetFields();
         }}
@@ -564,7 +565,6 @@ function Employee({
                 <Upload
                   customRequest={async (options) => {
                     const { onSuccess, file } = options;
-                    setFile(file);
                     onSuccess(file);
                   }}
                   listType="picture"

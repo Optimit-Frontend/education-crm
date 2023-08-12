@@ -1,21 +1,19 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, Modal, Row, Select
+  Col, Form, Input, InputNumber, Modal, Row, Select
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import employeeReducer, {
-  getEmployeeBranch,
-} from "../../reducer/employeeReducer";
 import transactionReducer, {
   deleteTransaction,
   editTransaction,
   getTransactionHistoryActiveTrue,
   getTransactionHistoryFindAllBranch,
-  getTrasactionHistoryById, saveTransaction,
+  getTrasactionHistoryById,
+  saveTransaction,
 } from "../../reducer/transactionReducer";
 import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
 
@@ -82,14 +80,13 @@ function Transaction({
   saveTransaction,
   editTransaction,
   transactionReducer,
-  balanceReducer, getEmployeeBranch, employeeReducer, deleteTransaction,
+  balanceReducer, deleteTransaction,
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const [moneyAmount, setMoneyAmount] = useState(0);
   const size = localStorage.getItem("PageSize") || 10;
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -104,12 +101,6 @@ function Transaction({
   useEffect(() => {
     getTransactionHistoryFindAllBranch(usersDataReducer?.branch?.id);
     getAllBalanceBranch(usersDataReducer?.branch?.id);
-    getEmployeeBranch({
-      page: pageData.page,
-      size: pageData.size,
-      branchId: usersDataReducer?.branch?.id,
-    });
-    // getEmployeeBranchId(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
@@ -297,8 +288,8 @@ function Transaction({
                   },
                 ]}
               >
-                <Input
-                  type="number"
+                <InputNumber
+                  className="w-full"
                   placeholder="So`mmani kiriting ..."
                 />
               </Form.Item>
@@ -362,19 +353,6 @@ function Transaction({
                   })}
                 </Select>
               </Form.Item>
-              {/* <Form.Item */}
-              {/*   key="accountNumber" */}
-              {/*   name="accountNumber" */}
-              {/*   label={<span className="text-base font-medium">Hisob raqam</span>} */}
-              {/*   rules={[ */}
-              {/*     { */}
-              {/*       required: false, */}
-              {/*       message: "Hisob raqamni kiritng", */}
-              {/*     }, */}
-              {/*   ]} */}
-              {/* > */}
-              {/*   <Input type="number" placeholder="Hisob raqamni kiriting..." /> */}
-              {/* </Form.Item> */}
             </Col>
             <Col span={12}>
               <Form.Item
@@ -466,19 +444,12 @@ function Transaction({
   );
 }
 
-export default connect(
-  (
-    usersDataReducer,
-    transactionReducer,
-    balanceReducer, employeeReducer
-  ), {
-    getTrasactionHistoryById,
-    getTransactionHistoryFindAllBranch,
-    getTransactionHistoryActiveTrue,
-    saveTransaction,
-    editTransaction,
-    getAllBalanceBranch,
-    getEmployeeBranch,
-    deleteTransaction
-  }
-)(Transaction);
+export default connect((usersDataReducer, transactionReducer, balanceReducer), {
+  getTrasactionHistoryById,
+  getTransactionHistoryFindAllBranch,
+  getTransactionHistoryActiveTrue,
+  saveTransaction,
+  editTransaction,
+  getAllBalanceBranch,
+  deleteTransaction
+})(Transaction);

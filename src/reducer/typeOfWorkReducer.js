@@ -3,62 +3,62 @@ import { toast } from "react-toastify";
 import { apiCall } from "../api";
 
 export const slice = createSlice({
-  name: "subjectData",
+  name: "typeOfWorkData",
   initialState: {
-    subjects: null,
+    typeOfWork: null,
     message: null,
     changeData: false,
   },
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.subjects = action.payload?.data;
+        state.typeOfWork = action.payload?.data;
       } else {
-        state.subjects = null;
         state.message = action.payload.message;
-        toast.warning(action.payload.message || "Fanlarni yuklashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Ish turlarini yuklashda muammo bo'ldi");
+        state.typeOfWork = null;
       }
       state.changeData = false;
     },
     saveFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Fan muvaffaqiyatli qo'shildi");
+        toast.success("Ish turi muvaffaqiyatli qo'shildi");
       } else {
-        toast.warning(action.payload.message || "Fanni qo'shishda muammo bo'ldi");
+        toast.warning(action.payload.message || "Ish turini qo'shishda muammo bo'ldi");
       }
       state.changeData = true;
     },
     editFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Fan muvafaqiyatli taxrirlandi");
+        toast.success("Ish turi muvafaqiyatli taxrirlandi");
       } else {
-        toast.warning(action.payload.message || "Fanni taxrirlashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Ish turini taxrirlashda muammo bo'ldi");
       }
       state.changeData = true;
     },
     deleteFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Fan muvafaqiyatli o'chirildi");
+        toast.success("Ish turi muvafaqiyatli o'chirildi");
       } else {
-        toast.warning("Fanni o'chirishda muammo bo'ldi");
+        toast.warning("Ish turini o'chirishda muammo bo'ldi");
       }
       state.changeData = true;
     },
   },
 });
 
-export const getSubject = (data) => {
+export const getAllTypeOfWork = (data) => {
   return apiCall({
-    url: `/subject/getAllByBranchId/${data}`,
+    url: `/typeOfWork/getAllByBranchId/${data}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
 };
 
-export const saveSubject = (data) => {
+export const saveTypeOfWork = (data) => {
   return apiCall({
-    url: "/subject/create",
+    url: "/typeOfWork/save",
     method: "post",
     data,
     onSuccess: slice.actions.saveFrom.type,
@@ -66,9 +66,9 @@ export const saveSubject = (data) => {
   });
 };
 
-export const editSubject = (data) => {
+export const editTypeOfWork = (data) => {
   return apiCall({
-    url: "/subject/update",
+    url: "/typeOfWork/update",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,
@@ -76,9 +76,9 @@ export const editSubject = (data) => {
   });
 };
 
-export const deleteSubject = (data) => {
+export const deleteTypeOfWork = (data) => {
   return apiCall({
-    url: `/subject/delete/${data}`,
+    url: `/typeOfWork/delete/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,

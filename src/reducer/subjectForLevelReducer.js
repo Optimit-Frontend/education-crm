@@ -3,62 +3,62 @@ import { toast } from "react-toastify";
 import { apiCall } from "../api";
 
 export const slice = createSlice({
-  name: "subjectData",
+  name: "subjectForLevel",
   initialState: {
-    subjects: null,
+    subjectForLevel: null,
     message: null,
     changeData: false,
   },
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.subjects = action.payload?.data;
+        state.subjectForLevel = action.payload?.data;
       } else {
-        state.subjects = null;
         state.message = action.payload.message;
-        toast.warning(action.payload.message || "Fanlarni yuklashda muammo bo'ldi");
+        state.subjectForLevel = null;
+        toast.warning(action.payload.message || "Sinflar kesimidagi fanlarni yuklashda muammo bo'ldi");
       }
       state.changeData = false;
     },
     saveFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Fan muvaffaqiyatli qo'shildi");
+        toast.success("Sinflar kesimidagi fan muvaffaqiyatli qo'shildi");
       } else {
-        toast.warning(action.payload.message || "Fanni qo'shishda muammo bo'ldi");
+        toast.warning(action.payload.message || "Sinflar kesimidagi fanni qo'shishda muammo bo'ldi");
       }
       state.changeData = true;
     },
     editFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Fan muvafaqiyatli taxrirlandi");
+        toast.success("Sinflar kesimidagi fan muvafaqiyatli taxrirlandi");
       } else {
-        toast.warning(action.payload.message || "Fanni taxrirlashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Sinflar kesimidagi fanni taxrirlashda muammo bo'ldi");
       }
       state.changeData = true;
     },
     deleteFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Fan muvafaqiyatli o'chirildi");
+        toast.success("Sinflar kesimidagi fan muvafaqiyatli o'chirildi");
       } else {
-        toast.warning("Fanni o'chirishda muammo bo'ldi");
+        toast.warning("Sinflar kesimidagi fanni o'chirishda muammo bo'ldi");
       }
       state.changeData = true;
     },
   },
 });
 
-export const getSubject = (data) => {
+export const getSubjectForLevel = (data) => {
   return apiCall({
-    url: `/subject/getAllByBranchId/${data}`,
+    url: `/subjectLevel/getAllByBranchId/${data}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
 };
 
-export const saveSubject = (data) => {
+export const saveSubjectForLevel = (data) => {
   return apiCall({
-    url: "/subject/create",
+    url: "/subjectLevel/create",
     method: "post",
     data,
     onSuccess: slice.actions.saveFrom.type,
@@ -66,9 +66,9 @@ export const saveSubject = (data) => {
   });
 };
 
-export const editSubject = (data) => {
+export const editSubjectForLevel = (data) => {
   return apiCall({
-    url: "/subject/update",
+    url: "/subjectLevel/update",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,
@@ -76,9 +76,9 @@ export const editSubject = (data) => {
   });
 };
 
-export const deleteSubject = (data) => {
+export const deleteSubjectForLevel = (data) => {
   return apiCall({
-    url: `/subject/delete/${data}`,
+    url: `/subjectLevel/delete/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,

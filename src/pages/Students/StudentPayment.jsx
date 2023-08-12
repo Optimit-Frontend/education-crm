@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, Modal, Row, Select
+  Col, Form, Input, InputNumber, Modal, Row, Select
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
@@ -300,10 +300,7 @@ function StudentPayment({
                   },
                 ]}
               >
-                <Input
-                  // value={money}
-                  // onchange={((e) => { return setMoney(e.target.value); })}
-                  type="number"
+                <InputNumber
                   placeholder="So`mmani kiriting ..."
                 />
               </Form.Item>

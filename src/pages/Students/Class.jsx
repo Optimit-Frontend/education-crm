@@ -414,7 +414,7 @@ function Class({
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Xona tanlang"
+                  placeholder="Sinf bosqichini tanlang"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"

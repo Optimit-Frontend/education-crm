@@ -6,12 +6,15 @@ import businessBranchesReducer from "./reducer/businessBranchesReducer";
 import roomTypeReducer from "./reducer/roomTypeReducer";
 import roomReducer from "./reducer/roomReducer";
 import subjectReducer from "./reducer/subjectReducer";
+import subjectForLevelReducer from "./reducer/subjectForLevelReducer";
 import roleReducer from "./reducer/roleReducer";
 import employeeReducer from "./reducer/employeeReducer";
 import studentReducer from "./reducer/studentReducer";
 import classReducer from "./reducer/classReducer";
 import achievementReducer from "./reducer/achievementReducer";
 import measurmentReducer from "./reducer/measurmentReducer";
+import warehouseReducer from "./reducer/warehouseReducer";
+import typeOfWorkReducer from "./reducer/typeOfWorkReducer";
 import productReducer from "./reducer/productReducer";
 import balanceReducer from "./reducer/balanceReducer";
 import workExpirenceReducer from "./reducer/workExpirenceReducer";
@@ -28,12 +31,15 @@ export default configureStore({
     roomTypeReducer,
     roomReducer,
     subjectReducer,
+    subjectForLevelReducer,
     roleReducer,
     balanceReducer,
     workExpirenceReducer,
     employeeReducer,
+    typeOfWorkReducer,
     achievementReducer,
     measurmentReducer,
+    warehouseReducer,
     productReducer,
     studentReducer,
     classReducer,

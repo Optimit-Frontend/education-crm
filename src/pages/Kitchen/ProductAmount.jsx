@@ -1,49 +1,37 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, Modal, Row
+  Col, Form, Input, Modal, Row, Select
 } from "antd";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import subjectReducer, {
-  deleteSubject,
-  editSubject,
-  getSubject,
-  saveSubject
-} from "../../reducer/subjectReducer";
+import warehouseReducer, {
+  deleteWarehouse,
+  editWarehouse,
+  getAllWarehouse,
+  saveWarehouse
+} from "../../reducer/warehouseReducer";
+
+const { Option } = Select;
 
 const columns = [
   {
-    title: "Fan nomi",
+    title: "Omborxona nomi",
     dataIndex: "name",
     key: "name",
-    width: "60%",
+    width: "100%",
     search: true,
-  },
-  {
-    title: "Holati",
-    dataIndex: "active",
-    key: "active",
-    width: "40%",
-    search: false,
-    render: (eski) => {
-      return eski ? (
-        <span className="bg-green-200 text-green-700 py-1 px-3 rounded-full text-xs">Active</span>
-      ) : (
-        <span className="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Nofaol</span>
-      );
-    },
   },
 ];
 
-function Subjects({
-  deleteSubject,
-  editSubject,
-  saveSubject,
-  getSubject,
+function ProductAmount({
+  deleteWarehouse,
+  editWarehouse,
+  getAllWarehouse,
+  saveWarehouse,
   usersDataReducer,
-  subjectReducer
+  warehouseReducer,
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -58,16 +46,16 @@ function Subjects({
   });
 
   useEffect(() => {
-    getSubject(usersDataReducer?.branch?.id);
+    getAllWarehouse(usersDataReducer?.branch?.id);
     setVisible(false);
     setOnedit(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [subjectReducer?.changeData]);
+  }, [warehouseReducer?.changeData]);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteSubject(item);
+      deleteWarehouse(item);
       return null;
     });
   };
@@ -82,10 +70,10 @@ function Subjects({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editSubject({
+          selectedRowKeys[1][0]?.id && editWarehouse({
             ...values,
-            branchId: usersDataReducer?.branch?.id,
-            id: selectedRowKeys[1][0]?.id
+            id: selectedRowKeys[1][0]?.id,
+            branchId: usersDataReducer?.branch?.id
           });
         })
         .catch((info) => {
@@ -94,7 +82,7 @@ function Subjects({
       : form
         .validateFields()
         .then((values) => {
-          saveSubject({ name: values.name, branchId: usersDataReducer?.branch?.id });
+          saveWarehouse({ name: values.name, branchId: usersDataReducer?.branch?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -108,7 +96,7 @@ function Subjects({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Fanlar</h3>
+      <h3 className="text-2xl font-bold mb-5">Mahsulot miqdorlari</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -185,7 +173,7 @@ function Subjects({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Fan
+            Omborxona
             {onedit ? "ni taxrirlash" : " qo'shish"}
           </h3>
         )}
@@ -205,17 +193,37 @@ function Subjects({
           <Row gutter={12}>
             <Col span={24}>
               <Form.Item
-                key="name"
-                name="name"
-                label={<span className="text-base font-medium">Fan nomi</span>}
+                key="warehouseId"
+                name="warehouseId"
+                label={<span className="text-base font-medium">Omborxonani tanlang</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Fan nomini kiriting",
+                    message: "Omborxonani tanlang",
                   },
                 ]}
               >
-                <Input placeholder="Fan nomini kiriting..." />
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Xona turini tanlang"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={
+                    (input, option) => {
+                      return option.children.toLowerCase()?.includes(input.toLowerCase());
+                    }
+                  }
+                >
+                  {warehouseReducer?.warehouse?.map((option) => {
+                    return (
+                      <Option value={option.id} key={option.id}>
+                        {option.name}
+                      </Option>
+                    );
+                  })}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
@@ -226,7 +234,7 @@ function Subjects({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={subjectReducer?.subjects}
+        tableData={warehouseReducer?.warehouse}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
@@ -236,9 +244,6 @@ function Subjects({
   );
 }
 
-export default connect((subjectReducer, usersDataReducer), {
-  deleteSubject,
-  editSubject,
-  saveSubject,
-  getSubject
-})(Subjects);
+export default connect((warehouseReducer, usersDataReducer), {
+  deleteWarehouse, editWarehouse, saveWarehouse, getAllWarehouse
+})(ProductAmount);

@@ -1,49 +1,42 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, Modal, Row
+  Col, Form, Input, InputNumber, Modal, Row
 } from "antd";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import subjectReducer, {
-  deleteSubject,
-  editSubject,
-  getSubject,
-  saveSubject
-} from "../../reducer/subjectReducer";
+import typeOfWorkReducer, {
+  deleteTypeOfWork,
+  editTypeOfWork,
+  getAllTypeOfWork,
+  saveTypeOfWork
+} from "../../reducer/typeOfWorkReducer";
 
 const columns = [
   {
-    title: "Fan nomi",
+    title: "Ish turi",
     dataIndex: "name",
     key: "name",
     width: "60%",
     search: true,
   },
   {
-    title: "Holati",
-    dataIndex: "active",
-    key: "active",
+    title: "Ish narxi",
+    dataIndex: "price",
+    key: "price",
     width: "40%",
-    search: false,
-    render: (eski) => {
-      return eski ? (
-        <span className="bg-green-200 text-green-700 py-1 px-3 rounded-full text-xs">Active</span>
-      ) : (
-        <span className="bg-red-200 text-red-600 py-1 px-3 rounded-full text-xs">Nofaol</span>
-      );
-    },
+    search: true,
   },
 ];
 
-function Subjects({
-  deleteSubject,
-  editSubject,
-  saveSubject,
-  getSubject,
+function TypeOfWork({
+  deleteTypeOfWork,
+  editTypeOfWork,
+  saveTypeOfWork,
+  getAllTypeOfWork,
   usersDataReducer,
-  subjectReducer
+  typeOfWorkReducer
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -58,16 +51,16 @@ function Subjects({
   });
 
   useEffect(() => {
-    getSubject(usersDataReducer?.branch?.id);
+    getAllTypeOfWork(usersDataReducer?.branch?.id);
     setVisible(false);
     setOnedit(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [subjectReducer?.changeData]);
+  }, [typeOfWorkReducer?.changeData]);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteSubject(item);
+      deleteTypeOfWork(item);
       return null;
     });
   };
@@ -82,10 +75,10 @@ function Subjects({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editSubject({
+          selectedRowKeys[1][0]?.id && editTypeOfWork({
             ...values,
-            branchId: usersDataReducer?.branch?.id,
-            id: selectedRowKeys[1][0]?.id
+            id: selectedRowKeys[1][0]?.id,
+            branchId: usersDataReducer?.branch?.id
           });
         })
         .catch((info) => {
@@ -94,7 +87,7 @@ function Subjects({
       : form
         .validateFields()
         .then((values) => {
-          saveSubject({ name: values.name, branchId: usersDataReducer?.branch?.id });
+          saveTypeOfWork({ ...values, branchId: usersDataReducer?.branch?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -108,7 +101,7 @@ function Subjects({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Fanlar</h3>
+      <h3 className="text-2xl font-bold mb-5">Ish turlari</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -116,6 +109,7 @@ function Subjects({
               setOnedit(true);
               setVisible(true);
               form.setFieldValue("name", selectedRowKeys[1][0]?.name);
+              form.setFieldValue("price", selectedRowKeys[1][0]?.price);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -185,8 +179,8 @@ function Subjects({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Fan
-            {onedit ? "ni taxrirlash" : " qo'shish"}
+            Ish turi
+            {onedit ? "ni taxrirlash" : "ni qo'shish"}
           </h3>
         )}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
@@ -207,15 +201,30 @@ function Subjects({
               <Form.Item
                 key="name"
                 name="name"
-                label={<span className="text-base font-medium">Fan nomi</span>}
+                label={<span className="text-base font-medium">Ish nomi</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Fan nomini kiriting",
+                    message: "Ish nomini kiriting",
                   },
                 ]}
               >
-                <Input placeholder="Fan nomini kiriting..." />
+                <Input placeholder="Ish nomini kiriting..." />
+              </Form.Item>
+            </Col>
+            <Col span={24}>
+              <Form.Item
+                key="price"
+                name="price"
+                label={<span className="text-base font-medium">Ish narxi</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Ish narxini kiriting",
+                  },
+                ]}
+              >
+                <InputNumber className="w-full" placeholder="Ish narxini kiriting..." />
               </Form.Item>
             </Col>
           </Row>
@@ -226,7 +235,7 @@ function Subjects({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={subjectReducer?.subjects}
+        tableData={typeOfWorkReducer?.typeOfWork}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
@@ -236,9 +245,6 @@ function Subjects({
   );
 }
 
-export default connect((subjectReducer, usersDataReducer), {
-  deleteSubject,
-  editSubject,
-  saveSubject,
-  getSubject
-})(Subjects);
+export default connect((typeOfWorkReducer, usersDataReducer), {
+  deleteTypeOfWork, editTypeOfWork, saveTypeOfWork, getAllTypeOfWork
+})(TypeOfWork);

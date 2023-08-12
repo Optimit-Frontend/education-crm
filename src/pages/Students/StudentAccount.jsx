@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, Modal, Row, Select
+  Col, Form, InputNumber, Modal, Row, Select
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
@@ -12,7 +12,9 @@ import studentAccountReducer, {
   deleteStudentAccount,
   editStudentAccount,
   getStudentAccountByBranch,
-  getStudentAccountById, saveStudentAccount, saveStudentPayment,
+  getStudentAccountById,
+  saveStudentAccount,
+  saveStudentPayment,
 } from "../../reducer/studentAccountReducer";
 import studentReducer, { getStudentsAll } from "../../reducer/studentReducer";
 
@@ -72,8 +74,15 @@ const columns = [
 
 function StudentAccount({
   usersDataReducer,
-  getAllBalanceBranch, studentAccountReducer, getStudentsAll, studentReducer,
-  balanceReducer, deleteStudentAccount, editStudentAccount, saveStudentPayment, saveStudentAccount, getStudentAccountByBranch, getStudentAccountById
+  getAllBalanceBranch,
+  studentAccountReducer,
+  getStudentsAll,
+  studentReducer,
+  balanceReducer,
+  deleteStudentAccount,
+  editStudentAccount,
+  saveStudentAccount,
+  getStudentAccountByBranch
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -81,7 +90,6 @@ function StudentAccount({
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
   const [newAccountNumber, setNewAccountNumber] = useState(0);
-  const [accNumber, setAccNumber] = useState(null);
   const size = localStorage.getItem("PageSize") || 10;
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
@@ -96,7 +104,11 @@ function StudentAccount({
   useEffect(() => {
     getStudentAccountByBranch(usersDataReducer?.branch?.id);
     getAllBalanceBranch(usersDataReducer?.branch?.id);
-    getStudentsAll({ branchId: usersDataReducer.branch?.id, page: pageData.page, size: pageData.size });
+    getStudentsAll({
+      branchId: usersDataReducer.branch?.id,
+      page: pageData.page,
+      size: pageData.size
+    });
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
@@ -133,7 +145,6 @@ function StudentAccount({
       deleteStudentAccount(parseInt(item?.accountNumber, 10));
       return null;
     });
-    console.log(arr);
   };
 
   const onChange = (pageNumber, page) => {
@@ -148,11 +159,8 @@ function StudentAccount({
         .then((values) => {
           selectedRowKeys[1][0]?.id && editStudentAccount({
             ...values,
-            // id: selectedRowKeys[1][0]?.id,
-            // accountNumber: selectedRowKeys[1][0]?.accountNumber,
             newAccountNumber: newAccountNumber || "0",
           });
-          console.log(selectedRowKeys);
           setOnedit(false);
         })
         .catch((info) => {
@@ -163,7 +171,6 @@ function StudentAccount({
         .then((values) => {
           saveStudentAccount({
             ...values,
-            // discount: parseInt(selectedRowKeys[1][0].discount, 10)
           });
           setOnedit(false);
         })
@@ -190,7 +197,6 @@ function StudentAccount({
               form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
               form.setFieldValue("discount", selectedRowKeys[1][0]?.discount);
               form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalance?.accountNumber);
-              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -235,7 +241,6 @@ function StudentAccount({
           onClick={() => {
             handleDelete(selectedRowKeys[1]);
             setSelectedRowKeys([[], []]);
-            console.log(selectedRowKeys);
           }}
           type="button"
           className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
@@ -291,7 +296,7 @@ function StudentAccount({
                   },
                 ]}
               >
-                <Input type="number" placeholder="Shot raqam kiriting" />
+                <InputNumber className="w-full" placeholder="Shot raqam kiriting" />
               </Form.Item>
               <Form.Item
                 key="discount"
@@ -304,7 +309,7 @@ function StudentAccount({
                   },
                 ]}
               >
-                <Input type="number" placeholder="Chegirma %" />
+                <InputNumber className="w-full" placeholder="Chegirma %" />
               </Form.Item>
               <Form.Item
                 key="mainBalanceId"
@@ -350,10 +355,10 @@ function StudentAccount({
                       },
                     ]}
                   >
-                    <Input
+                    <InputNumber
+                      className="w-full"
                       value={newAccountNumber}
                       onChange={(e) => { return setNewAccountNumber(e.target.value); }}
-                      type="number"
                       placeholder="yangi shot raqam kiriting"
                     />
                   </Form.Item>

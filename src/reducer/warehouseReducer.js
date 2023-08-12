@@ -3,62 +3,62 @@ import { toast } from "react-toastify";
 import { apiCall } from "../api";
 
 export const slice = createSlice({
-  name: "subjectData",
+  name: "warehouseData",
   initialState: {
-    subjects: null,
+    warehouse: null,
     message: null,
     changeData: false,
   },
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.subjects = action.payload?.data;
+        state.warehouse = action.payload?.data;
       } else {
-        state.subjects = null;
         state.message = action.payload.message;
-        toast.warning(action.payload.message || "Fanlarni yuklashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Xona turlarini yuklashda muammo bo'ldi");
+        state.warehouse = null;
       }
       state.changeData = false;
     },
     saveFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Fan muvaffaqiyatli qo'shildi");
+        toast.success("Ombor muvaffaqiyatli qo'shildi");
       } else {
-        toast.warning(action.payload.message || "Fanni qo'shishda muammo bo'ldi");
+        toast.warning(action.payload.message || "Omborni qo'shishda muammo bo'ldi");
       }
       state.changeData = true;
     },
     editFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Fan muvafaqiyatli taxrirlandi");
+        toast.success("Ombor muvafaqiyatli taxrirlandi");
       } else {
-        toast.warning(action.payload.message || "Fanni taxrirlashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Omborni taxrirlashda muammo bo'ldi");
       }
       state.changeData = true;
     },
     deleteFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Fan muvafaqiyatli o'chirildi");
+        toast.success("Ombor muvafaqiyatli o'chirildi");
       } else {
-        toast.warning("Fanni o'chirishda muammo bo'ldi");
+        toast.warning("Omborni o'chirishda muammo bo'ldi");
       }
       state.changeData = true;
     },
   },
 });
 
-export const getSubject = (data) => {
+export const getAllWarehouse = (data) => {
   return apiCall({
-    url: `/subject/getAllByBranchId/${data}`,
+    url: `/warehouse/getAll/${data}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
 };
 
-export const saveSubject = (data) => {
+export const saveWarehouse = (data) => {
   return apiCall({
-    url: "/subject/create",
+    url: "/warehouse/create",
     method: "post",
     data,
     onSuccess: slice.actions.saveFrom.type,
@@ -66,9 +66,9 @@ export const saveSubject = (data) => {
   });
 };
 
-export const editSubject = (data) => {
+export const editWarehouse = (data) => {
   return apiCall({
-    url: "/subject/update",
+    url: "/warehouse/update",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,
@@ -76,9 +76,9 @@ export const editSubject = (data) => {
   });
 };
 
-export const deleteSubject = (data) => {
+export const deleteWarehouse = (data) => {
   return apiCall({
-    url: `/subject/delete/${data}`,
+    url: `/warehouse/delete/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,
