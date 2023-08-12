@@ -4,6 +4,7 @@ import DefaultLayout from "../layout/Layout";
 import Loading from "../components/Loading/Loading";
 import StudentPayment from "../pages/Students/StudentPayment.jsx";
 import StudentDebt from "../pages/Students/StudentDebt.jsx";
+import Salary from "../pages/Salary/Salary.jsx";
 
 const Dashboard = lazy(() => {
   return import("../pages/Dashboard/Dashboard");
@@ -85,6 +86,7 @@ function RoutesPage() {
           <Route path="transactions" element={<Transaction />} />
           <Route path="student-transaction" element={<StudentPayment />} />
           <Route path="student-debts" element={<StudentDebt />} />
+          <Route path="salaries" element={<Salary />} />
         </Route>
         <Route path="/login" element={<Login />} />
         {/* <Route path='*' element={<Error404 />} /> */}

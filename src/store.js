@@ -18,6 +18,7 @@ import workExpirenceReducer from "./reducer/workExpirenceReducer";
 import levelReducer from "./reducer/levelReducer";
 import transactionReducer from "./reducer/transactionReducer";
 import studentAccountReducer from "./reducer/studentAccountReducer";
+import salaryReducer from "./reducer/salaryReducer.js";
 
 export default configureStore({
   reducer: {
@@ -38,7 +39,8 @@ export default configureStore({
     classReducer,
     levelReducer,
     transactionReducer,
-    studentAccountReducer
+    studentAccountReducer,
+    salaryReducer
   },
   middleware: [api],
 });
