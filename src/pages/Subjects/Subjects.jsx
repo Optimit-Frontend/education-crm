@@ -70,10 +70,7 @@ const columns = [
 
 function Salary({
   usersDataReducer,
-  getGiveSalary,
-  saveSalary, salaryReducer,
-  editSalary, balanceReducer, savePartlySalary,
-  deleteSalary, getAllBalanceBranch, businessBranchesReducer, getBusinessBranch
+  getAllBalanceBranch, getBusinessBranch
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -360,17 +357,9 @@ function Salary({
 
 export default connect(
   (
-    usersDataReducer,
-    employeeReducer, salaryReducer, balanceReducer, businessBranchesReducer
+    usersDataReducer, employeeReducer, salaryReducer, balanceReducer, businessBranchesReducer
   ), {
     getBusinessBranch,
-    getGiveSalary,
-    savePartlySalary,
-    saveGiveDebtToEmployee,
-    saveGiveCashAdvance,
-    saveSalary,
-    editSalary,
-    deleteSalary,
     getEmployeeBranchId,
     getAllBalanceBranch
   }

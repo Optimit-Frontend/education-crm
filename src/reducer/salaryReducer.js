@@ -59,7 +59,7 @@ export const savePartlySalary = (data) => {
   return apiCall({
     url: `/salary/givePartlySalary?phoneNumber=${data.phoneNumber}&partlySalary=${data?.partlySalary}&paymentType=${data?.paymentType}`,
     method: "post",
-    data,
+    // data,
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
