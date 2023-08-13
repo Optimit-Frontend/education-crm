@@ -58,7 +58,8 @@ export const getGiveSalary = (data) => {
 export const savePartlySalary = (data) => {
   return apiCall({
     url: `/salary/givePartlySalary?phoneNumber=${data.phoneNumber}&partlySalary=${data?.partlySalary}&paymentType=${data?.paymentType}`,
-    method: "get",
+    method: "post",
+    data,
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
@@ -68,6 +69,7 @@ export const saveGiveDebtToEmployee = (data) => {
   return apiCall({
     url: `/salary/giveDebtToEmployee?phoneNumber=${data.phoneNumber}&debitAmount=${data?.debitAmount}&paymentType=${data?.paymentType}`,
     method: "get",
+    data,
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
