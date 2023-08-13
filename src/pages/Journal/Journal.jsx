@@ -11,15 +11,15 @@ import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
 import employeeReducer, { getEmployeeBranchId } from "../../reducer/employeeReducer";
 import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer";
-import salaryReducer, {
-  deleteSalary,
-  editSalary,
-  saveGiveCashAdvance,
-  saveGiveDebtToEmployee,
-  getGiveSalary,
-  savePartlySalary, saveSalary,
-} from "../../reducer/salaryReducer.js";
 import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer.js";
+import journalReducer, {
+  deleteJournal,
+  editJournal,
+  getJournal,
+  saveJournal,
+} from "../../reducer/journalReducer.js";
+import classReducer, { getClassesAll } from "../../reducer/classReducer.js";
+import subjectReducer, { getSubject } from "../../reducer/subjectReducer.js";
 
 const { Option } = Select;
 
@@ -69,11 +69,8 @@ const columns = [
 ];
 
 function Salary({
-  usersDataReducer,
-  getGiveSalary,
-  saveSalary, salaryReducer,
-  editSalary, balanceReducer, savePartlySalary,
-  deleteSalary, getAllBalanceBranch, businessBranchesReducer, getBusinessBranch
+  usersDataReducer, classReducer, getClassesAll, subjectReducer, getSubject, businessBranchesReducer,
+  getAllBalanceBranch, getBusinessBranch, journalReducer, saveJournal, getJournal, editJournal, deleteJournal
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -92,13 +89,15 @@ function Salary({
   });
 
   useEffect(() => {
-    getGiveSalary(usersDataReducer?.branch?.id);
+    getJournal(usersDataReducer?.branch?.id);
+    getSubject(usersDataReducer?.branch?.id);
+    getClassesAll({ id: usersDataReducer?.branch?.id });
     getAllBalanceBranch(usersDataReducer?.branch?.id);
     getBusinessBranch(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [salaryReducer?.changeData]);
+  }, [journalReducer?.changeData]);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -107,28 +106,28 @@ function Salary({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/partly-salaries?page=${pageCount}&size=100`);
+      navigate(`/journal?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/partly-salaries?page=${pageCount}&size=50`);
+      navigate(`/journal?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/partly-salaries?page=${pageCount}&size=20`);
+      navigate(`/journal?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/partly-salaries?page=${pageCount}&size=10`);
+      navigate(`/journal?page=${pageCount}&size=10`);
     }
   }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteSalary(item?.user?.phoneNumber);
+      deleteJournal(item?.user?.phoneNumber);
       return null;
     });
   };
@@ -143,7 +142,7 @@ function Salary({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editSalary({
+          selectedRowKeys[1][0]?.id && editJournal({
             ...values,
             id: selectedRowKeys[1][0]?.id,
           });
@@ -155,11 +154,9 @@ function Salary({
       : form
         .validateFields()
         .then((values) => {
-          savePartlySalary({
-            // ...values,
-            phoneNumber: values.phoneNumber,
-            partlySalary: parseFloat(values.partlySalary),
-            paymentType: values.paymentType
+          saveJournal({
+            ...values,
+            id: 1
             // endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
           });
           setOnedit(false);
@@ -175,7 +172,7 @@ function Salary({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Maosh haqida</h3>
+      <h3 className="text-2xl font-bold mb-5">Jurnal</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -278,20 +275,20 @@ function Salary({
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item
-                key="paymentType"
-                name="paymentType"
-                label={<span className="text-base font-medium">Maosh turi</span>}
+                key="studentClassId"
+                name="studentClassId"
+                label={<span className="text-base font-medium">Sinf</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Maosh turi kiriting",
+                    message: "Sinf kiriting",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Tulov turi tanlang"
+                  placeholder="Sinf tanlang"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -299,39 +296,80 @@ function Salary({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  <Option value="CASH">Naqd</Option>
-                  <Option value="CARD">Plastik Karta</Option>
-                  <Option value="HISOBDAN_HISOBGA">Hisobdan hisobga</Option>
-                  <Option value="ELEKTRON">Elektron</Option>
+                  {classReducer?.class?.map((classes) => {
+                    return (
+                      <Option value={classes.id} key={classes.id}>{classes?.className}</Option>
+                    );
+                  })}
                 </Select>
               </Form.Item>
               <Form.Item
-                key="partlySalary"
-                name="partlySalary"
-                label={<span className="text-base font-medium">Maosh</span>}
+                key="branchId"
+                name="branchId"
+                label={<span className="text-base font-medium">Filial</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Maosh kiriting",
+                    message: "Filial kiriting",
                   },
                 ]}
               >
-                <Input type="number" placeholder="Maoshni kiritng" />
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Filial tanlang"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {
+                    businessBranchesReducer?.businessBranch?.map((barnch) => {
+                      return (
+                        <Option value={barnch?.id} key={barnch?.id}>
+                          {barnch?.name}
+                        </Option>
+                      );
+                    })
+                  }
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                key="phoneNumber"
-                name="phoneNumber"
-                label={<span className="text-base font-medium">Tel raqam</span>}
+                key="subjectIdList"
+                name="subjectIdList"
+                label={<span className="text-base font-medium">Fanlar</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Tel raqam kiriting",
+                    message: "Fan kiriting",
                   },
                 ]}
               >
-                <Input type="number" placeholder="Tel raqam kiriting . . ." />
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Fan tanlang"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {
+                    subjectReducer?.subjects?.map((subject) => {
+                      return (
+                        <Option value={subject?.id} key={subject?.id}>
+                          {subject?.name}
+                        </Option>
+                      );
+                    })
+                  }
+                </Select>
               </Form.Item>
             </Col>
           </Row>
@@ -342,7 +380,7 @@ function Salary({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={salaryReducer?.salaries?.map((item) => {
+        tableData={journalReducer?.journal?.map((item) => {
           return ({
             ...item,
             branchName: item.branch?.name,
@@ -361,17 +399,16 @@ function Salary({
 export default connect(
   (
     usersDataReducer,
-    employeeReducer, salaryReducer, balanceReducer, businessBranchesReducer
+    employeeReducer, balanceReducer, businessBranchesReducer, journalReducer, classReducer, subjectReducer
   ), {
     getBusinessBranch,
-    getGiveSalary,
-    savePartlySalary,
-    saveGiveDebtToEmployee,
-    saveGiveCashAdvance,
-    saveSalary,
-    editSalary,
-    deleteSalary,
     getEmployeeBranchId,
-    getAllBalanceBranch
+    getAllBalanceBranch,
+    getJournal,
+    saveJournal,
+    editJournal,
+    deleteJournal,
+    getClassesAll,
+    getSubject
   }
 )(Salary);
