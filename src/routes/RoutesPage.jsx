@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import DefaultLayout from "../layout/Layout";
 import Loading from "../components/Loading/Loading";
 import Salary from "../pages/Salary/Salary";
+import PartlySalary from "../pages/Salary/PartlySalary.jsx";
 
 const Dashboard = lazy(() => {
   return import("../pages/Dashboard/Dashboard");
@@ -103,6 +104,7 @@ function RoutesPage() {
           <Route path="student-transaction" element={<StudentPayment />} />
           <Route path="student-debts" element={<StudentDebt />} />
           <Route path="salaries" element={<Salary />} />
+          <Route path="partly-salaries" element={<PartlySalary />} />
         </Route>
         <Route path="/login" element={<Login />} />
         {/* <Route path='*' element={<Error404 />} /> */}
