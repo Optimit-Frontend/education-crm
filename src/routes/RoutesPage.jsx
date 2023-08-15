@@ -51,6 +51,12 @@ const Measurment = lazy(() => {
 const Warehouse = lazy(() => {
   return import("../pages/Settings/Warehouse");
 });
+const PurchasedProduct = lazy(() => {
+  return import("../pages/Kitchen/PurchasedProduct");
+});
+const PurchasedDrink = lazy(() => {
+  return import("../pages/Kitchen/PurchasedDrink");
+});
 const Product = lazy(() => {
   return import("../pages/Kitchen/Product");
 });
@@ -89,6 +95,8 @@ function RoutesPage() {
           <Route path="settings/balance" element={<Balance />} />
           <Route path="settings/warehouse" element={<Warehouse />} />
           <Route path="kitchen/product" element={<Product />} />
+          <Route path="kitchen/purchasedProduct" element={<PurchasedProduct />} />
+          <Route path="kitchen/purchasedDrink" element={<PurchasedDrink />} />
           <Route path="kitchen/measurement" element={<Measurment />} />
           <Route path="employee/role" element={<Role />} />
           <Route path="employee" element={<Employee />} />

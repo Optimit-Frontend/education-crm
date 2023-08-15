@@ -321,7 +321,7 @@ function Class({
                 </Select>
               </Form.Item>
               <Form.Item
-                key="roomIdroomId"
+                key="roomId"
                 name="roomId"
                 label={<span className="text-base font-medium">Xona</span>}
                 rules={[
