@@ -649,6 +649,36 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           </li>
                           <li>
                             <NavLink
+                              to={`/kitchen/dailyconsumedProduct?page=1&size=${pageSize}`}
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Ishlatilgan mahsulotlar
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to={`/kitchen/dailyConsumedDrink?page=1&size=${pageSize}`}
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Ishlatilgan ichimliklar
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
                               to={`/kitchen/product?page=1&size=${pageSize}`}
                               onClick={() => {
                                 return setSidebarOpen(false);

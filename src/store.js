@@ -14,6 +14,8 @@ import classReducer from "./reducer/classReducer";
 import achievementReducer from "./reducer/achievementReducer";
 import purchasedProductReducer from "./reducer/purchasedProductReducer";
 import purchasedDrinkReducer from "./reducer/purchasedDrinkReducer";
+import dailyConsumedProductsReducer from "./reducer/dailyConsumedProductsReducer";
+import dailyConsumedDrinksReducer from "./reducer/dailyConsumedDrinksReducer";
 import measurmentReducer from "./reducer/measurmentReducer";
 import warehouseReducer from "./reducer/warehouseReducer";
 import typeOfWorkReducer from "./reducer/typeOfWorkReducer";
@@ -44,6 +46,8 @@ export default configureStore({
     productReducer,
     purchasedProductReducer,
     purchasedDrinkReducer,
+    dailyConsumedProductsReducer,
+    dailyConsumedDrinksReducer,
     studentReducer,
     classReducer,
     levelReducer,

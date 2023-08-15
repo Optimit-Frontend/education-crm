@@ -57,6 +57,12 @@ const PurchasedProduct = lazy(() => {
 const PurchasedDrink = lazy(() => {
   return import("../pages/Kitchen/PurchasedDrink");
 });
+const DailyConsumedProducts = lazy(() => {
+  return import("../pages/Kitchen/DailyConsumedProducts");
+});
+const DailyConsumedDrinks = lazy(() => {
+  return import("../pages/Kitchen/DailyConsumedDrinks");
+});
 const Product = lazy(() => {
   return import("../pages/Kitchen/Product");
 });
@@ -97,6 +103,8 @@ function RoutesPage() {
           <Route path="kitchen/product" element={<Product />} />
           <Route path="kitchen/purchasedProduct" element={<PurchasedProduct />} />
           <Route path="kitchen/purchasedDrink" element={<PurchasedDrink />} />
+          <Route path="kitchen/dailyconsumedProduct" element={<DailyConsumedProducts />} />
+          <Route path="kitchen/dailyConsumedDrink" element={<DailyConsumedDrinks />} />
           <Route path="kitchen/measurement" element={<Measurment />} />
           <Route path="employee/role" element={<Role />} />
           <Route path="employee" element={<Employee />} />

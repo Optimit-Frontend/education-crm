@@ -14,7 +14,7 @@ export const slice = createSlice({
     getFromWearehouse: (state, action) => {
       if (action.payload.success) {
         state.purchasedDrink = action.payload?.data?.purchasedDrinksResponses;
-        state.purchasedDrinkTotalCount = action.payload?.data?.allSize;
+        state.purchasedDrinkTotalCount = action.payload?.data?.totalElements;
       } else {
         state.message = action.payload.message;
         toast.warning(action.payload.message || "Sotib olingan ichimliklarni yuklashda muammo bo'ldi");

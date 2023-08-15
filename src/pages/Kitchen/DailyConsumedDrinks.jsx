@@ -8,57 +8,38 @@ import moment from "moment";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import { measurement } from "../../const";
 import employeeReducer, { getEmployeeBranchId } from "../../reducer/employeeReducer";
 import warehouseReducer, { getAllWarehouse } from "../../reducer/warehouseReducer";
-import purchasedProductReducer, {
-  deletePurchasedProduct,
-  editPurchasedProduct,
-  getPurchasedProductBranch,
-  getPurchasedProductWearehouse,
-  savePurchasedProduct
-} from "../../reducer/purchasedProductReducer";
+import dailyConsumedDrinksReducer, {
+  deleteDailyConsumedDrinks,
+  editDailyConsumedDrinks,
+  getDailyConsumedDrinksBranch,
+  getDailyConsumedDrinksWearehouse,
+  saveDailyConsumedDrinks
+} from "../../reducer/dailyConsumedDrinksReducer";
 
 const { Option } = Select;
 const { TextArea } = Input;
 
 const columns = [
   {
-    title: "Mahsulot nomi",
+    title: "Nomi",
     dataIndex: "name",
     key: "name",
     width: "15%",
     search: false,
   },
   {
-    title: "Miqdori",
-    dataIndex: "quantity",
-    key: "quantity",
+    title: "Soni",
+    dataIndex: "count",
+    key: "count",
     width: "10%",
     search: false,
   },
   {
-    title: "O'lchov birlik",
-    dataIndex: "measurementType",
-    key: "measurementType",
-    width: "10%",
-    search: false,
-    render: (eski) => {
-      const meas = measurement?.find((item) => { return item.value === eski; });
-      return meas?.name;
-    }
-  },
-  {
-    title: "Birlik narxi",
-    dataIndex: "unitPrice",
-    key: "unitPrice",
-    width: "10%",
-    search: false,
-  },
-  {
-    title: "Umumiy narxi",
-    dataIndex: "totalPrice",
-    key: "totalPrice",
+    title: "Litr miqdori",
+    dataIndex: "literQuantity",
+    key: "literQuantity",
     width: "10%",
     search: false,
   },
@@ -73,7 +54,7 @@ const columns = [
     title: "Vaqti",
     dataIndex: "localDateTime",
     key: "localDateTime",
-    width: "10%",
+    width: "15%",
     search: false,
     render: (eski) => {
       return moment(eski).format("HH:mm:ss DD:MM:YYYY");
@@ -83,7 +64,7 @@ const columns = [
     title: "Hodim",
     dataIndex: "employeeName",
     key: "employeeName",
-    width: "10%",
+    width: "15%",
     search: false,
   },
   {
@@ -95,18 +76,18 @@ const columns = [
   }
 ];
 
-function PurchasedProduct({
-  purchasedProductReducer,
+function DailyConsumedDrinks({
+  dailyConsumedDrinksReducer,
   employeeReducer,
   warehouseReducer,
   usersDataReducer,
   getEmployeeBranchId,
   getAllWarehouse,
-  getPurchasedProductBranch,
-  getPurchasedProductWearehouse,
-  savePurchasedProduct,
-  deletePurchasedProduct,
-  editPurchasedProduct
+  getDailyConsumedDrinksBranch,
+  getDailyConsumedDrinksWearehouse,
+  saveDailyConsumedDrinks,
+  deleteDailyConsumedDrinks,
+  editDailyConsumedDrinks
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -125,7 +106,7 @@ function PurchasedProduct({
   });
 
   useEffect(() => {
-    getPurchasedProductBranch({
+    getDailyConsumedDrinksBranch({
       page: pageData.page,
       size: pageData.size,
       branchId: usersDataReducer?.branch?.id
@@ -136,7 +117,7 @@ function PurchasedProduct({
     setOnedit(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [purchasedProductReducer?.changeData]);
+  }, [dailyConsumedDrinksReducer?.changeData]);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -145,28 +126,28 @@ function PurchasedProduct({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/kitchen/purchasedProduct?page=${pageCount}&size=100`);
+      navigate(`/kitchen/dailyConsumedDrink?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/kitchen/purchasedProduct?page=${pageCount}&size=50`);
+      navigate(`/kitchen/dailyConsumedDrink?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/kitchen/purchasedProduct?page=${pageCount}&size=20`);
+      navigate(`/kitchen/dailyConsumedDrink?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/kitchen/purchasedProduct?page=${pageCount}&size=10`);
+      navigate(`/kitchen/dailyConsumedDrink?page=${pageCount}&size=10`);
     }
   }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deletePurchasedProduct(item);
+      deleteDailyConsumedDrinks(item);
       return null;
     });
   };
@@ -176,7 +157,7 @@ function PurchasedProduct({
     searchParams.set("size", page);
     searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
-    navigate(`/kitchen/purchasedProduct?page=${pageNumber}&size=${page}`);
+    navigate(`/kitchen/dailyConsumedDrink?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
@@ -184,7 +165,7 @@ function PurchasedProduct({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editPurchasedProduct({
+          selectedRowKeys[1][0]?.id && editDailyConsumedDrinks({
             ...values,
             id: selectedRowKeys[1][0]?.id,
             branchId: usersDataReducer?.branch?.id
@@ -196,7 +177,7 @@ function PurchasedProduct({
       : form
         .validateFields()
         .then((values) => {
-          savePurchasedProduct({ ...values, branchId: usersDataReducer?.branch?.id });
+          saveDailyConsumedDrinks({ ...values, branchId: usersDataReducer?.branch?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -210,16 +191,16 @@ function PurchasedProduct({
 
   return (
     <div>
-      <h3 className="mb-5 text-2xl font-bold">Sotib Olingan Mahsulotlar</h3>
+      <h3 className="mb-5 text-2xl font-bold">Kunlik ishlatilgan mahsulotlar</h3>
       <div className="mb-3 flex items-center justify-between gap-5">
         <div>
           <Select
             onChange={(e) => {
-              e ? getPurchasedProductWearehouse({
+              e ? getDailyConsumedDrinksWearehouse({
                 page: pageData.page,
                 size: pageData.size,
                 warehouseId: e,
-              }) : getPurchasedProductBranch({
+              }) : getDailyConsumedDrinksBranch({
                 page: pageData.page,
                 size: pageData.size,
                 branchId: usersDataReducer?.branch?.id
@@ -251,11 +232,9 @@ function PurchasedProduct({
                 setOnedit(true);
                 setVisible(true);
                 form.setFieldValue("name", selectedRowKeys[1][0]?.name);
-                form.setFieldValue("quantity", selectedRowKeys[1][0]?.quantity);
+                form.setFieldValue("count", selectedRowKeys[1][0]?.count);
                 form.setFieldValue("description", selectedRowKeys[1][0]?.description);
-                form.setFieldValue("measurementType", selectedRowKeys[1][0]?.measurementType);
-                form.setFieldValue("unitPrice", selectedRowKeys[1][0]?.unitPrice);
-                form.setFieldValue("totalPrice", selectedRowKeys[1][0]?.totalPrice);
+                form.setFieldValue("literQuantity", selectedRowKeys[1][0]?.literQuantity);
                 form.setFieldValue("warehouseId", selectedRowKeys[1][0]?.warehouse?.id);
                 form.setFieldValue("employeeId", selectedRowKeys[1][0]?.employee?.id);
               }}
@@ -328,10 +307,10 @@ function PurchasedProduct({
         open={visible}
         title={(
           <h3 className="mb-3 text-xl font-semibold">
-            Sotib Olingan Mahsulot
+            Kunlik ishlatilgan mahsulot
             {onedit ? "ni taxrirlash" : "ni qo'shish"}
           </h3>
-        )}
+                )}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
         okButtonProps={{ className: "bg-blue-600" }}
         cancelText="Bekor qilish"
@@ -361,74 +340,30 @@ function PurchasedProduct({
                 <Input placeholder="Mahsulot nomini kiriting..." />
               </Form.Item>
               <Form.Item
-                key="quantity"
-                name="quantity"
-                label={<span className="text-base font-medium">Mahsulot miqdori</span>}
+                key="count"
+                name="count"
+                label={<span className="text-base font-medium">Soni</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Mahsulot miqdorini kiriting",
+                    message: "Ichimlik sonini kiriting",
                   },
                 ]}
               >
-                <InputNumber placeholder="Mahsulot miqdorini kiriting..." className="w-full" />
+                <InputNumber placeholder="Ichimlik sonini kiriting..." className="w-full" />
               </Form.Item>
               <Form.Item
-                key="measurementType"
-                name="measurementType"
-                label={<span className="text-base font-medium">O&apos;lchov birlik</span>}
+                key="literQuantity"
+                name="literQuantity"
+                label={<span className="text-base font-medium">Liter miqdori</span>}
                 rules={[
                   {
                     required: true,
-                    message: "O'lchov birlikini tanlang",
+                    message: "Ichimlik litr miqdorini kiriting",
                   },
                 ]}
               >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="O'lchov birlikini tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {measurement?.map((option) => {
-                    return (
-                      <Option value={option.value} key={option.value}>
-                        {option.name}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="unitPrice"
-                name="unitPrice"
-                label={<span className="text-base font-medium">Mahsulot birlik narxi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Mahsulot birlik narxini kiriting",
-                  },
-                ]}
-              >
-                <InputNumber placeholder="Mahsulot birlik narxini kiriting..." className="w-full" />
-              </Form.Item>
-              <Form.Item
-                key="totalPrice"
-                name="totalPrice"
-                label={<span className="text-base font-medium">Mahsulot umumiy narxi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Mahsulot umumiy narxini kiriting",
-                  },
-                ]}
-              >
-                <InputNumber placeholder="Mahsulot umumiy narxini kiriting..." className="w-full" />
+                <InputNumber placeholder="Ichimlik litr miqdorini kiriting..." className="w-full" />
               </Form.Item>
               <Form.Item
                 key="description"
@@ -514,8 +449,8 @@ function PurchasedProduct({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        totalItems={purchasedProductReducer?.purchasedProductTotalCount}
-        tableData={purchasedProductReducer?.purchasedProduct?.map((item) => {
+        totalItems={dailyConsumedDrinksReducer?.dailyConsumedDrinksTotalCount}
+        tableData={dailyConsumedDrinksReducer?.dailyConsumedDrinks?.map((item) => {
           return {
             ...item,
             warehouseName: item.warehouse?.name,
@@ -533,17 +468,17 @@ function PurchasedProduct({
 
 export default connect(
   (
-    purchasedProductReducer,
+    dailyConsumedDrinksReducer,
     employeeReducer,
     warehouseReducer,
     usersDataReducer
   ), {
     getEmployeeBranchId,
     getAllWarehouse,
-    getPurchasedProductBranch,
-    getPurchasedProductWearehouse,
-    savePurchasedProduct,
-    deletePurchasedProduct,
-    editPurchasedProduct
+    getDailyConsumedDrinksBranch,
+    getDailyConsumedDrinksWearehouse,
+    saveDailyConsumedDrinks,
+    deleteDailyConsumedDrinks,
+    editDailyConsumedDrinks
   }
-)(PurchasedProduct);
+)(DailyConsumedDrinks);
