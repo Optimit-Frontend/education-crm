@@ -3,62 +3,78 @@ import { toast } from "react-toastify";
 import { apiCall } from "../api";
 
 export const slice = createSlice({
-  name: "journal",
+  name: "homework",
   initialState: {
-    journal: null,
+    homework: null,
+    accountTotalCount: 0,
     message: null,
     changeData: false,
   },
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.journal = action.payload?.data;
+        state.homework = action.payload?.data;
       } else {
-        state.journal = null;
         state.message = action.payload.message;
-        toast.warning(action.payload.message || "Jurnal yuklashda muammo bo'ldi");
+        state.homework = null;
       }
       state.changeData = false;
     },
     saveFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Jurnal muvaffaqiyatli qo'shildi");
+        toast.success("Vazifa qo'shildi");
       } else {
-        toast.warning(action.payload.message || "Jurnal qo'shishda muammo bo'ldi");
+        toast.warning(action.payload.message || "Vazifa qo'shilmadi");
       }
       state.changeData = true;
     },
     editFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Jurnal muvafaqiyatli taxrirlandi");
+        toast.success("Vazifa taxrirlandi");
       } else {
-        toast.warning(action.payload.message || "Jurnal taxrirlashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Vazifa taxrirlanmadi");
       }
       state.changeData = true;
     },
     deleteFrom: (state, action) => {
       if (action.payload.success) {
-        toast.success("Jurnal muvafaqiyatli o'chirildi");
+        toast.success("Vazifa o'chirildi");
       } else {
-        toast.warning("Jurnal o'chirishda muammo bo'ldi");
+        toast.warning("Vazifa o'chirilmadi");
       }
       state.changeData = true;
     },
   },
 });
 
-export const getJournal = (data) => {
+export const getHomeWorkList = (data) => {
   return apiCall({
-    url: `/journal/getAllByBranchId/${data.branchId}?page=${data.page - 1}&size=${data.size}`,
+    url: "/studentHomework/getList",
+    method: "get",
+    onSuccess: slice.actions.getFrom.type,
+    onFail: slice.actions.getFrom.type,
+  });
+};
+export const getHomeWorkListActive = (data) => {
+  return apiCall({
+    url: "/studentHomework/getListByActive",
+    method: "get",
+    onSuccess: slice.actions.getFrom.type,
+    onFail: slice.actions.getFrom.type,
+  });
+};
+export const getSHomeworkId = (data) => {
+  return apiCall({
+    url: "/studentHomework/getById",
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
 };
 
-export const saveJournal = (data) => {
+export const saveHomework = (data) => {
   return apiCall({
-    url: "/journal/create",
+    url: "/studentHomework/save",
     method: "post",
     data,
     onSuccess: slice.actions.saveFrom.type,
@@ -66,9 +82,9 @@ export const saveJournal = (data) => {
   });
 };
 
-export const editJournal = (data) => {
+export const editHomework = (data) => {
   return apiCall({
-    url: "/journal/update",
+    url: "/studentHomework/update",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,
@@ -76,9 +92,9 @@ export const editJournal = (data) => {
   });
 };
 
-export const deleteJournal = (data) => {
+export const deleteHomework = (data) => {
   return apiCall({
-    url: `/journal/delete/${data}`,
+    url: `/studentHomework/delete/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,

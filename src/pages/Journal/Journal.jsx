@@ -25,9 +25,9 @@ const { Option } = Select;
 
 const columns = [
   {
-    title: "Ism",
-    dataIndex: "username",
-    key: "username",
+    title: "Sinf",
+    dataIndex: "className",
+    key: "className",
     width: "30%",
     search: true,
   },
@@ -40,30 +40,30 @@ const columns = [
   },
   {
     title: "Olgan maoshi",
-    dataIndex: "cashAdvance",
-    key: "cashAdvance",
+    dataIndex: "roomNumber",
+    key: "roomNumber",
     width: "30%",
     search: false,
   },
   {
     title: "Sana",
-    dataIndex: "date",
-    key: "date",
+    dataIndex: "startDate",
+    key: "startDate",
     width: "20%",
     search: false,
   },
   {
-    title: "Maosh ( stabilniy )",
-    dataIndex: "fix",
-    key: "fix",
+    title: "Tugash sana",
+    dataIndex: "endDate",
+    key: "endDate",
+    width: "20%",
+    search: false,
+  },
+  {
+    title: "Ustoz",
+    dataIndex: "teacher",
+    key: "teacher",
     width: "30%",
-    search: false,
-  },
-  {
-    title: "Qarzi",
-    dataIndex: "amountDebt",
-    key: "amountDebt",
-    width: "20%",
     search: false,
   },
 ];
@@ -89,7 +89,13 @@ function Salary({
   });
 
   useEffect(() => {
-    getJournal(usersDataReducer?.branch?.id);
+    getJournal(
+      {
+        branchId: usersDataReducer.branch?.id,
+        page: pageData.page,
+        size: pageData.size
+      }
+    );
     getSubject(usersDataReducer?.branch?.id);
     getClassesAll({ id: usersDataReducer?.branch?.id });
     getAllBalanceBranch(usersDataReducer?.branch?.id);
@@ -127,9 +133,19 @@ function Salary({
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteJournal(item?.user?.phoneNumber);
+      deleteJournal(item);
       return null;
     });
+  };
+
+  const handleSelectAll = (value) => {
+    if (value && value.length && value.includes("all")) {
+      if (value.length) {
+        return [];
+      }
+      return [...value];
+    }
+    return value;
   };
 
   const onChange = (pageNumber, page) => {
@@ -156,7 +172,6 @@ function Salary({
         .then((values) => {
           saveJournal({
             ...values,
-            id: 1
             // endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
           });
           setOnedit(false);
@@ -179,12 +194,8 @@ function Salary({
             onClick={() => {
               setOnedit(true);
               setVisible(true);
-              form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.user?.phoneNumber);
-              form.setFieldValue("startDate", dayjs(selectedRowKeys[1][0]?.startDate));
-              form.setFieldValue("date", dayjs(selectedRowKeys[1][0]?.date));
               form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
-              form.setFieldValue("fix", selectedRowKeys[1][0]?.fix);
-              form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalanceId);
+              form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClass?.id);
               console.log(selectedRowKeys[1][0]);
             }}
             type="button"
@@ -303,6 +314,8 @@ function Salary({
                   })}
                 </Select>
               </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item
                 key="branchId"
                 name="branchId"
@@ -336,41 +349,40 @@ function Salary({
                   }
                 </Select>
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                key="subjectIdList"
-                name="subjectIdList"
-                label={<span className="text-base font-medium">Fanlar</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Fan kiriting",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Fan tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {
-                    subjectReducer?.subjects?.map((subject) => {
-                      return (
-                        <Option value={subject?.id} key={subject?.id}>
-                          {subject?.name}
-                        </Option>
-                      );
-                    })
-                  }
-                </Select>
-              </Form.Item>
+              {/* <Form.Item */}
+              {/*   key="subjectIdList" */}
+              {/*   name="subjectIdList" */}
+              {/*   label={<span className="text-base font-medium">Fanlar</span>} */}
+              {/*   rules={[ */}
+              {/*     { */}
+              {/*       required: true, */}
+              {/*       message: "Fan kiriting", */}
+              {/*     }, */}
+              {/*   ]} */}
+              {/* > */}
+              {/*   <Select */}
+              {/*     showSearch */}
+              {/*     allowClear */}
+              {/*     mode="multiple" */}
+              {/*     placeholder="Fan tanlang" */}
+              {/*     optionFilterProp="children" */}
+              {/*     style={{ width: "100%" }} */}
+              {/*     key="id" */}
+              {/*     filterOption={(input, option) => { */}
+              {/*       return option.children.toLowerCase()?.includes(input.toLowerCase()); */}
+              {/*     }} */}
+              {/*   > */}
+              {/*     { */}
+              {/*       subjectReducer?.subjects?.map((subject) => { */}
+              {/*         return ( */}
+              {/*           <Option value={subject?.id} key={subject?.id}> */}
+              {/*             {subject?.name} */}
+              {/*           </Option> */}
+              {/*         ); */}
+              {/*       }) */}
+              {/*     } */}
+              {/*   </Select> */}
+              {/* </Form.Item> */}
             </Col>
           </Row>
         </Form>
@@ -380,11 +392,13 @@ function Salary({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={journalReducer?.journal?.map((item) => {
+        tableData={journalReducer?.journal?.journalResponses?.map((item) => {
           return ({
             ...item,
             branchName: item.branch?.name,
-            username: item?.user?.name
+            className: item?.studentClass?.className,
+            roomNumber: item?.studentClass?.room?.roomNumber,
+            teacher: item?.studentClass?.classLeader?.name
           });
         })}
         loading={pageData?.loading}

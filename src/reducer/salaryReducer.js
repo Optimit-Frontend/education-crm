@@ -60,8 +60,8 @@ export const savePartlySalary = (data) => {
     url: `/salary/givePartlySalary?phoneNumber=${data.phoneNumber}&partlySalary=${data?.partlySalary}&paymentType=${data?.paymentType}`,
     method: "post",
     // data,
-    onSuccess: slice.actions.getFrom.type,
-    onFail: slice.actions.getFrom.type,
+    onSuccess: slice.actions.saveFrom.type,
+    onFail: slice.actions.saveFrom.type,
   });
 };
 
@@ -70,8 +70,8 @@ export const saveGiveDebtToEmployee = (data) => {
     url: `/salary/giveDebtToEmployee?phoneNumber=${data.phoneNumber}&debitAmount=${data?.debitAmount}&paymentType=${data?.paymentType}`,
     method: "get",
     data,
-    onSuccess: slice.actions.getFrom.type,
-    onFail: slice.actions.getFrom.type,
+    onSuccess: slice.actions.saveFrom.type,
+    onFail: slice.actions.saveFrom.type,
   });
 };
 export const saveGiveCashAdvance = (data) => {
