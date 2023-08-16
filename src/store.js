@@ -16,10 +16,10 @@ import purchasedProductReducer from "./reducer/purchasedProductReducer";
 import purchasedDrinkReducer from "./reducer/purchasedDrinkReducer";
 import dailyConsumedProductsReducer from "./reducer/dailyConsumedProductsReducer";
 import dailyConsumedDrinksReducer from "./reducer/dailyConsumedDrinksReducer";
-import measurmentReducer from "./reducer/measurmentReducer";
 import warehouseReducer from "./reducer/warehouseReducer";
 import typeOfWorkReducer from "./reducer/typeOfWorkReducer";
 import productReducer from "./reducer/productReducer";
+import drinksReducer from "./reducer/drinksReducer";
 import balanceReducer from "./reducer/balanceReducer";
 import workExpirenceReducer from "./reducer/workExpirenceReducer";
 import levelReducer from "./reducer/levelReducer";
@@ -41,9 +41,9 @@ export default configureStore({
     employeeReducer,
     typeOfWorkReducer,
     achievementReducer,
-    measurmentReducer,
     warehouseReducer,
     productReducer,
+    drinksReducer,
     purchasedProductReducer,
     purchasedDrinkReducer,
     dailyConsumedProductsReducer,

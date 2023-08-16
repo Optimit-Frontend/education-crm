@@ -40,7 +40,7 @@ const columns = [
     title: "Litr miqdori",
     dataIndex: "literQuantity",
     key: "literQuantity",
-    width: "10%",
+    width: "15%",
     search: false,
   },
   {
@@ -191,7 +191,7 @@ function DailyConsumedDrinks({
 
   return (
     <div>
-      <h3 className="mb-5 text-2xl font-bold">Kunlik ishlatilgan mahsulotlar</h3>
+      <h3 className="mb-5 text-2xl font-bold">Kunlik ishlatilgan ichimliklar</h3>
       <div className="mb-3 flex items-center justify-between gap-5">
         <div>
           <Select
@@ -307,7 +307,7 @@ function DailyConsumedDrinks({
         open={visible}
         title={(
           <h3 className="mb-3 text-xl font-semibold">
-            Kunlik ishlatilgan mahsulot
+            Kunlik ishlatilgan ichimlik
             {onedit ? "ni taxrirlash" : "ni qo'shish"}
           </h3>
                 )}
@@ -329,15 +329,15 @@ function DailyConsumedDrinks({
               <Form.Item
                 key="name"
                 name="name"
-                label={<span className="text-base font-medium">Mahsulot nomi</span>}
+                label={<span className="text-base font-medium">Ichimlik nomi</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Mahsulot nomini kiriting",
+                    message: "Ichimlik nomini kiriting",
                   },
                 ]}
               >
-                <Input placeholder="Mahsulot nomini kiriting..." />
+                <Input placeholder="Ichimlik nomini kiriting..." />
               </Form.Item>
               <Form.Item
                 key="count"
@@ -368,31 +368,31 @@ function DailyConsumedDrinks({
               <Form.Item
                 key="description"
                 name="description"
-                label={<span className="text-base font-medium">Mahsulot haqida ma&apos;lumot</span>}
+                label={<span className="text-base font-medium">Ichimlik haqida ma&apos;lumot</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Mahsulot haqida ma'lumotni kiriting",
+                    message: "Ichimlik haqida ma'lumotni kiriting",
                   },
                 ]}
               >
-                <TextArea rows={3} placeholder="Mahsulot haqida ma'lumotni kiriting..." />
+                <TextArea rows={3} placeholder="Ichimlik haqida ma'lumotni kiriting..." />
               </Form.Item>
               <Form.Item
                 key="employeeId"
                 name="employeeId"
-                label={<span className="text-base font-medium">Sotib oluvchi hodim</span>}
+                label={<span className="text-base font-medium">Ishlatuvchi hodim</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Sotib oluvchi hodimni tanlang",
+                    message: "Ishlatuvchi hodimni tanlang",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Sotib oluvchi hodimni tanlang..."
+                  placeholder="Ishlatuvchi hodimni tanlang..."
                   optionFilterProp="children"
                   className="w-full"
                   key="id"

@@ -15,7 +15,7 @@ export const slice = createSlice({
         state.warehouse = action.payload?.data?.warehouseList;
       } else {
         state.message = action.payload.message;
-        toast.warning(action.payload.message || "Xona turlarini yuklashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Omborlarni yuklashda muammo bo'ldi");
         state.warehouse = null;
       }
       state.changeData = false;

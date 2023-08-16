@@ -26,7 +26,7 @@ function Login({ usersDataReducer, saveUser }) {
       .then((res) => {
         if (res.data.success) {
           saveUser({
-            object: res.data.data?.userResponseDto,
+            object: res.data.data?.userResponse,
             message: res.data.data?.accessToken,
             success: true,
           });
