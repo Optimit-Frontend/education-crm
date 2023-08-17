@@ -11,12 +11,18 @@ import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReduce
 import studentHomeworkReducer, {
   deleteHomework,
   editHomework,
-  getHomeWorkList, getHomeWorkListActive,
+  getHomeWorkList,
   saveHomework,
 } from "../../reducer/studentHomeworkReducer.js";
 import subjectReducer, { getSubject } from "../../reducer/subjectReducer.js";
 import classReducer, { getClassesAll } from "../../reducer/classReducer.js";
 import employeeReducer, { getEmployeeBranch, getUserLists } from "../../reducer/employeeReducer.js";
+import scoreReducer, {
+  deleteScore,
+  editScore,
+  getScores,
+  saveScore,
+} from "../../reducer/scoreReducer.js";
 import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer.js";
 
 const { Option } = Select;
@@ -63,21 +69,14 @@ const columns = [
     key: "lessonHour",
     width: "30%",
     search: false,
-    // render: (eski) => {
-    //   return (
-    //     <button style={{ background: "gold", padding: "5px", borderRadius: "5px" }} type="button" onClick={() => { return console.log(eski); }}>
-    //       Ko`rish
-    //     </button>
-    //   );
-    // }
   },
 ];
 
 function StudentHomework({
-  usersDataReducer, getHomeWorkListActive,
-  getEmployeeBranch, employeeReducer, getUserLists, businessBranchesReducer,
+  usersDataReducer,
+  getEmployeeBranch, employeeReducer, getUserLists, scoreReducer, getScores, saveScore, editScore, deleteScore,
   subjectReducer, classReducer, getSubject, getClassesAll, getBusinessBranch,
-  studentHomeworkReducer, getHomeWorkList, saveHomework, editHomework, deleteHomework
+  studentHomeworkReducer, getHomeWorkList, saveHomework, editHomework, deleteHomework, businessBranchesReducer
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -96,10 +95,9 @@ function StudentHomework({
   });
 
   useEffect(() => {
-    // getHomeWorkList();
+    getHomeWorkList();
     getClassesAll({ id: usersDataReducer?.branch?.id });
     getSubject(usersDataReducer?.branch?.id);
-    getHomeWorkListActive();
     getBusinessBranch(usersDataReducer?.branch?.id);
     getUserLists();
     // getEmployeeBranch({
@@ -119,28 +117,28 @@ function StudentHomework({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/student-homework?page=${pageCount}&size=100`);
+      navigate(`/scores?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/student-homework?page=${pageCount}&size=50`);
+      navigate(`/scores?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/student-homework?page=${pageCount}&size=20`);
+      navigate(`/scores?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/student-homework?page=${pageCount}&size=10`);
+      navigate(`/scores?page=${pageCount}&size=10`);
     }
   }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteHomework(item.id);
+      deleteScore(item);
       return null;
     });
   };
@@ -155,7 +153,7 @@ function StudentHomework({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editHomework({
+          selectedRowKeys[1][0]?.id && editScore({
             ...values,
           });
           setOnedit(false);
@@ -166,7 +164,7 @@ function StudentHomework({
       : form
         .validateFields()
         .then((values) => {
-          saveHomework({
+          saveScore({
             ...values,
           });
           setOnedit(false);
@@ -182,7 +180,7 @@ function StudentHomework({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Uy vazifalar</h3>
+      <h3 className="text-2xl font-bold mb-5">Baholar</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -197,7 +195,6 @@ function StudentHomework({
               form.setFieldValue("date", selectedRowKeys[1][0]?.date);
               form.setFieldValue("lessonHour", selectedRowKeys[1][0]?.lessonHour);
               form.setFieldValue("teacherId", selectedRowKeys[1][0]?.teacherId);
-              form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -242,7 +239,6 @@ function StudentHomework({
           onClick={() => {
             handleDelete(selectedRowKeys[1]);
             setSelectedRowKeys([[], []]);
-            console.log(selectedRowKeys[1]);
           }}
           type="button"
           className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
@@ -502,8 +498,8 @@ function StudentHomework({
 
 export default connect(
   (
-    usersDataReducer, employeeReducer,
-    balanceReducer, studentHomeworkReducer, subjectReducer, classReducer, businessBranchesReducer
+    usersDataReducer, employeeReducer, businessBranchesReducer,
+    balanceReducer, studentHomeworkReducer, subjectReducer, classReducer, scoreReducer
   ), {
     getAllBalanceBranch,
     getSubject,
@@ -514,7 +510,10 @@ export default connect(
     deleteHomework,
     getEmployeeBranch,
     getUserLists,
-    getHomeWorkListActive,
-    getBusinessBranch
+    getScores,
+    saveScore,
+    editScore,
+    deleteScore,
+    getBusinessBranch,
   }
 )(StudentHomework);
