@@ -7,13 +7,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
-import studentHomeworkReducer, {
-  deleteHomework,
-  editHomework,
-  getHomeWorkList,
-  saveHomework,
-} from "../../reducer/studentHomeworkReducer.js";
 import subjectReducer, { getSubject } from "../../reducer/subjectReducer.js";
 import classReducer, { getClassesAll } from "../../reducer/classReducer.js";
 import employeeReducer, { getEmployeeBranch, getUserLists } from "../../reducer/employeeReducer.js";
@@ -24,6 +17,8 @@ import scoreReducer, {
   saveScore,
 } from "../../reducer/scoreReducer.js";
 import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer.js";
+import studentReducer, { getStudentsAll } from "../../reducer/studentReducer.js";
+import journalReducer, { getJournal } from "../../reducer/journalReducer.js";
 
 const { Option } = Select;
 
@@ -73,10 +68,10 @@ const columns = [
 ];
 
 function StudentHomework({
-  usersDataReducer,
-  getEmployeeBranch, employeeReducer, getUserLists, scoreReducer, getScores, saveScore, editScore, deleteScore,
-  subjectReducer, classReducer, getSubject, getClassesAll, getBusinessBranch,
-  studentHomeworkReducer, getHomeWorkList, saveHomework, editHomework, deleteHomework, businessBranchesReducer
+  usersDataReducer, getStudentsAll,
+  employeeReducer, getUserLists, scoreReducer, getScores, saveScore, editScore, deleteScore,
+  subjectReducer, getSubject, getClassesAll, getBusinessBranch,
+  businessBranchesReducer, studentReducer, getJournal, journalReducer,
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -95,20 +90,24 @@ function StudentHomework({
   });
 
   useEffect(() => {
-    getHomeWorkList();
     getClassesAll({ id: usersDataReducer?.branch?.id });
     getSubject(usersDataReducer?.branch?.id);
+    getJournal({
+      branchId: usersDataReducer.branch?.id,
+      page: pageData.page,
+      size: pageData.size
+    });
     getBusinessBranch(usersDataReducer?.branch?.id);
     getUserLists();
-    // getEmployeeBranch({
-    //   page: pageData.page,
-    //   size: pageData.size,
-    //   branchId: usersDataReducer?.branch?.id,
-    // });
+    getStudentsAll({
+      branchId: usersDataReducer.branch?.id,
+      page: pageData.page,
+      size: pageData.size
+    });
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [studentHomeworkReducer?.changeData]);
+  }, [scoreReducer?.changeData]);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -284,59 +283,20 @@ function StudentHomework({
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item
-                key="topicNumber"
-                name="topicNumber"
-                label={<span className="text-base font-medium">Mavzu raqami </span>}
+                key="studentId"
+                name="studentId"
+                label={<span className="text-base font-medium">Talaba tanlash</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Mavzu raqamini kiriting",
-                  },
-                ]}
-              >
-                <Input type="number" className="w-full" placeholder="Mavzu raqamini kiriting" />
-              </Form.Item>
-              <Form.Item
-                key="lessonHour"
-                name="lessonHour"
-                label={<span className="text-base font-medium">Dars vaqti </span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Dars vaqti",
-                  },
-                ]}
-              >
-                <InputNumber type="number" className="w-full" placeholder="Dars vaqti" />
-              </Form.Item>
-              <Form.Item
-                key="date"
-                name="date"
-                label={<span className="text-base font-medium">Sana </span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Sana",
-                  },
-                ]}
-              >
-                <Input type="date" className="w-full" placeholder="Dars vaqti" />
-              </Form.Item>
-              <Form.Item
-                key="studentClassId"
-                name="studentClassId"
-                label={<span className="text-base font-medium">Xona tanlash</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Xona kiriting",
+                    message: "Talabani kiriting",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Xona tanlash"
+                  placeholder="Talaba tanlash"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -344,13 +304,57 @@ function StudentHomework({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  {classReducer?.class?.map((room) => {
+                  {studentReducer?.students?.studentResponseDtoList?.map((room) => {
                     return (
-                      <Option value={room.id} key={room.id}>{room?.className}</Option>
+                      <Option value={room.id} key={room.id}>{room?.firstName}</Option>
                     );
                   })}
                 </Select>
               </Form.Item>
+              <Form.Item
+                key="score"
+                name="score"
+                label={<span className="text-base font-medium">Baho</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Dars vaqti",
+                  },
+                ]}
+              >
+                <InputNumber type="number" className="w-full" placeholder="Baho kiriting ( 1...5 )" />
+              </Form.Item>
+              <Form.Item
+                key="journalId"
+                name="journalId"
+                label={<span className="text-base font-medium">Jurnal tanlash</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Jurnalni kiriting",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Jurnal tanlash"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {journalReducer?.journal?.journalResponses?.map((journal) => {
+                    return (
+                      <Option value={journal.id} key={journal.id}>{journal?.studentClass?.className}</Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
               <Form.Item
                 key="teacherId"
                 name="teacherId"
@@ -378,41 +382,6 @@ function StudentHomework({
                       <Option value={employee.id} key={employee.id}>{employee?.name}</Option>
                     );
                   })}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                key="branchId"
-                name="branchId"
-                label={<span className="text-base font-medium">Filial ( Branch )</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Filialni tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Filialni tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {
-                    businessBranchesReducer?.businessBranch?.map((barnch) => {
-                      return (
-                        <Option value={barnch?.id} key={barnch?.id}>
-                          {barnch?.name}
-                        </Option>
-                      );
-                    })
-                  }
                 </Select>
               </Form.Item>
               <Form.Item
@@ -445,19 +414,6 @@ function StudentHomework({
                 </Select>
               </Form.Item>
               <Form.Item
-                key="homework"
-                name="homework"
-                label={<span className="text-base font-medium">Uy ishi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Uy ishini kiriting",
-                  },
-                ]}
-              >
-                <Input placeholder="Uy ishini kiriting" />
-              </Form.Item>
-              <Form.Item
                 key="description"
                 name="description"
                 label={<span className="text-base font-medium">Qisqa eslatma</span>}
@@ -479,7 +435,7 @@ function StudentHomework({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={studentHomeworkReducer?.homework?.map((item) => {
+        tableData={scoreReducer?.scores?.map((item) => {
           return ({
             ...item,
             branchId: item.branch?.name,
@@ -498,22 +454,19 @@ function StudentHomework({
 
 export default connect(
   (
-    usersDataReducer, employeeReducer, businessBranchesReducer,
-    balanceReducer, studentHomeworkReducer, subjectReducer, classReducer, scoreReducer
+    usersDataReducer, employeeReducer, businessBranchesReducer, studentReducer,
+    subjectReducer, classReducer, scoreReducer, journalReducer
   ), {
-    getAllBalanceBranch,
     getSubject,
     getClassesAll,
-    getHomeWorkList,
-    saveHomework,
-    editHomework,
-    deleteHomework,
     getEmployeeBranch,
     getUserLists,
     getScores,
     saveScore,
+    getStudentsAll,
     editScore,
     deleteScore,
     getBusinessBranch,
+    getJournal
   }
 )(StudentHomework);

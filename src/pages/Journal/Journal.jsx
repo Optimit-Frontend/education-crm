@@ -3,8 +3,6 @@ import { useEffect, useState } from "react";
 import {
   Col, DatePicker, Form, Input, Modal, Row, Select
 } from "antd";
-import dayjs from "dayjs";
-import moment from "moment";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
@@ -15,7 +13,7 @@ import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReduce
 import journalReducer, {
   deleteJournal,
   editJournal,
-  getJournal,
+  getJournal, getJournalActiveTrue,
   saveJournal,
 } from "../../reducer/journalReducer.js";
 import classReducer, { getClassesAll } from "../../reducer/classReducer.js";
@@ -69,7 +67,7 @@ const columns = [
 ];
 
 function Salary({
-  usersDataReducer, classReducer, getClassesAll, subjectReducer, getSubject, businessBranchesReducer,
+  usersDataReducer, classReducer, getClassesAll, subjectReducer, getSubject, businessBranchesReducer, getJournalActiveTrue,
   getAllBalanceBranch, getBusinessBranch, journalReducer, saveJournal, getJournal, editJournal, deleteJournal
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
@@ -89,16 +87,14 @@ function Salary({
   });
 
   useEffect(() => {
-    getJournal(
-      {
-        branchId: usersDataReducer.branch?.id,
-        page: pageData.page,
-        size: pageData.size
-      }
-    );
+    getJournalActiveTrue({
+      branchId: usersDataReducer.branch?.id,
+      page: pageData.page,
+      size: pageData.size
+    });
     getSubject(usersDataReducer?.branch?.id);
     getClassesAll({ id: usersDataReducer?.branch?.id });
-    getAllBalanceBranch(usersDataReducer?.branch?.id);
+    // getAllBalanceBranch(usersDataReducer?.branch?.id);
     getBusinessBranch(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
@@ -133,7 +129,7 @@ function Salary({
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteJournal(item);
+      deleteJournal(item.id);
       return null;
     });
   };
@@ -349,40 +345,6 @@ function Salary({
                   }
                 </Select>
               </Form.Item>
-              {/* <Form.Item */}
-              {/*   key="subjectIdList" */}
-              {/*   name="subjectIdList" */}
-              {/*   label={<span className="text-base font-medium">Fanlar</span>} */}
-              {/*   rules={[ */}
-              {/*     { */}
-              {/*       required: true, */}
-              {/*       message: "Fan kiriting", */}
-              {/*     }, */}
-              {/*   ]} */}
-              {/* > */}
-              {/*   <Select */}
-              {/*     showSearch */}
-              {/*     allowClear */}
-              {/*     mode="multiple" */}
-              {/*     placeholder="Fan tanlang" */}
-              {/*     optionFilterProp="children" */}
-              {/*     style={{ width: "100%" }} */}
-              {/*     key="id" */}
-              {/*     filterOption={(input, option) => { */}
-              {/*       return option.children.toLowerCase()?.includes(input.toLowerCase()); */}
-              {/*     }} */}
-              {/*   > */}
-              {/*     { */}
-              {/*       subjectReducer?.subjects?.map((subject) => { */}
-              {/*         return ( */}
-              {/*           <Option value={subject?.id} key={subject?.id}> */}
-              {/*             {subject?.name} */}
-              {/*           </Option> */}
-              {/*         ); */}
-              {/*       }) */}
-              {/*     } */}
-              {/*   </Select> */}
-              {/* </Form.Item> */}
             </Col>
           </Row>
         </Form>
@@ -421,6 +383,7 @@ export default connect(
     getJournal,
     saveJournal,
     editJournal,
+    getJournalActiveTrue,
     deleteJournal,
     getClassesAll,
     getSubject
