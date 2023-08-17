@@ -55,6 +55,14 @@ export const getJournal = (data) => {
     onFail: slice.actions.getFrom.type,
   });
 };
+export const getJournalActiveTrue = (data) => {
+  return apiCall({
+    url: `/journal/getAllByIdBranchIdAndActiveTrue/${data.branchId}?page=${data.page - 1}&size=${data.size}`,
+    method: "get",
+    onSuccess: slice.actions.getFrom.type,
+    onFail: slice.actions.getFrom.type,
+  });
+};
 
 export const saveJournal = (data) => {
   return apiCall({
