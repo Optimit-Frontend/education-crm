@@ -62,9 +62,7 @@ export const slice = createSlice({
 
 export const getEmployeeBranch = (data) => {
   return apiCall({
-    url: `/user/getUserListByBranchId?page=${data.page - 1}&size=${data.size}&branchId=${
-      data.branchId
-    }`,
+    url: `/user/getUserListByBranchId?page=${data.page - 1}&size=${data.size}&branchId=${data.branchId}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
@@ -74,6 +72,14 @@ export const getEmployeeBranch = (data) => {
 export const getEmployeeBranchId = (data) => {
   return apiCall({
     url: `/user/getUserListByBranchId/${data}`,
+    method: "get",
+    onSuccess: slice.actions.getFromAll.type,
+    onFail: slice.actions.getFromAll.type,
+  });
+};
+export const getUserLists = () => {
+  return apiCall({
+    url: "/user/getUserList",
     method: "get",
     onSuccess: slice.actions.getFromAll.type,
     onFail: slice.actions.getFromAll.type,
