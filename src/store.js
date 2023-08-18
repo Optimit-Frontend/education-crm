@@ -24,6 +24,7 @@ import studentAccountReducer from "./reducer/studentAccountReducer";
 import salaryReducer from "./reducer/salaryReducer.js";
 import journalReducer from "./reducer/journalReducer.js";
 import studentHomeworkReducer from "./reducer/studentHomeworkReducer.js";
+import scoreReducer from "./reducer/scoreReducer.js";
 
 export default configureStore({
   reducer: {
@@ -51,6 +52,7 @@ export default configureStore({
     salaryReducer,
     journalReducer,
     studentHomeworkReducer,
+    scoreReducer,
   },
   middleware: [api],
 });
