@@ -24,6 +24,13 @@ const { Option } = Select;
 
 const columns = [
   {
+    title: "Talaba",
+    dataIndex: "firstName",
+    key: "firstName",
+    width: "30%",
+    search: true,
+  },
+  {
     title: "Fan",
     dataIndex: "subjectName",
     key: "subjectName",
@@ -31,23 +38,23 @@ const columns = [
     search: true,
   },
   {
-    title: "Mavzu raqam",
-    dataIndex: "topicNumber",
-    key: "topicNumber",
+    title: "O`qituvchi",
+    dataIndex: "teacher",
+    key: "teacher",
     width: "30%",
     search: true,
   },
   {
-    title: "Uy ishi",
-    dataIndex: "homework",
-    key: "homework",
+    title: "Baho",
+    dataIndex: "score",
+    key: "score",
     width: "25%",
     search: false,
   },
   {
     title: "Sana",
-    dataIndex: "date",
-    key: "date",
+    dataIndex: "createdDate",
+    key: "createdDate",
     width: "30%",
     search: false,
   },
@@ -57,14 +64,7 @@ const columns = [
     key: "description",
     width: "20%",
     search: false,
-  },
-  {
-    title: "Dars soati",
-    dataIndex: "lessonHour",
-    key: "lessonHour",
-    width: "30%",
-    search: false,
-  },
+  }
 ];
 
 function StudentHomework({
@@ -137,7 +137,7 @@ function StudentHomework({
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteScore(item);
+      deleteScore(item.id);
       return null;
     });
   };
@@ -154,6 +154,7 @@ function StudentHomework({
         .then((values) => {
           selectedRowKeys[1][0]?.id && editScore({
             ...values,
+            id: selectedRowKeys[1][0]?.id
           });
           setOnedit(false);
         })
@@ -177,23 +178,64 @@ function StudentHomework({
     formValidate();
   }
 
+  const [journalId, setJournalId] = useState(null);
+
+  function changeJournal(event) {
+    getScores({
+      journalId: event,
+      page: pageData.page,
+      size: pageData.size
+    });
+  }
+
   return (
     <div>
       <h3 className="text-2xl font-bold mb-5">Baholar</h3>
+      <Form.Item
+        key="journalId"
+        name="journalId"
+        // label={<span className="text-base font-medium">Jurnal tanlash</span>}
+        rules={[
+          {
+            required: false,
+            message: "Jurnalni kiriting",
+          },
+        ]}
+      >
+        <Select
+          value={journalId}
+          showSearch
+          allowClear
+          onChange={changeJournal}
+          placeholder="Jurnal tanlash"
+          optionFilterProp="children"
+          style={{ width: "100%" }}
+          key="id"
+          filterOption={(input, option) => {
+            return option.children.toLowerCase()?.includes(input.toLowerCase());
+          }}
+        >
+          {journalReducer?.journal?.journalResponses?.map((journal) => {
+            return (
+              <Option value={journal.id} key={journal.id}>{journal?.studentClass?.className}</Option>
+            );
+          })}
+        </Select>
+      </Form.Item>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
             onClick={() => {
               setOnedit(true);
               setVisible(true);
-              form.setFieldValue("topicNumber", selectedRowKeys[1][0]?.topicNumber);
+              form.setFieldValue("studentId", selectedRowKeys[1][0]?.student?.id);
               form.setFieldValue("subjectId", selectedRowKeys[1][0]?.subject?.id);
-              form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
               form.setFieldValue("description", selectedRowKeys[1][0]?.description);
-              form.setFieldValue("homework", selectedRowKeys[1][0]?.homework);
+              form.setFieldValue("journalId", selectedRowKeys[1][0]?.journal?.id);
               form.setFieldValue("date", selectedRowKeys[1][0]?.date);
-              form.setFieldValue("lessonHour", selectedRowKeys[1][0]?.lessonHour);
+              form.setFieldValue("score", selectedRowKeys[1][0]?.score);
               form.setFieldValue("teacherId", selectedRowKeys[1][0]?.teacherId);
+              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -435,10 +477,12 @@ function StudentHomework({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={scoreReducer?.scores?.map((item) => {
+        tableData={scoreReducer?.scores?.scoreResponses?.map((item) => {
           return ({
             ...item,
-            branchId: item.branch?.name,
+            teacher: item.teacher?.name,
+            teacherId: item.teacher?.id,
+            firstName: item.student?.firstName,
             subjectName: item.subject?.name,
             studentId: item.student?.id
           });

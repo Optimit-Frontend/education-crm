@@ -49,7 +49,7 @@ export const slice = createSlice({
 
 export const getScores = (data) => {
   return apiCall({
-    url: `/score/getAllByJournalId?journalId=${data?.journalId}&page=${data.page - 1}&size=${data.size}`,
+    url: `/score/getAllByJournalId/${data?.journalId}?page=${data.page - 1}&size=${data.size}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
