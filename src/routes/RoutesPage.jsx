@@ -7,6 +7,7 @@ import PartlySalary from "../pages/Salary/PartlySalary.jsx";
 import Journal from "../pages/Journal/Journal.jsx";
 import StudentHomework from "../pages/Students/StudentHomework.jsx";
 import Scores from "../pages/Journal/Scores.jsx";
+import Attendance from "../pages/Attendance/Attendance.jsx";
 
 const Dashboard = lazy(() => {
   return import("../pages/Dashboard/Dashboard");
@@ -111,6 +112,7 @@ function RoutesPage() {
           <Route path="journal" element={<Journal />} />
           <Route path="student-homework" element={<StudentHomework />} />
           <Route path="scores" element={<Scores />} />
+          <Route path="attendance" element={<Attendance />} />
         </Route>
         <Route path="/login" element={<Login />} />
         {/* <Route path='*' element={<Error404 />} /> */}
