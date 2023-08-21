@@ -26,6 +26,7 @@ import journalReducer from "./reducer/journalReducer.js";
 import studentHomeworkReducer from "./reducer/studentHomeworkReducer.js";
 import scoreReducer from "./reducer/scoreReducer.js";
 import attendanceReducer from "./reducer/attendanceReducer.js";
+import teachingHourReducer from "./reducer/teachingHourReducer.js";
 
 export default configureStore({
   reducer: {
@@ -54,7 +55,8 @@ export default configureStore({
     journalReducer,
     studentHomeworkReducer,
     scoreReducer,
-    attendanceReducer
+    attendanceReducer,
+    teachingHourReducer,
   },
   middleware: [api],
 });
