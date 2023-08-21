@@ -2,6 +2,13 @@ import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import DefaultLayout from "../layout/Layout";
 import Loading from "../components/Loading/Loading";
+import Salary from "../pages/Salary/Salary";
+import PartlySalary from "../pages/Salary/PartlySalary.jsx";
+import Journal from "../pages/Journal/Journal.jsx";
+import StudentHomework from "../pages/Students/StudentHomework.jsx";
+import Scores from "../pages/Journal/Scores.jsx";
+import Attendance from "../pages/Attendance/Attendance.jsx";
+import TeachingHours from "../pages/TeachHours/TeachingHours.jsx";
 
 const Dashboard = lazy(() => {
   return import("../pages/Dashboard/Dashboard");
@@ -117,6 +124,13 @@ function RoutesPage() {
           <Route path="transactions" element={<Transaction />} />
           <Route path="student-transaction" element={<StudentPayment />} />
           <Route path="student-debts" element={<StudentDebt />} />
+          <Route path="salaries" element={<Salary />} />
+          <Route path="partly-salaries" element={<PartlySalary />} />
+          <Route path="journal" element={<Journal />} />
+          <Route path="student-homework" element={<StudentHomework />} />
+          <Route path="scores" element={<Scores />} />
+          <Route path="attendance" element={<Attendance />} />
+          <Route path="teaching-hours" element={<TeachingHours />} />
         </Route>
         <Route path="/login" element={<Login />} />
         {/* <Route path='*' element={<Error404 />} /> */}

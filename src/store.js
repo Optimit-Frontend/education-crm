@@ -25,6 +25,12 @@ import workExpirenceReducer from "./reducer/workExpirenceReducer";
 import levelReducer from "./reducer/levelReducer";
 import transactionReducer from "./reducer/transactionReducer";
 import studentAccountReducer from "./reducer/studentAccountReducer";
+import salaryReducer from "./reducer/salaryReducer.js";
+import journalReducer from "./reducer/journalReducer.js";
+import studentHomeworkReducer from "./reducer/studentHomeworkReducer.js";
+import scoreReducer from "./reducer/scoreReducer.js";
+import attendanceReducer from "./reducer/attendanceReducer.js";
+import teachingHourReducer from "./reducer/teachingHourReducer.js";
 
 export default configureStore({
   reducer: {
@@ -52,7 +58,13 @@ export default configureStore({
     classReducer,
     levelReducer,
     transactionReducer,
-    studentAccountReducer
+    studentAccountReducer,
+    salaryReducer,
+    journalReducer,
+    studentHomeworkReducer,
+    scoreReducer,
+    attendanceReducer,
+    teachingHourReducer,
   },
   middleware: [api],
 });
