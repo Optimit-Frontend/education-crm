@@ -4,9 +4,8 @@ import { Select } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import { measurement } from "../../const";
 import warehouseReducer, { getAllWarehouse } from "../../reducer/warehouseReducer";
-import productReducer, { getProductsBranch, getProductsWearehouse } from "../../reducer/productReducer";
+import drinksReducer, { getDrinksBranch, getDrinksWearehouse } from "../../reducer/drinksReducer";
 
 const { Option } = Select;
 const columns = [
@@ -18,22 +17,18 @@ const columns = [
     search: false,
   },
   {
-    title: "Miqdori",
-    dataIndex: "quantity",
-    key: "quantity",
+    title: "Soni",
+    dataIndex: "count",
+    key: "count",
     width: "20%",
     search: false,
   },
   {
-    title: "O'lchov birlik",
-    dataIndex: "measurementType",
-    key: "measurementType",
+    title: "Liter miqdori",
+    dataIndex: "literQuantity",
+    key: "literQuantity",
     width: "20%",
     search: false,
-    render: (eski) => {
-      const meas = measurement?.find((item) => { return item.value === eski; });
-      return meas?.name;
-    }
   },
   {
     title: "Ombor",
@@ -44,13 +39,13 @@ const columns = [
   }
 ];
 
-function Product({
-  productReducer,
+function Drinks({
+  drinksReducer,
   warehouseReducer,
   usersDataReducer,
   getAllWarehouse,
-  getProductsBranch,
-  getProductsWearehouse,
+  getDrinksBranch,
+  getDrinksWearehouse,
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const location = useLocation();
@@ -65,14 +60,14 @@ function Product({
   });
 
   useEffect(() => {
-    getProductsBranch({
+    getDrinksBranch({
       page: pageData.page,
       size: pageData.size,
       branchId: usersDataReducer?.branch?.id
     });
     getAllWarehouse(usersDataReducer?.branch?.id);
     setSelectedRowKeys([[], []]);
-  }, [productReducer?.changeData]);
+  }, [drinksReducer?.changeData]);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -81,22 +76,22 @@ function Product({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/kitchen/product?page=${pageCount}&size=100`);
+      navigate(`/kitchen/drinks?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/kitchen/product?page=${pageCount}&size=50`);
+      navigate(`/kitchen/drinks?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/kitchen/product?page=${pageCount}&size=20`);
+      navigate(`/kitchen/drinks?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/kitchen/product?page=${pageCount}&size=10`);
+      navigate(`/kitchen/drinks?page=${pageCount}&size=10`);
     }
   }, []);
 
@@ -105,21 +100,21 @@ function Product({
     searchParams.set("size", page);
     searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
-    navigate(`/kitchen/product?page=${pageNumber}&size=${page}`);
+    navigate(`/kitchen/drinks?page=${pageNumber}&size=${page}`);
   };
 
   return (
     <div>
-      <h3 className="mb-5 text-2xl font-bold">Mahsulotlar</h3>
+      <h3 className="mb-5 text-2xl font-bold">Ichimliklar</h3>
       <div className="mb-3 flex items-center justify-between gap-5">
         <div>
           <Select
             onChange={(e) => {
-              e ? getProductsWearehouse({
+              e ? getDrinksWearehouse({
                 page: pageData.page,
                 size: pageData.size,
                 warehouseId: e,
-              }) : getProductsBranch({
+              }) : getDrinksBranch({
                 page: pageData.page,
                 size: pageData.size,
                 branchId: usersDataReducer?.branch?.id
@@ -151,8 +146,8 @@ function Product({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        totalItems={productReducer?.productsTotalCount}
-        tableData={productReducer?.products?.map((item) => {
+        totalItems={drinksReducer?.drinksTotalCount}
+        tableData={drinksReducer?.drinks?.map((item) => {
           return {
             ...item,
             warehouseName: item.warehouse?.name,
@@ -167,14 +162,8 @@ function Product({
   );
 }
 
-export default connect(
-  (
-    productReducer,
-    warehouseReducer,
-    usersDataReducer
-  ), {
-    getAllWarehouse,
-    getProductsBranch,
-    getProductsWearehouse,
-  }
-)(Product);
+export default connect((drinksReducer, warehouseReducer, usersDataReducer), {
+  getAllWarehouse,
+  getDrinksBranch,
+  getDrinksWearehouse,
+})(Drinks);

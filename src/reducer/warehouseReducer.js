@@ -12,10 +12,10 @@ export const slice = createSlice({
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.warehouse = action.payload?.data;
+        state.warehouse = action.payload?.data?.warehouseList;
       } else {
         state.message = action.payload.message;
-        toast.warning(action.payload.message || "Xona turlarini yuklashda muammo bo'ldi");
+        toast.warning(action.payload.message || "Omborlarni yuklashda muammo bo'ldi");
         state.warehouse = null;
       }
       state.changeData = false;
@@ -49,7 +49,7 @@ export const slice = createSlice({
 
 export const getAllWarehouse = (data) => {
   return apiCall({
-    url: `/warehouse/getAll/${data}`,
+    url: `/wareHouses/getAllByBranchId/${data}?page=0&size=100`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
@@ -58,7 +58,7 @@ export const getAllWarehouse = (data) => {
 
 export const saveWarehouse = (data) => {
   return apiCall({
-    url: "/warehouse/create",
+    url: "/wareHouses",
     method: "post",
     data,
     onSuccess: slice.actions.saveFrom.type,
@@ -68,7 +68,7 @@ export const saveWarehouse = (data) => {
 
 export const editWarehouse = (data) => {
   return apiCall({
-    url: "/warehouse/update",
+    url: "/wareHouses",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,
@@ -78,7 +78,7 @@ export const editWarehouse = (data) => {
 
 export const deleteWarehouse = (data) => {
   return apiCall({
-    url: `/warehouse/delete/${data}`,
+    url: `/wareHouses/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,

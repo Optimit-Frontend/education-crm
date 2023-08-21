@@ -13,7 +13,7 @@ function App({ saveUser }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = JSON.parse(
+    const user = JSON?.parse(
       localStorage.getItem("userDataCRM") || sessionStorage.getItem("EducationCRM"),
     );
     const token = localStorage.getItem("EducationCRM") || sessionStorage.getItem("EducationCRM");

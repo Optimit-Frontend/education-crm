@@ -3,53 +3,53 @@ import { toast } from "react-toastify";
 import { apiCall } from "../api";
 
 export const slice = createSlice({
-  name: "products",
+  name: "drinks",
   initialState: {
-    products: null,
-    productsTotalCount: 0,
+    drinks: null,
+    drinksTotalCount: 0,
     message: null,
     changeData: false,
   },
   reducers: {
     getFromWearehouse: (state, action) => {
       if (action.payload.success) {
-        state.products = action.payload?.data?.productsInWareHouseResponses;
-        state.productsTotalCount = action.payload?.data?.totalElement;
+        state.drinks = action.payload?.data?.drinksInWareHouseResponses;
+        state.drinksTotalCount = action.payload?.data?.totalElement;
       } else {
         state.message = action.payload.message;
         toast.warning(action.payload.message || "Kunlik ishlatilgan mahsulotlarni yuklashda muammo bo'ldi");
-        state.products = null;
-        state.productsTotalCount = 0;
+        state.drinks = null;
+        state.drinksTotalCount = 0;
       }
       state.changeData = false;
     },
     getFromBarnch: (state, action) => {
       if (action.payload.success) {
-        state.products = action.payload?.data?.productsInWareHouseResponses;
-        state.productsTotalCount = action.payload?.data?.totalElement;
+        state.drinks = action.payload?.data?.drinksInWareHouseResponses;
+        state.drinksTotalCount = action.payload?.data?.totalElement;
       } else {
         state.message = action.payload.message;
         toast.warning(action.payload.message || "Kunlik ishlatilgan mahsulotlarni yuklashda muammo bo'ldi");
-        state.products = null;
-        state.productsTotalCount = 0;
+        state.drinks = null;
+        state.drinksTotalCount = 0;
       }
       state.changeData = false;
     },
   },
 });
 
-export const getProductsWearehouse = (data) => {
+export const getDrinksWearehouse = (data) => {
   return apiCall({
-    url: `/productsInWarehouse/getAllByWarehouseId/${data.warehouseId}?page=${data.page - 1}&size=${data.size}`,
+    url: `/drinksInWarehouse/getAllByWarehouseId?page=${data.page - 1}&size=${data.size}&wareHouseId=${data.warehouseId}`,
     method: "get",
     onSuccess: slice.actions.getFromWearehouse.type,
     onFail: slice.actions.getFromWearehouse.type,
   });
 };
 
-export const getProductsBranch = (data) => {
+export const getDrinksBranch = (data) => {
   return apiCall({
-    url: `/productsInWarehouse/getAllByBranchId/${data.branchId}?page=${data.page - 1}&size=${data.size}`,
+    url: `/drinksInWarehouse/getAllByBranchIdId?page=${data.page - 1}&size=${data.size}&branchId=${data.branchId}`,
     method: "get",
     onSuccess: slice.actions.getFromBarnch.type,
     onFail: slice.actions.getFromBarnch.type,

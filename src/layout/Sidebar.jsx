@@ -862,7 +862,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                           <li>
                             <NavLink
-                              to="/kitchen/measurement"
+                              to={`/kitchen/purchasedProduct?page=1&size=${pageSize}`}
                               onClick={() => {
                                 return setSidebarOpen(false);
                               }}
@@ -872,7 +872,52 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 }`;
                               }}
                             >
-                              O&apos;lchov birligi
+                              Sotib olingan mahsulotlar
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to={`/kitchen/purchasedDrink?page=1&size=${pageSize}`}
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Sotib olingan ichimliklar
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to={`/kitchen/dailyconsumedProduct?page=1&size=${pageSize}`}
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Ishlatilgan mahsulotlar
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to={`/kitchen/dailyConsumedDrink?page=1&size=${pageSize}`}
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Ishlatilgan ichimliklar
                             </NavLink>
                           </li>
                           <li>
@@ -888,6 +933,21 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               }}
                             >
                               Mahsuloatlar
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to={`/kitchen/drinks?page=1&size=${pageSize}`}
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Ichimliklar
                             </NavLink>
                           </li>
                         </ul>
