@@ -391,31 +391,31 @@ function DailyConsumedProducts({
               <Form.Item
                 key="description"
                 name="description"
-                label={<span className="text-base font-medium">Mahsulot haqida ma&apos;lumot</span>}
+                label={<span className="text-base font-medium">Ma&apos;lumot</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Mahsulot haqida ma'lumotni kiriting",
+                    message: "Ma'lumotni kiriting",
                   },
                 ]}
               >
-                <TextArea rows={3} placeholder="Mahsulot haqida ma'lumotni kiriting..." />
+                <TextArea rows={3} placeholder="Ma'lumotni kiriting..." />
               </Form.Item>
               <Form.Item
                 key="employeeId"
                 name="employeeId"
-                label={<span className="text-base font-medium">Sotib oluvchi hodim</span>}
+                label={<span className="text-base font-medium">Ishlatuvchi hodim</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Sotib oluvchi hodimni tanlang",
+                    message: "Ishlatuvchi hodimni tanlang",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Sotib oluvchi hodimni tanlang..."
+                  placeholder="Ishlatuvchi hodimni tanlang..."
                   optionFilterProp="children"
                   className="w-full"
                   key="id"
