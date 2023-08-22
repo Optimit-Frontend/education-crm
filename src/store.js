@@ -31,6 +31,7 @@ import studentHomeworkReducer from "./reducer/studentHomeworkReducer.js";
 import scoreReducer from "./reducer/scoreReducer.js";
 import attendanceReducer from "./reducer/attendanceReducer.js";
 import teachingHourReducer from "./reducer/teachingHourReducer.js";
+import lessonScheduleReducer from "./reducer/lessonScheduleReducer.js";
 
 export default configureStore({
   reducer: {
@@ -65,6 +66,7 @@ export default configureStore({
     scoreReducer,
     attendanceReducer,
     teachingHourReducer,
+    lessonScheduleReducer,
   },
   middleware: [api],
 });
