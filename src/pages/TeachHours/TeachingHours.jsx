@@ -5,7 +5,7 @@ import {
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import moment from "moment/moment.js";
+import moment from "moment";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -69,14 +69,14 @@ function TeachingHours({
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const size = localStorage.getItem("PageSize") || 10;
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
   const page = searchParams.get("page");
+  const size = searchParams.get("size");
   const [pageData, setPageData] = useState({
-    page: 1,
-    size,
+    page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
+    size: size ? parseInt(size, 10) : 10,
     loading: false,
   });
 
@@ -130,7 +130,10 @@ function TeachingHours({
 
   const onChange = (pageNumber, page) => {
     setPageData({ size: page, page: pageNumber, loading: false });
+    searchParams.set("size", page);
+    searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
+    navigate(`/teaching-hours?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
@@ -475,7 +478,8 @@ function TeachingHours({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={teachingHourReducer?.teachingHour?.teachingHoursResponses?.map((item) => {
+        totalItems={teachingHourReducer?.teachingHourTotalCount}
+        tableData={teachingHourReducer?.teachingHour?.map((item) => {
           return ({
             ...item,
             teacher: item.teacher?.name,
