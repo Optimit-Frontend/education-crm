@@ -49,7 +49,7 @@ export const slice = createSlice({
 
 export const getFamily = (data) => {
   return apiCall({
-    url: `/family/getAllActiveFamily/${data.branchId}?page=${data.page - 1}&size=${data.size}`,
+    url: `/family/getAllActiveFamily?page=${data.page - 1}&size=${data.size}&branchId=${data.branchId}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
@@ -67,6 +67,15 @@ export const getFamilyById = (data) => {
 export const saveFamily = (data) => {
   return apiCall({
     url: "/family/create",
+    method: "post",
+    data,
+    onSuccess: slice.actions.saveFrom.type,
+    onFail: slice.actions.saveFrom.type,
+  });
+};
+export const saveFamilyLogin = (data) => {
+  return apiCall({
+    url: "/family/loginFamily",
     method: "post",
     data,
     onSuccess: slice.actions.saveFrom.type,
