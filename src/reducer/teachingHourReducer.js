@@ -6,15 +6,18 @@ export const slice = createSlice({
   name: "teachingHour",
   initialState: {
     teachingHour: null,
+    teachingHourTotalCount: 0,
     message: null,
     changeData: false,
   },
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.teachingHour = action.payload?.data;
+        state.teachingHour = action.payload?.data?.teachingHoursResponses;
+        state.teachingHourTotalCount = action.payload?.data?.totalElement;
       } else {
         state.teachingHour = null;
+        state.teachingHourTotalCount = 0;
         state.message = action.payload.message;
         toast.warning(action.payload.message);
       }
@@ -55,9 +58,9 @@ export const getTeachingHour = (data) => {
     onFail: slice.actions.getFrom.type,
   });
 };
-export const getAttendanceUserId = (data) => {
+export const getTeachingHoursByTeacherId = (data) => {
   return apiCall({
-    url: `/staffAttendance/getAllByUserId/${data.id}?page=${data.page - 1}&size=${data.size}`,
+    url: `/teachingHours/getByTeacherId/${data.teacherId}?page=${data.page - 1}&size=${data.size}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,

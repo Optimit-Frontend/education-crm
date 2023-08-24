@@ -14,7 +14,7 @@ export const slice = createSlice({
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.employees = action.payload?.data?.userResponseDtoList;
+        state.employees = action.payload?.data?.userResponseList;
         state.employeesTotalCount = action.payload?.data?.allSize;
       } else {
         state.message = action.payload.message;

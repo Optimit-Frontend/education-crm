@@ -62,7 +62,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
   return (
     <aside
       ref={sidebar}
-      className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
+      className={`absolute left-0 top-0 z-50 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
@@ -862,6 +862,21 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                         <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                           <li>
                             <NavLink
+                              to={`/kitchen/dailyMeal?page=1&size=${pageSize}`}
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Kunlik ovqatlar
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
                               to={`/kitchen/purchasedProduct?page=1&size=${pageSize}`}
                               onClick={() => {
                                 return setSidebarOpen(false);
@@ -1003,7 +1018,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     <>
                       <NavLink
                         to="#"
-                        className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                           (pathname === "/settings" || pathname.includes("settings"))
                           && "bg-graydark dark:bg-meta-4"
                         }`}
@@ -1062,7 +1077,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                       </NavLink>
                       {/* <!-- Dropdown Menu Start --> */}
                       <div className={`translate transform overflow-hidden ${!open && "hidden"}`}>
-                        <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                        <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                           <li>
                             <NavLink
                               to="/settings/branches"
@@ -1155,7 +1170,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           </li>
                           <li>
                             <NavLink
-                              to="/settings/subjectsForLevel"
+                              to={`/settings/subjectsForLevel?page=1&size=${pageSize}`}
                               onClick={() => {
                                 return setSidebarOpen(false);
                               }}

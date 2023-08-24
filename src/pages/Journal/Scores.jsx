@@ -191,37 +191,25 @@ function StudentHomework({
   return (
     <div>
       <h3 className="text-2xl font-bold mb-5">Baholar</h3>
-      <Form.Item
-        key="journalId"
-        name="journalId"
-        // label={<span className="text-base font-medium">Jurnal tanlash</span>}
-        rules={[
-          {
-            required: false,
-            message: "Jurnalni kiriting",
-          },
-        ]}
+      <Select
+        value={journalId}
+        showSearch
+        allowClear
+        onChange={changeJournal}
+        placeholder="Jurnal tanlash"
+        optionFilterProp="children"
+        style={{ width: "100%" }}
+        key="id"
+        filterOption={(input, option) => {
+          return option.children.toLowerCase()?.includes(input.toLowerCase());
+        }}
       >
-        <Select
-          value={journalId}
-          showSearch
-          allowClear
-          onChange={changeJournal}
-          placeholder="Jurnal tanlash"
-          optionFilterProp="children"
-          style={{ width: "100%" }}
-          key="id"
-          filterOption={(input, option) => {
-            return option.children.toLowerCase()?.includes(input.toLowerCase());
-          }}
-        >
-          {journalReducer?.journal?.journalResponses?.map((journal) => {
-            return (
-              <Option value={journal.id} key={journal.id}>{journal?.studentClass?.className}</Option>
-            );
-          })}
-        </Select>
-      </Form.Item>
+        {journalReducer?.journal?.journalResponses?.map((journal) => {
+          return (
+            <Option value={journal.id} key={journal.id}>{journal?.studentClass?.className}</Option>
+          );
+        })}
+      </Select>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button

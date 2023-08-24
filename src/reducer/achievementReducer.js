@@ -12,7 +12,7 @@ export const slice = createSlice({
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.achievement = action.payload?.data;
+        state.achievement = action.payload?.data?.achievementResponses;
       } else {
         state.message = action.payload.message;
         toast.warning(action.payload.message || "Hodim yutug'larini yuklashda muammo bo'ldi");
@@ -49,7 +49,7 @@ export const slice = createSlice({
 
 export const getAchievementUserId = (data) => {
   return apiCall({
-    url: `/achievement/getByUserId/${data}`,
+    url: `/achievement/getByUserId/${data}?page=0&size=100`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,

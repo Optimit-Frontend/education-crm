@@ -82,7 +82,11 @@ function RoomType({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editRoomType({ ...values, id: selectedRowKeys[1][0]?.id });
+          selectedRowKeys[1][0]?.id && editRoomType({
+            ...values,
+            id: selectedRowKeys[1][0]?.id,
+            branchId: selectedRowKeys[1][0]?.branch?.id
+          });
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -90,7 +94,7 @@ function RoomType({
       : form
         .validateFields()
         .then((values) => {
-          saveRoomType({ name: values.name, comingBranchId: usersDataReducer?.branch?.id });
+          saveRoomType({ name: values.name, branchId: usersDataReducer?.branch?.id });
           setOnedit(false);
         })
         .catch((info) => {

@@ -3,12 +3,12 @@ import { Route, Routes } from "react-router-dom";
 import DefaultLayout from "../layout/Layout";
 import Loading from "../components/Loading/Loading";
 import Salary from "../pages/Salary/Salary";
-import PartlySalary from "../pages/Salary/PartlySalary.jsx";
-import Journal from "../pages/Journal/Journal.jsx";
-import StudentHomework from "../pages/Students/StudentHomework.jsx";
-import Scores from "../pages/Journal/Scores.jsx";
-import Attendance from "../pages/Attendance/Attendance.jsx";
-import TeachingHours from "../pages/TeachHours/TeachingHours.jsx";
+import PartlySalary from "../pages/Salary/PartlySalary";
+import Journal from "../pages/Journal/Journal";
+import StudentHomework from "../pages/Students/StudentHomework";
+import Scores from "../pages/Journal/Scores";
+import Attendance from "../pages/Attendance/Attendance";
+import TeachingHours from "../pages/TeachHours/TeachingHours";
 
 const Dashboard = lazy(() => {
   return import("../pages/Dashboard/Dashboard");
@@ -73,6 +73,9 @@ const Product = lazy(() => {
 const Drinks = lazy(() => {
   return import("../pages/Kitchen/Drinks");
 });
+const DailyMeal = lazy(() => {
+  return import("../pages/Kitchen/DailyMeal");
+});
 const WorkExpirence = lazy(() => {
   return import("../pages/Employee/WorkExpirence");
 });
@@ -107,6 +110,7 @@ function RoutesPage() {
           <Route path="settings/subjectsForLevel" element={<SubjectForLevel />} />
           <Route path="settings/balance" element={<Balance />} />
           <Route path="settings/warehouse" element={<Warehouse />} />
+          <Route path="kitchen/dailyMeal" element={<DailyMeal />} />
           <Route path="kitchen/product" element={<Product />} />
           <Route path="kitchen/drinks" element={<Drinks />} />
           <Route path="kitchen/purchasedProduct" element={<PurchasedProduct />} />
