@@ -18,7 +18,7 @@ import studentAccountReducer, {
 } from "../../reducer/studentAccountReducer";
 import studentReducer, { getStudentsAll } from "../../reducer/studentReducer";
 import familiyReducer, {
-  deleteFamily, editFamily, getFamily, saveFamily
+  deleteFamily, editFamily, getFamily, saveFamily, saveFamilyLogin,
 } from "../../reducer/familiyReducer.js";
 import businessBranchesReducer, {
   getBusinessBranch,
@@ -27,27 +27,54 @@ import businessBranchesReducer, {
 const { Option } = Select;
 
 const columns = [
-
   {
-    title: "Ism",
-    dataIndex: "fullName",
-    key: "fullName",
+    title: "Talaba",
+    dataIndex: "student",
+    key: "student",
     width: "30%",
     search: true,
   },
   {
-    title: "Tel raqam",
-    dataIndex: "phoneNumber",
-    key: "phoneNumber",
+    title: "Hisob raqam",
+    dataIndex: "accountNumber",
+    key: "accountNumber",
+    width: "30%",
+    search: true,
+  },
+  {
+    title: "Filial",
+    dataIndex: "branchId",
+    key: "branchId",
     width: "25%",
     search: false,
   },
   {
-    title: "Jinsi",
-    dataIndex: "gender",
-    key: "gender",
+    title: "Sana",
+    dataIndex: "date",
+    key: "date",
     width: "30%",
-    search: true,
+    search: false,
+  },
+  {
+    title: "Qarz",
+    dataIndex: "amountOfDebit",
+    key: "amountOfDebit",
+    width: "20%",
+    search: false,
+  },
+  {
+    title: "Amallar",
+    dataIndex: "getOneId",
+    key: "getOneId",
+    width: "30%",
+    search: false,
+    render: (eski) => {
+      return (
+        <button style={{ background: "gold", padding: "5px", borderRadius: "5px" }} type="button" onClick={() => { return console.log(eski); }}>
+          Ko`rish
+        </button>
+      );
+    }
   },
 ];
 
@@ -62,7 +89,7 @@ function Family({
   deleteFamily,
   businessBranchesReducer,
   familiyReducer,
-  getBusinessBranch
+  getBusinessBranch, saveFamilyLogin
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -106,28 +133,28 @@ function Family({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/family?page=${pageCount}&size=100`);
+      navigate(`/family-login?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/family?page=${pageCount}&size=50`);
+      navigate(`/family-login?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/family?page=${pageCount}&size=20`);
+      navigate(`/family-login?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/family?page=${pageCount}&size=10`);
+      navigate(`/family-login?page=${pageCount}&size=10`);
     }
   }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteFamily(parseInt(item?.id, 10));
+      deleteFamily(parseInt(item?.accountNumber, 10));
       return null;
     });
   };
@@ -154,8 +181,10 @@ function Family({
       : form
         .validateFields()
         .then((values) => {
-          saveFamily({
+          saveFamilyLogin({
             ...values,
+            phoneNumber: values.phoneNumber.toString(),
+            password: values.password.toString()
           });
           setOnedit(false);
         })
@@ -170,20 +199,18 @@ function Family({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Talaba malumotlari</h3>
+      <h3 className="text-2xl font-bold mb-5">Login</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
             onClick={() => {
               setOnedit(true);
               setVisible(true);
-              form.setFieldValue("gender", selectedRowKeys[1][0]?.gender);
-              form.setFieldValue("fullName", selectedRowKeys[1][0]?.fullName);
+              form.setFieldValue("accountNumber", selectedRowKeys[1][0]?.accountNumber);
+              form.setFieldValue("studentId", selectedRowKeys[1][0]?.studentId);
               form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
-              form.setFieldValue("password", selectedRowKeys[1][0]?.password);
-              form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
-              form.setFieldValue("studentIdList", selectedRowKeys[1][0]?.studentResponses[0]);
-              console.log(selectedRowKeys[1][0]);
+              form.setFieldValue("discount", selectedRowKeys[1][0]?.discount);
+              form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalance?.accountNumber);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -271,20 +298,7 @@ function Family({
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
           <Row gutter={24}>
-            <Col span={12}>
-              <Form.Item
-                key="fullName"
-                name="fullName"
-                label={<span className="text-base font-medium">Ism familiya</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "ism familiya kiriting",
-                  },
-                ]}
-              >
-                <Input placeholder="Ism familiya kiriting" />
-              </Form.Item>
+            <Col span={24}>
               <Form.Item
                 key="phoneNumber"
                 name="phoneNumber"
@@ -312,97 +326,6 @@ function Family({
                 <InputNumber className="w-full" placeholder="Password" />
               </Form.Item>
             </Col>
-            <Col span={12}>
-              <Form.Item
-                key="branchId"
-                name="branchId"
-                label={<span className="text-base font-medium">Filial ( Branch )</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Filialni tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Filialni tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {
-                    businessBranchesReducer?.businessBranch?.map((barnch) => {
-                      return (
-                        <Option value={barnch?.id} key={barnch?.id}>
-                          {barnch?.name}
-                        </Option>
-                      );
-                    })
-                  }
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="gender"
-                name="gender"
-                label={<span className="text-base font-medium">Jinsi</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Jisini kiriting",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Jinsini kiriting"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  <Option value="ERKAK">Erkak</Option>
-                  <Option value="AYOL">Ayol</Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="studentIdList"
-                name="studentIdList"
-                label={<span className="text-base font-medium">Talaba tanlash</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Xarajat turini kiriting",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  mode="multiple"
-                  placeholder="Talaba tanlash"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {studentReducer?.students?.studentResponseDtoList?.map((student) => {
-                    return (
-                      <Option value={student.id} key={student.id}>{student?.firstName}</Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-            </Col>
           </Row>
         </Form>
       </Modal>
@@ -415,6 +338,7 @@ function Family({
           return ({
             ...item,
             branchId: item.branch?.name,
+            student: item.student?.firstName,
             studentId: item.student?.id
           });
         })}
@@ -437,6 +361,7 @@ export default connect(
     editFamily,
     saveFamily,
     getFamily,
-    getBusinessBranch
+    getBusinessBranch,
+    saveFamilyLogin
   }
 )(Family);
