@@ -305,7 +305,7 @@ function Class({
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Xona tanlang"
+                  placeholder="Rahbar tanlang"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -313,7 +313,7 @@ function Class({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  {employeeReducer?.employees?.map((room) => {
+                  {employeeReducer?.employeesAllBranch?.map((room) => {
                     return (
                       <Option value={room.id} key={room.id}>{room?.name}</Option>
                     );
@@ -344,7 +344,7 @@ function Class({
                 >
                   {roomReducer?.roomAllBarnch?.map((room) => {
                     return (
-                      <Option value={room.id} key={room.id}>{room?.roomNumber}</Option>
+                      <Option value={room.id} key={room.id}>{room?.roomType?.name}</Option>
                     );
                   })}
                 </Select>

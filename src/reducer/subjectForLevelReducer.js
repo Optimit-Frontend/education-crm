@@ -49,7 +49,7 @@ export const slice = createSlice({
 
 export const getSubjectForLevel = (data) => {
   return apiCall({
-    url: `/subjectLevel/getAllByBranchId/${data}`,
+    url: `/subjectLevels/getAllSubjectByBranchId/${data}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
@@ -58,7 +58,7 @@ export const getSubjectForLevel = (data) => {
 
 export const saveSubjectForLevel = (data) => {
   return apiCall({
-    url: "/subjectLevel/create",
+    url: "/subjectLevels",
     method: "post",
     data,
     onSuccess: slice.actions.saveFrom.type,
@@ -68,7 +68,7 @@ export const saveSubjectForLevel = (data) => {
 
 export const editSubjectForLevel = (data) => {
   return apiCall({
-    url: "/subjectLevel/update",
+    url: "/subjectLevels",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,
@@ -78,7 +78,7 @@ export const editSubjectForLevel = (data) => {
 
 export const deleteSubjectForLevel = (data) => {
   return apiCall({
-    url: `/subjectLevel/delete/${data}`,
+    url: `/subjectLevels/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,
