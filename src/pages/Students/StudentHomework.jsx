@@ -18,6 +18,9 @@ import subjectReducer, { getSubject } from "../../reducer/subjectReducer.js";
 import classReducer, { getClassesAll } from "../../reducer/classReducer.js";
 import employeeReducer, { getEmployeeBranch, getUserLists } from "../../reducer/employeeReducer.js";
 import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer.js";
+import subjectForLevelReducer, {
+  getSubjectForLevel,
+} from "../../reducer/subjectForLevelReducer.js";
 
 const { Option } = Select;
 
@@ -74,7 +77,7 @@ const columns = [
 ];
 
 function StudentHomework({
-  usersDataReducer, getHomeWorkListActive,
+  usersDataReducer, getHomeWorkListActive, getSubjectForLevel, subjectForLevelReducer,
   getEmployeeBranch, employeeReducer, getUserLists, businessBranchesReducer,
   subjectReducer, classReducer, getSubject, getClassesAll, getBusinessBranch,
   studentHomeworkReducer, getHomeWorkList, saveHomework, editHomework, deleteHomework
@@ -100,6 +103,7 @@ function StudentHomework({
     getClassesAll({ id: usersDataReducer?.branch?.id });
     getSubject(usersDataReducer?.branch?.id);
     getHomeWorkListActive();
+    getSubjectForLevel(usersDataReducer?.branch?.id);
     getBusinessBranch(usersDataReducer?.branch?.id);
     getUserLists();
     // getEmployeeBranch({
@@ -190,7 +194,7 @@ function StudentHomework({
               setOnedit(true);
               setVisible(true);
               form.setFieldValue("topicNumber", selectedRowKeys[1][0]?.topicNumber);
-              form.setFieldValue("subjectId", selectedRowKeys[1][0]?.subject?.id);
+              form.setFieldValue("subjectLevelId", selectedRowKeys[1][0]?.subject?.id);
               form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
               form.setFieldValue("description", selectedRowKeys[1][0]?.description);
               form.setFieldValue("homework", selectedRowKeys[1][0]?.homework);
@@ -420,8 +424,8 @@ function StudentHomework({
                 </Select>
               </Form.Item>
               <Form.Item
-                key="subjectId"
-                name="subjectId"
+                key="subjectLevelId"
+                name="subjectLevelId"
                 label={<span className="text-base font-medium">Fan tanlash</span>}
                 rules={[
                   {
@@ -441,9 +445,9 @@ function StudentHomework({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  {subjectReducer?.subjects?.map((student) => {
+                  {subjectForLevelReducer?.subjectForLevel?.map((student) => {
                     return (
-                      <Option value={student.id} key={student.id}>{student?.name}</Option>
+                      <Option value={student.id} key={student.id}>{student?.subject?.name}</Option>
                     );
                   })}
                 </Select>
@@ -503,7 +507,7 @@ function StudentHomework({
 export default connect(
   (
     usersDataReducer, employeeReducer,
-    balanceReducer, studentHomeworkReducer, subjectReducer, classReducer, businessBranchesReducer
+    balanceReducer, studentHomeworkReducer, subjectReducer, classReducer, businessBranchesReducer, subjectForLevelReducer
   ), {
     getAllBalanceBranch,
     getSubject,
@@ -515,6 +519,7 @@ export default connect(
     getEmployeeBranch,
     getUserLists,
     getHomeWorkListActive,
-    getBusinessBranch
+    getBusinessBranch,
+    getSubjectForLevel
   }
 )(StudentHomework);

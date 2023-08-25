@@ -17,6 +17,9 @@ import studentAccountReducer, {
   saveStudentPayment,
 } from "../../reducer/studentAccountReducer";
 import studentReducer, { getStudentsAll } from "../../reducer/studentReducer";
+import businessBranchesReducer, {
+  getBusinessBranch,
+} from "../../reducer/businessBranchesReducer.js";
 
 const { Option } = Select;
 
@@ -82,7 +85,7 @@ function StudentAccount({
   deleteStudentAccount,
   editStudentAccount,
   saveStudentAccount,
-  getStudentAccountByBranch
+  getStudentAccountByBranch, getBusinessBranch, businessBranchesReducer
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -104,6 +107,7 @@ function StudentAccount({
   useEffect(() => {
     getStudentAccountByBranch(usersDataReducer?.branch?.id);
     getAllBalanceBranch(usersDataReducer?.branch?.id);
+    getBusinessBranch(usersDataReducer?.branch?.id);
     getStudentsAll({
       branchId: usersDataReducer.branch?.id,
       page: pageData.page,
@@ -291,7 +295,7 @@ function StudentAccount({
                 label={<span className="text-base font-medium">Shot raqam </span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Hisobdagi pulni kiriting",
                   },
                 ]}
@@ -325,7 +329,7 @@ function StudentAccount({
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Hisobd raqam"
+                  placeholder="Hisob raqam"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -385,7 +389,15 @@ function StudentAccount({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  <Option value={1}>1</Option>
+                  {
+                    businessBranchesReducer?.businessBranch?.map((barnch) => {
+                      return (
+                        <Option value={barnch?.id} key={barnch?.id}>
+                          {barnch?.name}
+                        </Option>
+                      );
+                    })
+                  }
                 </Select>
               </Form.Item>
               <Form.Item
@@ -446,7 +458,7 @@ function StudentAccount({
 export default connect(
   (
     usersDataReducer, studentReducer,
-    balanceReducer, studentAccountReducer
+    balanceReducer, studentAccountReducer, businessBranchesReducer
   ), {
     getAllBalanceBranch,
     getStudentAccountById,
@@ -455,6 +467,7 @@ export default connect(
     saveStudentPayment,
     editStudentAccount,
     deleteStudentAccount,
-    getStudentsAll
+    getStudentsAll,
+    getBusinessBranch
   }
 )(StudentAccount);

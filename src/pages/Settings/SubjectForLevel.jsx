@@ -243,7 +243,7 @@ function Subjects({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  {subjectReducer?.subjects?.map((subject) => {
+                  {subjectForLevelReducer?.subjectForLevel?.map((subject) => {
                     return (
                       <Option value={subject.id} key={subject.id}>{subject?.name}</Option>
                     );
@@ -279,32 +279,32 @@ function Subjects({
                   })}
                 </Select>
               </Form.Item>
-              <Form.Item
-                key="teachingHour"
-                name="teachingHour"
-                label={<span className="text-base font-medium">O&apos;qitilish soati</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "O'qitilish soatini kiriting",
-                  },
-                ]}
-              >
-                <InputNumber className="w-full" placeholder="O'qitilish soatini kiriting..." />
-              </Form.Item>
-              <Form.Item
-                key="priceForPerHour"
-                name="priceForPerHour"
-                label={<span className="text-base font-medium">Soatlik o&apos;qitish narxi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Soatlik o'qitish narxini kiriting",
-                  },
-                ]}
-              >
-                <InputNumber className="w-full" placeholder="Soatlik o'qitish narxini kiriting..." />
-              </Form.Item>
+              {/* <Form.Item */}
+              {/*   key="teachingHour" */}
+              {/*   name="teachingHour" */}
+              {/*   label={<span className="text-base font-medium">O&apos;qitilish soati</span>} */}
+              {/*   rules={[ */}
+              {/*     { */}
+              {/*       required: true, */}
+              {/*       message: "O'qitilish soatini kiriting", */}
+              {/*     }, */}
+              {/*   ]} */}
+              {/* > */}
+              {/*   <InputNumber className="w-full" placeholder="O'qitilish soatini kiriting..." /> */}
+              {/* </Form.Item> */}
+              {/* <Form.Item */}
+              {/*   key="priceForPerHour" */}
+              {/*   name="priceForPerHour" */}
+              {/*   label={<span className="text-base font-medium">Soatlik o&apos;qitish narxi</span>} */}
+              {/*   rules={[ */}
+              {/*     { */}
+              {/*       required: true, */}
+              {/*       message: "Soatlik o'qitish narxini kiriting", */}
+              {/*     }, */}
+              {/*   ]} */}
+              {/* > */}
+              {/*   <InputNumber className="w-full" placeholder="Soatlik o'qitish narxini kiriting..." /> */}
+              {/* </Form.Item> */}
             </Col>
           </Row>
         </Form>
