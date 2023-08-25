@@ -272,7 +272,7 @@ function StudentHomework({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Talaba hisob raqami
+            Talaba Vazifalari
             {onedit ? "ni taxrirlash" : " "}
           </h3>
         )}
@@ -310,7 +310,7 @@ function StudentHomework({
                 label={<span className="text-base font-medium">Dars vaqti </span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Dars vaqti",
                   },
                 ]}
@@ -323,7 +323,7 @@ function StudentHomework({
                 label={<span className="text-base font-medium">Sana </span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Sana",
                   },
                 ]}
@@ -336,7 +336,7 @@ function StudentHomework({
                 label={<span className="text-base font-medium">Xona tanlash</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Xona kiriting",
                   },
                 ]}
@@ -396,7 +396,7 @@ function StudentHomework({
                 label={<span className="text-base font-medium">Filial ( Branch )</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Filialni tanlang",
                   },
                 ]}

@@ -253,7 +253,7 @@ function Family({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Talaba hisob raqami
+            Talaba haqida
             {onedit ? "ni taxrirlash" : " "}
           </h3>
         )}
@@ -296,7 +296,7 @@ function Family({
                   },
                 ]}
               >
-                <InputNumber className="w-full" placeholder="Tel raqam" />
+                <Input type="number" placeholder="Tel raqam" />
               </Form.Item>
               <Form.Item
                 key="password"
@@ -319,7 +319,7 @@ function Family({
                 label={<span className="text-base font-medium">Filial ( Branch )</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Filialni tanlang",
                   },
                 ]}
@@ -352,7 +352,7 @@ function Family({
                 label={<span className="text-base font-medium">Jinsi</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Jisini kiriting",
                   },
                 ]}
