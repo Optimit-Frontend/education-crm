@@ -19,6 +19,9 @@ import transactionReducer, {
 } from "../../reducer/transactionReducer";
 import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
 import studentAccountReducer, { getStudentAccountByBranch } from "../../reducer/studentAccountReducer.js";
+import businessBranchesReducer, {
+  getBusinessBranch,
+} from "../../reducer/businessBranchesReducer.js";
 
 const { Option } = Select;
 
@@ -85,9 +88,9 @@ function StudentPayment({
   usersDataReducer,
   getAllBalanceBranch,
   getTransactionHistoryFindAllBranch,
-  getStudentAccountByBranch,
+  getStudentAccountByBranch, businessBranchesReducer,
   transactionReducer, editStudentTransaction, studentAccountReducer,
-  balanceReducer, deleteTransaction, saveStudentTransaction
+  balanceReducer, deleteTransaction, saveStudentTransaction, getBusinessBranch
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -109,6 +112,7 @@ function StudentPayment({
   useEffect(() => {
     getTransactionHistoryFindAllBranch(usersDataReducer?.branch?.id);
     getAllBalanceBranch(usersDataReducer?.branch?.id);
+    getBusinessBranch(usersDataReducer?.branch?.id);
     getStudentAccountByBranch(usersDataReducer?.branch?.id);
     // getEmployeeBranchId(usersDataReducer?.branch?.id);
     setVisible(false);
@@ -300,7 +304,8 @@ function StudentPayment({
                   },
                 ]}
               >
-                <InputNumber
+                <Input
+                  type="number"
                   placeholder="So`mmani kiriting ..."
                 />
               </Form.Item>
@@ -370,7 +375,7 @@ function StudentPayment({
                 label={<span className="text-base font-medium">Balance raqam tanlash</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Balance pulni kiriting",
                   },
                 ]}
@@ -401,7 +406,7 @@ function StudentPayment({
                 label={<span className="text-base font-medium">Filial ( Branch )</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Filialni tanlang",
                   },
                 ]}
@@ -417,7 +422,15 @@ function StudentPayment({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  <Option value={1}>1</Option>
+                  {
+                    businessBranchesReducer?.businessBranch?.map((barnch) => {
+                      return (
+                        <Option value={barnch?.id} key={barnch?.id}>
+                          {barnch?.name}
+                        </Option>
+                      );
+                    })
+                  }
                 </Select>
               </Form.Item>
               <Form.Item
@@ -426,7 +439,7 @@ function StudentPayment({
                 label={<span className="text-base font-medium">Yillik tulov</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Yillik tulovni tanlang",
                   },
                 ]}
@@ -452,7 +465,7 @@ function StudentPayment({
                 label={<span className="text-base font-medium">Qisqa eslatma</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "eslatma ni kiriting",
                   },
                 ]}
@@ -465,7 +478,7 @@ function StudentPayment({
                 label={<span className="text-base font-medium">To`lov turi</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Tulov turini tanlang",
                   },
                 ]}
@@ -513,7 +526,7 @@ function StudentPayment({
 
 export default connect(
   (
-    usersDataReducer, transactionReducer, balanceReducer, studentAccountReducer
+    usersDataReducer, transactionReducer, balanceReducer, studentAccountReducer, businessBranchesReducer
   ), {
     getTransactionHistoryFindAllBranch,
     getTransactionHistoryActiveTrue,
@@ -523,6 +536,7 @@ export default connect(
     deleteTransaction,
     saveStudentTransaction,
     getStudentAccountByBranch,
-    editStudentTransaction
+    editStudentTransaction,
+    getBusinessBranch
   }
 )(StudentPayment);
