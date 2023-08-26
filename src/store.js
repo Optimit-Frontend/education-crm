@@ -33,6 +33,7 @@ import attendanceReducer from "./reducer/attendanceReducer.js";
 import teachingHourReducer from "./reducer/teachingHourReducer.js";
 import lessonScheduleReducer from "./reducer/lessonScheduleReducer.js";
 import familiyReducer from "./reducer/familiyReducer.js";
+import topicReducer from "./reducer/topicReducer.js";
 
 export default configureStore({
   reducer: {
@@ -69,6 +70,7 @@ export default configureStore({
     teachingHourReducer,
     lessonScheduleReducer,
     familiyReducer,
+    topicReducer,
   },
   middleware: [api],
 });

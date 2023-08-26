@@ -7,22 +7,38 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
+import employeeReducer, {
+  getEmployeeBranch,
+} from "../../reducer/employeeReducer";
 import transactionReducer, {
-  deleteTransaction,
+  deleteTransaction, editStudentTransaction,
   editTransaction,
   getTransactionHistoryActiveTrue,
   getTransactionHistoryFindAllBranch,
-  getTrasactionHistoryById,
-  saveTransaction,
+  getTrasactionHistoryById, saveStudentTransaction, saveTransaction,
 } from "../../reducer/transactionReducer";
 import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
+import studentAccountReducer, { getStudentAccountByBranch } from "../../reducer/studentAccountReducer.js";
 import businessBranchesReducer, {
   getBusinessBranch,
 } from "../../reducer/businessBranchesReducer.js";
+import topicReducer, {
+  deleteTopic,
+  editTopic,
+  getTopic,
+  saveTopic,
+} from "../../reducer/topicReducer.js";
 
 const { Option } = Select;
 
 const columns = [
+  {
+    title: "Talaba",
+    dataIndex: "firstName",
+    key: "firstName",
+    width: "30%",
+    search: true,
+  },
   {
     title: "Otkazma",
     dataIndex: "moneyAmount",
@@ -74,16 +90,11 @@ const columns = [
   },
 ];
 
-function Transaction({
-  usersDataReducer,
-  getAllBalanceBranch,
-  getTrasactionHistoryById,
-  getTransactionHistoryFindAllBranch,
-  getTransactionHistoryActiveTrue,
-  saveTransaction,
-  editTransaction,
-  transactionReducer, getBusinessBranch,
-  balanceReducer, deleteTransaction, businessBranchesReducer
+function StudentPayment({
+  usersDataReducer, topicReducer,
+  businessBranchesReducer,
+  transactionReducer, editStudentTransaction, studentAccountReducer,
+  balanceReducer, deleteTransaction, saveStudentTransaction, getBusinessBranch, editTopic, saveTopic, deleteTopic, getTopic
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -94,6 +105,7 @@ function Transaction({
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
+  const [money, setMoney] = useState(0);
   const page = searchParams.get("page");
   const [pageData, setPageData] = useState({
     page: 1,
@@ -102,13 +114,13 @@ function Transaction({
   });
 
   useEffect(() => {
-    getTransactionHistoryFindAllBranch(usersDataReducer?.branch?.id);
-    getAllBalanceBranch(usersDataReducer?.branch?.id);
     getBusinessBranch(usersDataReducer?.branch?.id);
+    getTopic(usersDataReducer?.branch?.id);
+    // getEmployeeBranchId(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [transactionReducer?.changeData]);
+  }, [topicReducer?.changeData]);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -117,28 +129,28 @@ function Transaction({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/transactions?page=${pageCount}&size=100`);
+      navigate(`/topic?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/transactions?page=${pageCount}&size=50`);
+      navigate(`/topic?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/transactions?page=${pageCount}&size=20`);
+      navigate(`/topic?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/transactions?page=${pageCount}&size=10`);
+      navigate(`/topic?page=${pageCount}&size=10`);
     }
   }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteTransaction(item);
+      deleteTopic(item);
       return null;
     });
   };
@@ -153,7 +165,7 @@ function Transaction({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editTransaction({ ...values, id: selectedRowKeys[1][0].id });
+          selectedRowKeys[1][0]?.id && editStudentTransaction({ ...values });
           setOnedit(false);
         })
         .catch((info) => {
@@ -162,7 +174,7 @@ function Transaction({
       : form
         .validateFields()
         .then((values) => {
-          saveTransaction({ ...values });
+          saveTopic({ ...values });
           setOnedit(false);
         })
         .catch((info) => {
@@ -176,7 +188,7 @@ function Transaction({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Hamma o`tkazmalar</h3>
+      <h3 className="text-2xl font-bold mb-5">Mavzular</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -184,13 +196,8 @@ function Transaction({
               setOnedit(true);
               setVisible(true);
               // form.setFieldValue("moneyAmount", parseFloat(selectedRowKeys[1][0]?.moneyAmount));
-              form.setFieldValue("moneyAmount", selectedRowKeys[1][0]?.moneyAmount);
-              form.setFieldValue("comment", selectedRowKeys[1][0]?.comment);
-              form.setFieldValue("expenseType", selectedRowKeys[1][0]?.expenseType);
+              form.setFieldValue("money", selectedRowKeys[1][0]?.moneyAmount);
               form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
-              form.setFieldValue("paymentType", selectedRowKeys[1][0]?.paymentType);
-              form.setFieldValue("accountNumber", selectedRowKeys[1][0]?.accountNumber);
-              form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalanceResponse?.accountNumber);
               console.log(selectedRowKeys[1][0]);
             }}
             type="button"
@@ -262,7 +269,7 @@ function Transaction({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Pul o`tkazma
+            Mavzu qo`shish
             {onedit ? "ni taxrirlash" : " "}
           </h3>
         )}
@@ -282,8 +289,8 @@ function Transaction({
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item
-                key="moneyAmount"
-                name="moneyAmount"
+                key="money"
+                name="money"
                 label={<span className="text-base font-medium">Pul miqdori</span>}
                 rules={[
                   {
@@ -292,10 +299,39 @@ function Transaction({
                   },
                 ]}
               >
-                <InputNumber
-                  className="w-full"
+                <Input
+                  type="number"
                   placeholder="So`mmani kiriting ..."
                 />
+              </Form.Item>
+              <Form.Item
+                key="accountNumber"
+                name="accountNumber"
+                label={<span className="text-base font-medium">Talaba hisob raqami</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Hisob raqami",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Talaba hisob raqami"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {studentAccountReducer?.account?.map((account) => {
+                    return (
+                      <Option value={account?.accountNumber} key={account.id}>{account?.accountNumber}</Option>
+                    );
+                  })}
+                </Select>
               </Form.Item>
               <Form.Item
                 key="expenseType"
@@ -334,7 +370,7 @@ function Transaction({
                 label={<span className="text-base font-medium">Balance raqam tanlash</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Balance pulni kiriting",
                   },
                 ]}
@@ -365,7 +401,7 @@ function Transaction({
                 label={<span className="text-base font-medium">Filial ( Branch )</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Filialni tanlang",
                   },
                 ]}
@@ -393,12 +429,38 @@ function Transaction({
                 </Select>
               </Form.Item>
               <Form.Item
+                key="paidInFull"
+                name="paidInFull"
+                label={<span className="text-base font-medium">Yillik tulov</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Yillik tulovni tanlang",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Balance raqam"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  <Option value="true">Ha</Option>
+                  <Option value="false">Yuq</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
                 key="comment"
                 name="comment"
                 label={<span className="text-base font-medium">Qisqa eslatma</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "eslatma ni kiriting",
                   },
                 ]}
@@ -411,7 +473,7 @@ function Transaction({
                 label={<span className="text-base font-medium">To`lov turi</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Tulov turini tanlang",
                   },
                 ]}
@@ -444,7 +506,8 @@ function Transaction({
         pageSize={pageData?.size}
         tableData={transactionReducer?.transaction?.map((item) => {
           return ({
-            ...item
+            ...item,
+            firstName: item?.student?.firstName,
           });
         })}
         loading={pageData?.loading}
@@ -456,13 +519,23 @@ function Transaction({
   );
 }
 
-export default connect((usersDataReducer, transactionReducer, balanceReducer, businessBranchesReducer), {
-  getTrasactionHistoryById,
-  getTransactionHistoryFindAllBranch,
-  getTransactionHistoryActiveTrue,
-  saveTransaction,
-  editTransaction,
-  getAllBalanceBranch,
-  deleteTransaction,
-  getBusinessBranch
-})(Transaction);
+export default connect(
+  (
+    usersDataReducer, transactionReducer, balanceReducer, studentAccountReducer, businessBranchesReducer, topicReducer
+  ), {
+    getTransactionHistoryFindAllBranch,
+    getTransactionHistoryActiveTrue,
+    editTransaction,
+    getAllBalanceBranch,
+    getEmployeeBranch,
+    deleteTransaction,
+    saveStudentTransaction,
+    getStudentAccountByBranch,
+    editStudentTransaction,
+    getBusinessBranch,
+    getTopic,
+    editTopic,
+    saveTopic,
+    deleteTopic
+  }
+)(StudentPayment);
