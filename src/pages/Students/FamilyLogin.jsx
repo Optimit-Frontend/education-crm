@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, InputNumber, Modal, Row, Select
+  Col, Form, Input, InputNumber, Modal, Row, Select,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
@@ -17,6 +17,9 @@ import studentAccountReducer, {
   saveStudentPayment,
 } from "../../reducer/studentAccountReducer";
 import studentReducer, { getStudentsAll } from "../../reducer/studentReducer";
+import familiyReducer, {
+  deleteFamily, editFamily, getFamily, saveFamily, saveFamilyLogin,
+} from "../../reducer/familiyReducer.js";
 import businessBranchesReducer, {
   getBusinessBranch,
 } from "../../reducer/businessBranchesReducer.js";
@@ -75,17 +78,18 @@ const columns = [
   },
 ];
 
-function StudentAccount({
+function Family({
   usersDataReducer,
   getAllBalanceBranch,
-  studentAccountReducer,
   getStudentsAll,
   studentReducer,
-  balanceReducer,
-  deleteStudentAccount,
-  editStudentAccount,
-  saveStudentAccount,
-  getStudentAccountByBranch, getBusinessBranch, businessBranchesReducer
+  getFamily,
+  editFamily,
+  saveFamily,
+  deleteFamily,
+  businessBranchesReducer,
+  familiyReducer,
+  getBusinessBranch, saveFamilyLogin
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -105,7 +109,11 @@ function StudentAccount({
   });
 
   useEffect(() => {
-    getStudentAccountByBranch(usersDataReducer?.branch?.id);
+    getFamily({
+      branchId: usersDataReducer.branch?.id,
+      page: pageData.page,
+      size: pageData.size
+    });
     getAllBalanceBranch(usersDataReducer?.branch?.id);
     getBusinessBranch(usersDataReducer?.branch?.id);
     getStudentsAll({
@@ -116,7 +124,7 @@ function StudentAccount({
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [studentAccountReducer?.changeData]);
+  }, [familiyReducer?.changeData]);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -125,28 +133,28 @@ function StudentAccount({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/create-account?page=${pageCount}&size=100`);
+      navigate(`/family-login?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/create-account?page=${pageCount}&size=50`);
+      navigate(`/family-login?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/create-account?page=${pageCount}&size=20`);
+      navigate(`/family-login?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/create-account?page=${pageCount}&size=10`);
+      navigate(`/family-login?page=${pageCount}&size=10`);
     }
   }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteStudentAccount(parseInt(item?.accountNumber, 10));
+      deleteFamily(parseInt(item?.accountNumber, 10));
       return null;
     });
   };
@@ -161,7 +169,7 @@ function StudentAccount({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editStudentAccount({
+          selectedRowKeys[1][0]?.id && editFamily({
             ...values,
             newAccountNumber: newAccountNumber || "0",
           });
@@ -173,8 +181,10 @@ function StudentAccount({
       : form
         .validateFields()
         .then((values) => {
-          saveStudentAccount({
+          saveFamilyLogin({
             ...values,
+            phoneNumber: values.phoneNumber.toString(),
+            password: values.password.toString()
           });
           setOnedit(false);
         })
@@ -189,7 +199,7 @@ function StudentAccount({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Talaba hisob raqamlari</h3>
+      <h3 className="text-2xl font-bold mb-5">Login</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -288,146 +298,32 @@ function StudentAccount({
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
           <Row gutter={24}>
-            <Col span={12}>
+            <Col span={24}>
               <Form.Item
-                key="accountNumber"
-                name="accountNumber"
-                label={<span className="text-base font-medium">Shot raqam </span>}
+                key="phoneNumber"
+                name="phoneNumber"
+                label={<span className="text-base font-medium">Tel raqam </span>}
                 rules={[
                   {
                     required: true,
-                    message: "Hisobdagi pulni kiriting",
+                    message: "Tel raqam",
                   },
                 ]}
               >
-                <InputNumber className="w-full" placeholder="Shot raqam kiriting" />
+                <InputNumber className="w-full" placeholder="Tel raqam" />
               </Form.Item>
               <Form.Item
-                key="discount"
-                name="discount"
-                label={<span className="text-base font-medium">Chegirma % </span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Chegirma %",
-                  },
-                ]}
-              >
-                <InputNumber className="w-full" placeholder="Chegirma %" />
-              </Form.Item>
-              <Form.Item
-                key="mainBalanceId"
-                name="mainBalanceId"
-                label={<span className="text-base font-medium">Hisob raqam tanlash</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Hisobdagi pulni kiriting",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Hisob raqam"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {balanceReducer?.balance?.map((balance) => {
-                    return (
-                      <Option value={balance.id} key={balance.id}>{balance?.accountNumber}</Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              { onedit
-                ? (
-                  <Form.Item
-                    key="newAccountNumber"
-                    name="newAccountNumber"
-                    label={<span className="text-base font-medium">Yangi shot raqam </span>}
-                    rules={[
-                      {
-                        required: false,
-                        message: "Hisobdagi pulni kiriting",
-                      },
-                    ]}
-                  >
-                    <InputNumber
-                      className="w-full"
-                      value={newAccountNumber}
-                      onChange={(e) => { return setNewAccountNumber(e.target.value); }}
-                      placeholder="yangi shot raqam kiriting"
-                    />
-                  </Form.Item>
-                ) : ""}
-              <Form.Item
-                key="branchId"
-                name="branchId"
-                label={<span className="text-base font-medium">Filial ( Branch )</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Filialni tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Filialni tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {
-                    businessBranchesReducer?.businessBranch?.map((barnch) => {
-                      return (
-                        <Option value={barnch?.id} key={barnch?.id}>
-                          {barnch?.name}
-                        </Option>
-                      );
-                    })
-                  }
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="studentId"
-                name="studentId"
-                label={<span className="text-base font-medium">Talaba tanlash</span>}
+                key="password"
+                name="password"
+                label={<span className="text-base font-medium">Parol </span>}
                 rules={[
                   {
                     required: true,
-                    message: "Xarajat turini kiriting",
+                    message: "password is required",
                   },
                 ]}
               >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Talaba tanlash"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {studentReducer?.students?.studentResponseDtoList?.map((student) => {
-                    return (
-                      <Option value={student.id} key={student.id}>{student?.firstName}</Option>
-                    );
-                  })}
-                </Select>
+                <InputNumber className="w-full" placeholder="Password" />
               </Form.Item>
             </Col>
           </Row>
@@ -438,7 +334,7 @@ function StudentAccount({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={studentAccountReducer?.account?.map((item) => {
+        tableData={familiyReducer?.family?.familyResponseDtoList?.map((item) => {
           return ({
             ...item,
             branchId: item.branch?.name,
@@ -457,17 +353,15 @@ function StudentAccount({
 
 export default connect(
   (
-    usersDataReducer, studentReducer,
-    balanceReducer, studentAccountReducer, businessBranchesReducer
+    usersDataReducer, studentReducer, balanceReducer, studentAccountReducer, businessBranchesReducer
   ), {
     getAllBalanceBranch,
-    getStudentAccountById,
-    getStudentAccountByBranch,
-    saveStudentAccount,
-    saveStudentPayment,
-    editStudentAccount,
-    deleteStudentAccount,
     getStudentsAll,
-    getBusinessBranch
+    deleteFamily,
+    editFamily,
+    saveFamily,
+    getFamily,
+    getBusinessBranch,
+    saveFamilyLogin
   }
-)(StudentAccount);
+)(Family);

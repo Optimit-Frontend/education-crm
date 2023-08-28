@@ -265,7 +265,7 @@ function Subjects({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  {subjectReducer?.subjects?.map((subject) => {
+                  {subjectForLevelReducer?.subjectForLevel?.map((subject) => {
                     return (
                       <Option value={subject.id} key={subject.id}>{subject?.name}</Option>
                     );

@@ -467,6 +467,36 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               Qarzdor talabalar
                             </NavLink>
                           </li>
+                          <li>
+                            <NavLink
+                              to="/family"
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Talaba haqida
+                            </NavLink>
+                          </li>
+                          {/* <li> */}
+                          {/*   <NavLink */}
+                          {/*     to="/family-login" */}
+                          {/*     onClick={() => { */}
+                          {/*       return setSidebarOpen(false); */}
+                          {/*     }} */}
+                          {/*     className={({ isActive }) => { */}
+                          {/*       return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${ */}
+                          {/*         isActive && "!text-white" */}
+                          {/*       }`; */}
+                          {/*     }} */}
+                          {/*   > */}
+                          {/*     Login */}
+                          {/*   </NavLink> */}
+                          {/* </li> */}
                         </ul>
                       </div>
                     </>
@@ -800,7 +830,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           </li>
                           <li>
                             <NavLink
-                              to="/lesson-schedule"
+                              to={`/lesson-schedule?page=1&size=${pageSize}`}
                               onClick={() => {
                                 return setSidebarOpen(false);
                               }}
@@ -810,7 +840,23 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 }`;
                               }}
                             >
-                              Dars jadvali
+                              Dars Jadvali
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to={`/topic?page=1&size=${pageSize}`}
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              {/* eslint-disable-next-line react/no-unescaped-entities */}
+                              Mavzu
                             </NavLink>
                           </li>
                         </ul>

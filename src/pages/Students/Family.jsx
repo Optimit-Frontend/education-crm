@@ -1,95 +1,80 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, DatePicker, Form, Input, Modal, Row, Select
+  Col, Form, Input, InputNumber, Modal, Row, Select,
 } from "antd";
-import dayjs from "dayjs";
-import moment from "moment";
+import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import classReducer, {
-  deleteClass,
-  editClass,
-  getClassById,
-  getClassesAll,
-  getClassesAllNeActive,
-  saveClass,
-} from "../../reducer/classReducer";
-import roomReducer, { getAllRoomBranch } from "../../reducer/roomReducer";
-import levelReducer, { getLevels } from "../../reducer/levelReducer";
-import employeeReducer, { getEmployeeBranchId } from "../../reducer/employeeReducer";
-import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer";
+import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
+import studentAccountReducer, {
+  deleteStudentAccount,
+  editStudentAccount,
+  getStudentAccountByBranch,
+  getStudentAccountById,
+  saveStudentAccount,
+  saveStudentPayment,
+} from "../../reducer/studentAccountReducer";
+import studentReducer, { getStudentsAll } from "../../reducer/studentReducer";
+import familiyReducer, {
+  deleteFamily, editFamily, getFamily, saveFamily
+} from "../../reducer/familiyReducer.js";
+import businessBranchesReducer, {
+  getBusinessBranch,
+} from "../../reducer/businessBranchesReducer.js";
 
 const { Option } = Select;
 
 const columns = [
+
   {
-    title: "Sinf",
-    dataIndex: "className",
-    key: "className",
+    title: "Ism",
+    dataIndex: "fullName",
+    key: "fullName",
     width: "30%",
     search: true,
   },
   {
-    title: "Filial",
-    dataIndex: "branchName",
-    key: "branchName",
+    title: "Tel raqam",
+    dataIndex: "phoneNumber",
+    key: "phoneNumber",
     width: "25%",
     search: false,
   },
   {
-    title: "Sinf rahbar",
-    dataIndex: "classLeaderName",
-    key: "classLeaderName",
+    title: "Jinsi",
+    dataIndex: "gender",
+    key: "gender",
     width: "30%",
-    search: false,
-  },
-  {
-    title: "Boshlangan sana",
-    dataIndex: "startDate",
-    key: "startDate",
-    width: "20%",
-    search: false,
-  },
-  {
-    title: "Amallar",
-    dataIndex: "getOneId",
-    key: "getOneId",
-    width: "30%",
-    search: false,
-    render: (eski) => {
-      return (
-        <button style={{ background: "gold", padding: "5px", borderRadius: "5px" }} type="button" onClick={() => { return console.log(eski); }}>
-          Ko`rish
-        </button>
-      );
-    }
+    search: true,
   },
 ];
 
-function Class({
+function Family({
   usersDataReducer,
-  getClassesAll,
-  saveClass,
-  editClass,
-  deleteClass,
-  classReducer,
-  roomReducer,
-  getAllRoomBranch,
-  levelReducer,
-  getLevels,
-  getEmployeeBranchId,
-  getBusinessBranch,
-  employeeReducer,
-  businessBranchesReducer
+  getAllBalanceBranch,
+  getStudentsAll,
+  studentReducer,
+  getFamily,
+  editFamily,
+  saveFamily,
+  deleteFamily,
+  businessBranchesReducer,
+  familiyReducer,
+  getBusinessBranch
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
+  const [newAccountNumber, setNewAccountNumber] = useState(0);
   const size = localStorage.getItem("PageSize") || 10;
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const navigate = useNavigate();
+  const page = searchParams.get("page");
   const [pageData, setPageData] = useState({
     page: 1,
     size,
@@ -97,19 +82,52 @@ function Class({
   });
 
   useEffect(() => {
-    getClassesAll({ id: usersDataReducer?.branch?.id });
-    getBusinessBranch(usersDataReducer?.businessId);
-    getLevels();
-    getEmployeeBranchId(usersDataReducer?.branch?.id);
-    getAllRoomBranch(usersDataReducer?.branch?.id);
+    getFamily({
+      branchId: usersDataReducer.branch?.id,
+      page: pageData.page,
+      size: pageData.size
+    });
+    getAllBalanceBranch(usersDataReducer?.branch?.id);
+    getBusinessBranch(usersDataReducer?.branch?.id);
+    getStudentsAll({
+      branchId: usersDataReducer.branch?.id,
+      page: pageData.page,
+      size: pageData.size
+    });
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [classReducer?.changeData]);
+  }, [familiyReducer?.changeData]);
+
+  useEffect(() => {
+    const pageSize = parseInt(size, 10);
+    const pageCount = parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1;
+    if (pageSize >= 100) {
+      setPageData((prev) => {
+        return { ...prev, size: 100 };
+      });
+      navigate(`/family?page=${pageCount}&size=100`);
+    } else if (pageSize >= 50) {
+      setPageData((prev) => {
+        return { ...prev, size: 50 };
+      });
+      navigate(`/family?page=${pageCount}&size=50`);
+    } else if (pageSize >= 20) {
+      setPageData((prev) => {
+        return { ...prev, size: 20 };
+      });
+      navigate(`/family?page=${pageCount}&size=20`);
+    } else {
+      setPageData((prev) => {
+        return { ...prev, size: 10 };
+      });
+      navigate(`/family?page=${pageCount}&size=10`);
+    }
+  }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteClass(item);
+      deleteFamily(parseInt(item?.id, 10));
       return null;
     });
   };
@@ -124,13 +142,9 @@ function Class({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editClass({
+          selectedRowKeys[1][0]?.id && editFamily({
             ...values,
-            id: selectedRowKeys[1][0]?.id,
-            startDate: moment(
-              new Date(values?.startDate)?.toLocaleDateString()
-            ).format("YYYY-MM-DD"),
-            endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
+            newAccountNumber: newAccountNumber || "0",
           });
           setOnedit(false);
         })
@@ -140,12 +154,8 @@ function Class({
       : form
         .validateFields()
         .then((values) => {
-          saveClass({
+          saveFamily({
             ...values,
-            startDate: moment(
-              new Date(values?.startDate)?.toLocaleDateString()
-            ).format("YYYY-MM-DD"),
-            endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
           });
           setOnedit(false);
         })
@@ -160,20 +170,20 @@ function Class({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Hamma Sinflar</h3>
+      <h3 className="text-2xl font-bold mb-5">Talaba malumotlari</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
             onClick={() => {
               setOnedit(true);
               setVisible(true);
-              form.setFieldValue("className", selectedRowKeys[1][0]?.className);
-              form.setFieldValue("startDate", dayjs(selectedRowKeys[1][0]?.startDate));
-              form.setFieldValue("endDate", dayjs(selectedRowKeys[1][0]?.endDate));
+              form.setFieldValue("gender", selectedRowKeys[1][0]?.gender);
+              form.setFieldValue("fullName", selectedRowKeys[1][0]?.fullName);
               form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
-              form.setFieldValue("classLeaderId", selectedRowKeys[1][0]?.classLeader?.id);
-              form.setFieldValue("roomId", selectedRowKeys[1][0]?.room?.id);
-              form.setFieldValue("levelId", selectedRowKeys[1][0]?.level?.id);
+              form.setFieldValue("password", selectedRowKeys[1][0]?.password);
+              form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
+              form.setFieldValue("studentIdList", selectedRowKeys[1][0]?.studentResponses[0]);
+              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -216,7 +226,7 @@ function Class({
         </button>
         <button
           onClick={() => {
-            handleDelete(selectedRowKeys[0]);
+            handleDelete(selectedRowKeys[1]);
             setSelectedRowKeys([[], []]);
           }}
           type="button"
@@ -243,8 +253,8 @@ function Class({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Talaba
-            {onedit ? "ni taxrirlash" : " qo'shish"}
+            Talaba haqida
+            {onedit ? "ni taxrirlash" : " "}
           </h3>
         )}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
@@ -263,91 +273,43 @@ function Class({
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item
-                key="className"
-                name="className"
-                label={<span className="text-base font-medium">Sinf nomi</span>}
+                key="fullName"
+                name="fullName"
+                label={<span className="text-base font-medium">Ism familiya</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Sinf nomini kiriting",
+                    message: "ism familiya kiriting",
                   },
                 ]}
               >
-                <Input placeholder="Sinf nomi kiriting..." />
+                <Input placeholder="Ism familiya kiriting" />
               </Form.Item>
               <Form.Item
-                key="startDate"
-                name="startDate"
-                label={<span className="text-base font-medium">Boshlangan sana</span>}
+                key="phoneNumber"
+                name="phoneNumber"
+                label={<span className="text-base font-medium">Tel raqam </span>}
                 rules={[
                   {
                     required: true,
-                    message: "Sanani kiriting",
+                    message: "Tel raqam",
                   },
                 ]}
               >
-                <DatePicker
-                  className="w-full"
-                  placeholder="Boshlagan sanasini kiriting..."
-                />
+                <Input type="number" placeholder="Tel raqam" />
               </Form.Item>
               <Form.Item
-                key="classLeaderId"
-                name="classLeaderId"
-                label={<span className="text-base font-medium">Sinf rahbari</span>}
+                key="password"
+                name="password"
+                label={<span className="text-base font-medium">Parol </span>}
                 rules={[
                   {
                     required: true,
-                    message: "Rahbarni kiriting",
+                    message: "password is required",
                   },
                 ]}
               >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Rahbar tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {employeeReducer?.employeesAllBranch?.map((room) => {
-                    return (
-                      <Option value={room.id} key={room.id}>{room?.name}</Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="roomId"
-                name="roomId"
-                label={<span className="text-base font-medium">Xona</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Xona kiriting",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Xona tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {roomReducer?.roomAllBarnch?.map((room) => {
-                    return (
-                      <Option value={room.id} key={room.id}>{room?.roomType?.name}</Option>
-                    );
-                  })}
-                </Select>
+                <InputNumber className="w-full" placeholder="Password" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -385,36 +347,20 @@ function Class({
                 </Select>
               </Form.Item>
               <Form.Item
-                key="endDate"
-                name="endDate"
-                label={<span className="text-base font-medium">Tugash sana</span>}
+                key="gender"
+                name="gender"
+                label={<span className="text-base font-medium">Jinsi</span>}
                 rules={[
                   {
-                    required: false,
-                    message: "Sanani kiriting",
-                  },
-                ]}
-              >
-                <DatePicker
-                  className="w-full"
-                  placeholder="Tugash sanasini kiriting..."
-                />
-              </Form.Item>
-              <Form.Item
-                key="levelId"
-                name="levelId"
-                label={<span className="text-base font-medium">Sinf bosqich</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Level tanlang",
+                    required: true,
+                    message: "Jisini kiriting",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Sinf bosqichini tanlang"
+                  placeholder="Jinsini kiriting"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -422,9 +368,36 @@ function Class({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  {levelReducer?.level?.map((room) => {
+                  <Option value="ERKAK">Erkak</Option>
+                  <Option value="AYOL">Ayol</Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                key="studentIdList"
+                name="studentIdList"
+                label={<span className="text-base font-medium">Talaba tanlash</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Xarajat turini kiriting",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  mode="multiple"
+                  placeholder="Talaba tanlash"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {studentReducer?.students?.studentResponseDtoList?.map((student) => {
                     return (
-                      <Option value={room.id} key={room.id}>{room?.level}</Option>
+                      <Option value={student.id} key={student.id}>{student?.firstName}</Option>
                     );
                   })}
                 </Select>
@@ -438,12 +411,11 @@ function Class({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={classReducer?.class?.map((item) => {
+        tableData={familiyReducer?.family?.familyResponseDtoList?.map((item) => {
           return ({
             ...item,
-            branchName: item.branch?.name,
-            classLeaderName: item.classLeader.name,
-            getOneId: item.id
+            branchId: item.branch?.name,
+            studentId: item.student?.id
           });
         })}
         loading={pageData?.loading}
@@ -457,22 +429,14 @@ function Class({
 
 export default connect(
   (
-    usersDataReducer,
-    classReducer,
-    roomReducer,
-    levelReducer,
-    employeeReducer,
-    businessBranchesReducer
+    usersDataReducer, studentReducer, balanceReducer, studentAccountReducer, businessBranchesReducer
   ), {
-    getClassById,
-    getClassesAll,
-    getClassesAllNeActive,
-    saveClass,
-    editClass,
-    deleteClass,
-    getAllRoomBranch,
-    getLevels,
-    getEmployeeBranchId,
+    getAllBalanceBranch,
+    getStudentsAll,
+    deleteFamily,
+    editFamily,
+    saveFamily,
+    getFamily,
     getBusinessBranch
   }
-)(Class);
+)(Family);

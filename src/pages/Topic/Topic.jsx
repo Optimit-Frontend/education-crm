@@ -1,28 +1,49 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, InputNumber, Modal, Row, Select
+  Button,
+  Col, Form, Input, InputNumber, Modal, Row, Select, Upload,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
+import { UploadOutlined } from "@ant-design/icons";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
+import employeeReducer, {
+  getEmployeeBranch,
+} from "../../reducer/employeeReducer";
 import transactionReducer, {
-  deleteTransaction,
+  deleteTransaction, editStudentTransaction,
   editTransaction,
   getTransactionHistoryActiveTrue,
   getTransactionHistoryFindAllBranch,
-  getTrasactionHistoryById,
-  saveTransaction,
+  getTrasactionHistoryById, saveStudentTransaction, saveTransaction,
 } from "../../reducer/transactionReducer";
 import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
+import studentAccountReducer, { getStudentAccountByBranch } from "../../reducer/studentAccountReducer.js";
 import businessBranchesReducer, {
   getBusinessBranch,
 } from "../../reducer/businessBranchesReducer.js";
+import topicReducer, {
+  deleteTopic,
+  editTopic,
+  getTopic,
+  saveTopic,
+} from "../../reducer/topicReducer.js";
+import subjectForLevelReducer, {
+  getSubjectForLevel,
+} from "../../reducer/subjectForLevelReducer.js";
 
 const { Option } = Select;
 
 const columns = [
+  {
+    title: "Talaba",
+    dataIndex: "firstName",
+    key: "firstName",
+    width: "30%",
+    search: true,
+  },
   {
     title: "Otkazma",
     dataIndex: "moneyAmount",
@@ -74,16 +95,10 @@ const columns = [
   },
 ];
 
-function Transaction({
-  usersDataReducer,
-  getAllBalanceBranch,
-  getTrasactionHistoryById,
-  getTransactionHistoryFindAllBranch,
-  getTransactionHistoryActiveTrue,
-  saveTransaction,
-  editTransaction,
-  transactionReducer, getBusinessBranch,
-  balanceReducer, deleteTransaction, businessBranchesReducer
+function StudentPayment({
+  usersDataReducer, topicReducer,
+  businessBranchesReducer, getSubjectForLevel, subjectForLevelReducer,
+  editTopic, saveTopic, deleteTopic, getTopic
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -94,6 +109,7 @@ function Transaction({
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
+  const [money, setMoney] = useState(0);
   const page = searchParams.get("page");
   const [pageData, setPageData] = useState({
     page: 1,
@@ -102,13 +118,13 @@ function Transaction({
   });
 
   useEffect(() => {
-    getTransactionHistoryFindAllBranch(usersDataReducer?.branch?.id);
-    getAllBalanceBranch(usersDataReducer?.branch?.id);
-    getBusinessBranch(usersDataReducer?.branch?.id);
+    getTopic(usersDataReducer?.branch?.id);
+    getSubjectForLevel(usersDataReducer?.branch?.id);
+    // getEmployeeBranchId(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [transactionReducer?.changeData]);
+  }, [topicReducer?.changeData]);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -117,28 +133,28 @@ function Transaction({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/transactions?page=${pageCount}&size=100`);
+      navigate(`/topic?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/transactions?page=${pageCount}&size=50`);
+      navigate(`/topic?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/transactions?page=${pageCount}&size=20`);
+      navigate(`/topic?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/transactions?page=${pageCount}&size=10`);
+      navigate(`/topic?page=${pageCount}&size=10`);
     }
   }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteTransaction(item);
+      deleteTopic(item?.id);
       return null;
     });
   };
@@ -153,7 +169,7 @@ function Transaction({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editTransaction({ ...values, id: selectedRowKeys[1][0].id });
+          selectedRowKeys[1][0]?.id && editTopic({ ...values });
           setOnedit(false);
         })
         .catch((info) => {
@@ -162,7 +178,7 @@ function Transaction({
       : form
         .validateFields()
         .then((values) => {
-          saveTransaction({ ...values });
+          saveTopic({ ...values });
           setOnedit(false);
         })
         .catch((info) => {
@@ -176,7 +192,7 @@ function Transaction({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Hamma o`tkazmalar</h3>
+      <h3 className="text-2xl font-bold mb-5">Mavzular</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -184,13 +200,8 @@ function Transaction({
               setOnedit(true);
               setVisible(true);
               // form.setFieldValue("moneyAmount", parseFloat(selectedRowKeys[1][0]?.moneyAmount));
-              form.setFieldValue("moneyAmount", selectedRowKeys[1][0]?.moneyAmount);
-              form.setFieldValue("comment", selectedRowKeys[1][0]?.comment);
-              form.setFieldValue("expenseType", selectedRowKeys[1][0]?.expenseType);
+              form.setFieldValue("money", selectedRowKeys[1][0]?.moneyAmount);
               form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
-              form.setFieldValue("paymentType", selectedRowKeys[1][0]?.paymentType);
-              form.setFieldValue("accountNumber", selectedRowKeys[1][0]?.accountNumber);
-              form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalanceResponse?.accountNumber);
               console.log(selectedRowKeys[1][0]);
             }}
             type="button"
@@ -262,7 +273,7 @@ function Transaction({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Pul o`tkazma
+            Mavzu qo`shish
             {onedit ? "ni taxrirlash" : " "}
           </h3>
         )}
@@ -282,98 +293,92 @@ function Transaction({
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item
-                key="moneyAmount"
-                name="moneyAmount"
-                label={<span className="text-base font-medium">Pul miqdori</span>}
+                key="name"
+                name="name"
+                label={<span className="text-base font-medium">Ism</span>}
                 rules={[
                   {
                     required: true,
-                    message: "So`mmani kiritng",
+                    message: "Ism kiritng",
                   },
                 ]}
               >
-                <InputNumber
-                  className="w-full"
-                  placeholder="So`mmani kiriting ..."
+                <Input
+                  type="text"
+                  placeholder="Ism kiriting ..."
                 />
               </Form.Item>
               <Form.Item
-                key="expenseType"
-                name="expenseType"
-                label={<span className="text-base font-medium">O`tkazma turi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Xarajat turini kiriting",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="O`tkazma turini tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  <Option value="SALARY">Maosh</Option>
-                  <Option value="PAYMENT">Tulov</Option>
-                  <Option value="ADDITIONAL_PAYMENT">Qo`shimcha to`lov</Option>
-                  <Option value="ADDITIONAL_EXPENSE">Qo`shimcha xarajat</Option>
-                  <Option value="STUDENT_PAYMENT">Talaba to`lov</Option>
-                  <Option value="STUDENT_EXPENSE">Talaba xarajati</Option>
-                  <Option value="MEAL_EXPENSE">Oziq-ovqat xarajati</Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="mainBalanceId"
-                name="mainBalanceId"
-                label={<span className="text-base font-medium">Balance raqam tanlash</span>}
+                key="lessonFiles"
+                name="lessonFiles"
+                label={<span className="text-base font-medium">Dars uchun file</span>}
                 rules={[
                   {
                     required: false,
-                    message: "Balance pulni kiriting",
+                    message: "File kiriting",
                   },
                 ]}
               >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Balance raqam"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                <Upload
+                  customRequest={async (options) => {
+                    const { onSuccess, file } = options;
+                    onSuccess(file);
                   }}
+                  listType="file"
+                  multiple
+                  maxCount={4}
+                  accept="image/*"
+                  className="w-full"
                 >
-                  {balanceReducer?.balance?.map((balance) => {
-                    return (
-                      <Option value={balance.id} key={balance.id}>{balance?.accountNumber}</Option>
-                    );
-                  })}
-                </Select>
+                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
+                    Yuklash
+                  </Button>
+                </Upload>
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                key="branchId"
-                name="branchId"
-                label={<span className="text-base font-medium">Filial ( Branch )</span>}
+                key="useFullLinks"
+                name="useFullLinks"
+                label={<span className="text-base font-medium">Foydali linklar</span>}
                 rules={[
                   {
                     required: false,
-                    message: "Filialni tanlang",
+                    message: "Foydali linklar kiriting",
+                  },
+                ]}
+              >
+                <Upload
+                  customRequest={async (options) => {
+                    const { onSuccess, file } = options;
+                    onSuccess(file);
+                  }}
+                  listType="file"
+                  multiple
+                  maxCount={4}
+                  accept="image/*"
+                  className="w-full"
+                >
+                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
+                    File yuklash
+                  </Button>
+                </Upload>
+              </Form.Item>
+              <Form.Item
+                key="subjectLevelId"
+                name="subjectLevelId"
+                label={<span className="text-base font-medium">Fan bosqichi</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Fan bosqichni kiriting",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Filialni tanlang"
+                  placeholder="Fan bosqich tanlang"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -382,55 +387,14 @@ function Transaction({
                   }}
                 >
                   {
-                    businessBranchesReducer?.businessBranch?.map((barnch) => {
+                    subjectForLevelReducer?.subjectForLevel?.map((sub) => {
                       return (
-                        <Option value={barnch?.id} key={barnch?.id}>
-                          {barnch?.name}
+                        <Option value={sub?.id} key={sub?.id}>
+                          {sub?.subject?.name}
                         </Option>
                       );
                     })
                   }
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="comment"
-                name="comment"
-                label={<span className="text-base font-medium">Qisqa eslatma</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "eslatma ni kiriting",
-                  },
-                ]}
-              >
-                <Input type="text" placeholder="qisqa eslatma..." />
-              </Form.Item>
-              <Form.Item
-                key="paymentType"
-                name="paymentType"
-                label={<span className="text-base font-medium">To`lov turi</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Tulov turini tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Tulov turini tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  <Option value="CASH">Naqd</Option>
-                  <Option value="CARD">Karta</Option>
-                  <Option value="HISOBDAN_HISOBGA">Hisobdan hisobga</Option>
-                  <Option value="ELEKTRON">ELEKTRON</Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -444,7 +408,8 @@ function Transaction({
         pageSize={pageData?.size}
         tableData={transactionReducer?.transaction?.map((item) => {
           return ({
-            ...item
+            ...item,
+            firstName: item?.student?.firstName,
           });
         })}
         loading={pageData?.loading}
@@ -456,13 +421,15 @@ function Transaction({
   );
 }
 
-export default connect((usersDataReducer, transactionReducer, balanceReducer, businessBranchesReducer), {
-  getTrasactionHistoryById,
-  getTransactionHistoryFindAllBranch,
-  getTransactionHistoryActiveTrue,
-  saveTransaction,
-  editTransaction,
-  getAllBalanceBranch,
-  deleteTransaction,
-  getBusinessBranch
-})(Transaction);
+export default connect(
+  (
+    usersDataReducer, transactionReducer, balanceReducer, studentAccountReducer, businessBranchesReducer, topicReducer, subjectForLevelReducer
+  ), {
+    getBusinessBranch,
+    getTopic,
+    editTopic,
+    saveTopic,
+    deleteTopic,
+    getSubjectForLevel
+  }
+)(StudentPayment);

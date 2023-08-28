@@ -9,6 +9,10 @@ import StudentHomework from "../pages/Students/StudentHomework";
 import Scores from "../pages/Journal/Scores";
 import Attendance from "../pages/Attendance/Attendance";
 import TeachingHours from "../pages/TeachHours/TeachingHours";
+import LessonSchedule from "../pages/LessonSchedule/LessonSchedule.jsx";
+import Family from "../pages/Students/Family.jsx";
+import FamilyLogin from "../pages/Students/FamilyLogin.jsx";
+import Topic from "../pages/Topic/Topic.jsx";
 
 const Dashboard = lazy(() => {
   return import("../pages/Dashboard/Dashboard");
@@ -73,9 +77,6 @@ const Product = lazy(() => {
 const Drinks = lazy(() => {
   return import("../pages/Kitchen/Drinks");
 });
-const LessonSchedule = lazy(() => {
-  return import("../pages/Journal/LessonSchedule");
-});
 const DailyMeal = lazy(() => {
   return import("../pages/Kitchen/DailyMeal");
 });
@@ -139,6 +140,10 @@ function RoutesPage() {
           <Route path="scores" element={<Scores />} />
           <Route path="attendance" element={<Attendance />} />
           <Route path="teaching-hours" element={<TeachingHours />} />
+          <Route path="lesson-schedule" element={<LessonSchedule />} />
+          <Route path="family" element={<Family />} />
+          <Route path="family-login" element={<FamilyLogin />} />
+          <Route path="topic" element={<Topic />} />
         </Route>
         <Route path="/login" element={<Login />} />
         {/* <Route path='*' element={<Error404 />} /> */}
