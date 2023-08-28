@@ -6,16 +6,30 @@ export const slice = createSlice({
   name: "subjectForLevel",
   initialState: {
     subjectForLevel: null,
+    subjectForLevelAllBranch: null,
+    subjectForLevelTotalCount: 0,
     message: null,
     changeData: false,
   },
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.subjectForLevel = action.payload?.data;
+        state.subjectForLevel = action.payload?.data?.subjectLevels;
+        state.subjectForLevelTotalCount = action.payload?.data?.totalElement;
       } else {
         state.message = action.payload.message;
         state.subjectForLevel = null;
+        state.subjectForLevelTotalCount = 0;
+        toast.warning(action.payload.message || "Sinflar kesimidagi fanlarni yuklashda muammo bo'ldi");
+      }
+      state.changeData = false;
+    },
+    getFromAllByBarnch: (state, action) => {
+      if (action.payload.success) {
+        state.subjectForLevelAllBranch = action.payload?.data;
+      } else {
+        state.message = action.payload.message;
+        state.subjectForLevelAllBranch = null;
         toast.warning(action.payload.message || "Sinflar kesimidagi fanlarni yuklashda muammo bo'ldi");
       }
       state.changeData = false;
@@ -49,10 +63,19 @@ export const slice = createSlice({
 
 export const getSubjectForLevel = (data) => {
   return apiCall({
-    url: `/subjectLevels/getAllSubjectByBranchId/${data}`,
+    url: `/subjectLevels/getAllSubjectByBranchIdByPage/${data.branchId}?page=${data.page - 1}&size=${data.size}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
+  });
+};
+
+export const getSubjectForLevelAllByBranchId = (data) => {
+  return apiCall({
+    url: `/subjectLevels/getAllSubjectByBranchId/${data}`,
+    method: "get",
+    onSuccess: slice.actions.getFromAllByBarnch.type,
+    onFail: slice.actions.getFromAllByBarnch.type,
   });
 };
 

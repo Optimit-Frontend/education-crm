@@ -20,6 +20,7 @@ export const slice = createSlice({
         state.message = action.payload.message;
         toast.warning(action.payload.message || "Xonalarni yuklashda muammo bo'ldi");
         state.room = null;
+        state.roomTotalCount = 0;
       }
       state.changeData = false;
     },

@@ -107,7 +107,7 @@ function Login({ usersDataReducer, saveUser }) {
                       id="phone"
                       {...register("phone", { required: true })}
                       placeholder="Telefon nomeringizni kiriting..."
-                      className="w-full max-w-[250px] border-none outline-none"
+                      className="w-full max-w-[250px] dark:bg-gray-900 border-none outline-none"
                     />
                   </div>
                   {errors.phone?.type === "required" && (

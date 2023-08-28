@@ -1,8 +1,9 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, InputNumber, Modal, Row, Select
+  Col, Form, Modal, Row, Select
 } from "antd";
+import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -19,28 +20,14 @@ const columns = [
     title: "Fan nomi",
     dataIndex: "subjectName",
     key: "subjectName",
-    width: "30%",
+    width: "50%",
     search: true,
   },
   {
     title: "Sinf bosqichi",
     dataIndex: "levelName",
     key: "levelName",
-    width: "20%",
-    search: false,
-  },
-  {
-    title: "O'tiladigan soati",
-    dataIndex: "teachingHour",
-    key: "teachingHour",
-    width: "20%",
-    search: false,
-  },
-  {
-    title: "Soatlik o'tilish narxi",
-    dataIndex: "priceForPerHour",
-    key: "priceForPerHour",
-    width: "30%",
+    width: "50%",
     search: false,
   },
 ];
@@ -62,22 +49,56 @@ function Subjects({
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const size = localStorage.getItem("PageSize") || 10;
+  const location = useLocation();
+  const navigate = useNavigate();
+  const searchParams = new URLSearchParams(location.search);
+  const page = searchParams.get("page");
+  const size = searchParams.get("size");
   const [pageData, setPageData] = useState({
-    page: 1,
-    size,
+    page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
+    size: size ? parseInt(size, 10) : 10,
     loading: false,
   });
 
   useEffect(() => {
     getSubject(usersDataReducer?.branch?.id);
-    getSubjectForLevel(usersDataReducer?.branch?.id);
+    getSubjectForLevel({
+      page: pageData.page,
+      size: pageData.size,
+      branchId: usersDataReducer?.branch?.id
+    });
     getLevels();
     setVisible(false);
     setOnedit(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
   }, [subjectForLevelReducer?.changeData]);
+
+  useEffect(() => {
+    const pageSize = parseInt(size, 10);
+    const pageCount = parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1;
+    if (pageSize >= 100) {
+      setPageData((prev) => {
+        return { ...prev, size: 100 };
+      });
+      navigate(`/settings/subjectsForLevel?page=${pageCount}&size=100`);
+    } else if (pageSize >= 50) {
+      setPageData((prev) => {
+        return { ...prev, size: 50 };
+      });
+      navigate(`/settings/subjectsForLevel?page=${pageCount}&size=50`);
+    } else if (pageSize >= 20) {
+      setPageData((prev) => {
+        return { ...prev, size: 20 };
+      });
+      navigate(`/settings/subjectsForLevel?page=${pageCount}&size=20`);
+    } else {
+      setPageData((prev) => {
+        return { ...prev, size: 10 };
+      });
+      navigate(`/settings/subjectsForLevel?page=${pageCount}&size=10`);
+    }
+  }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
@@ -88,7 +109,10 @@ function Subjects({
 
   const onChange = (pageNumber, page) => {
     setPageData({ size: page, page: pageNumber, loading: false });
+    searchParams.set("size", page);
+    searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
+    navigate(`/settings/subjectsForLevel?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
@@ -129,8 +153,6 @@ function Subjects({
           onClick={() => {
             setOnedit(true);
             setVisible(true);
-            form.setFieldValue("priceForPerHour", selectedRowKeys[1][0]?.priceForPerHour);
-            form.setFieldValue("teachingHour", selectedRowKeys[1][0]?.teachingHour);
             form.setFieldValue("levelId", selectedRowKeys[1][0]?.level?.id);
             form.setFieldValue("subjectId", selectedRowKeys[1][0]?.subject?.id);
           }}
@@ -279,32 +301,6 @@ function Subjects({
                   })}
                 </Select>
               </Form.Item>
-              {/* <Form.Item */}
-              {/*   key="teachingHour" */}
-              {/*   name="teachingHour" */}
-              {/*   label={<span className="text-base font-medium">O&apos;qitilish soati</span>} */}
-              {/*   rules={[ */}
-              {/*     { */}
-              {/*       required: true, */}
-              {/*       message: "O'qitilish soatini kiriting", */}
-              {/*     }, */}
-              {/*   ]} */}
-              {/* > */}
-              {/*   <InputNumber className="w-full" placeholder="O'qitilish soatini kiriting..." /> */}
-              {/* </Form.Item> */}
-              {/* <Form.Item */}
-              {/*   key="priceForPerHour" */}
-              {/*   name="priceForPerHour" */}
-              {/*   label={<span className="text-base font-medium">Soatlik o&apos;qitish narxi</span>} */}
-              {/*   rules={[ */}
-              {/*     { */}
-              {/*       required: true, */}
-              {/*       message: "Soatlik o'qitish narxini kiriting", */}
-              {/*     }, */}
-              {/*   ]} */}
-              {/* > */}
-              {/*   <InputNumber className="w-full" placeholder="Soatlik o'qitish narxini kiriting..." /> */}
-              {/* </Form.Item> */}
             </Col>
           </Row>
         </Form>
@@ -314,6 +310,7 @@ function Subjects({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
+        totalItems={subjectForLevelReducer?.subjectForLevelTotalCount}
         tableData={subjectForLevelReducer?.subjectForLevel?.map((item) => {
           return ({ ...item, levelName: item.level?.level, subjectName: item.subject?.name });
         })}

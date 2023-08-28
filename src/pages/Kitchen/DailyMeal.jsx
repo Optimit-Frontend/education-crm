@@ -3,27 +3,27 @@ import { useEffect, useState } from "react";
 import {
   Button, Col, Form, Image, Input, Modal, Row, Select, Upload
 } from "antd";
+import { useLocation, useNavigate } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import achievementReducer, {
-  deleteAchievement,
-  editAchievement,
-  getAchievementUserId,
-  saveAchievement
-} from "../../reducer/achievementReducer";
-import employeeReducer, { getEmployeeBranchId } from "../../reducer/employeeReducer";
+import dailyMealReducer, {
+  deleteDailyMeal,
+  editDailyMeal,
+  getDailyMealByBranch,
+  saveDailyMeal
+} from "../../reducer/dailyMealReducer";
+import { week } from "../../const";
 
-const { TextArea } = Input;
 const { Option } = Select;
 
 const columns = [
   {
     title: "Rasmi",
-    dataIndex: "photoCertificate",
-    key: "photoCertificate",
-    width: "15%",
+    dataIndex: "photo",
+    key: "photo",
+    width: "10%",
     search: false,
     render: (eski) => {
       return (
@@ -37,69 +37,107 @@ const columns = [
     },
   },
   {
-    title: "Yutug' nomi",
+    title: "Nomi",
     dataIndex: "name",
     key: "name",
-    width: "30%",
+    width: "40%",
     search: true,
   },
   {
-    title: "Yutug' haqida",
-    dataIndex: "aboutAchievement",
-    key: "aboutAchievement",
-    width: "30%",
-    search: true,
+    title: "Kuni",
+    dataIndex: "day",
+    key: "day",
+    width: "25%",
+    search: false,
+    render: (eski) => {
+      const day = week?.find((item) => { return item.value === eski; });
+      return day?.name;
+    }
   },
   {
-    title: "Holati",
-    dataIndex: "userId",
-    key: "userId",
+    title: "Vaqti",
+    dataIndex: "time",
+    key: "time",
     width: "25%",
     search: false,
   },
 ];
 
-function Achievement({
-  deleteAchievement,
-  editAchievement,
-  saveAchievement,
-  getAchievementUserId,
-  getEmployeeBranchId,
-  usersDataReducer,
-  achievementReducer,
-  employeeReducer,
+function DailyMeal({
+  deleteDailyMeal,
+  editDailyMeal,
+  saveDailyMeal,
+  getDailyMealByBranch,
+  dailyMealReducer,
+  usersDataReducer
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const size = localStorage.getItem("PageSize") || 10;
+  const location = useLocation();
+  const navigate = useNavigate();
+  const searchParams = new URLSearchParams(location.search);
+  const page = searchParams.get("page");
+  const size = searchParams.get("size");
   const [pageData, setPageData] = useState({
-    page: 1,
-    size,
+    page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
+    size: size ? parseInt(size, 10) : 10,
     loading: false,
   });
 
   useEffect(() => {
-    getAchievementUserId(usersDataReducer?.userData?.id);
-    getEmployeeBranchId(usersDataReducer?.branch?.id);
+    getDailyMealByBranch({
+      page: pageData.page,
+      size: pageData.size,
+      branchId: usersDataReducer?.branch?.id
+    });
     setVisible(false);
     setOnedit(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [achievementReducer?.changeData]);
+  }, [dailyMealReducer?.changeData]);
+
+  useEffect(() => {
+    const pageSize = parseInt(size, 10);
+    const pageCount = parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1;
+    if (pageSize >= 100) {
+      setPageData((prev) => {
+        return { ...prev, size: 100 };
+      });
+      navigate(`/kitchen/dailyMeal?page=${pageCount}&size=100`);
+    } else if (pageSize >= 50) {
+      setPageData((prev) => {
+        return { ...prev, size: 50 };
+      });
+      navigate(`/kitchen/dailyMeal?page=${pageCount}&size=50`);
+    } else if (pageSize >= 20) {
+      setPageData((prev) => {
+        return { ...prev, size: 20 };
+      });
+      navigate(`/kitchen/dailyMeal?page=${pageCount}&size=20`);
+    } else {
+      setPageData((prev) => {
+        return { ...prev, size: 10 };
+      });
+      navigate(`/kitchen/dailyMeal?page=${pageCount}&size=10`);
+    }
+  }, []);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteAchievement(item);
+      deleteDailyMeal(item);
       return null;
     });
   };
 
   const onChange = (pageNumber, page) => {
     setPageData({ size: page, page: pageNumber, loading: false });
+    searchParams.set("size", page);
+    searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
+    navigate(`/kitchen/dailyMeal?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
@@ -108,14 +146,15 @@ function Achievement({
         .validateFields()
         .then((values) => {
           const fmData = new FormData();
-          fmData.append("name", values?.name);
-          fmData.append("aboutAchievement", values?.aboutAchievement);
-          values?.photoCertificate && values?.photoCertificate?.fileList?.map((item) => {
-            return fmData.append("photoCertificate", item?.response);
+          values?.photo && values?.photo?.fileList?.map((item) => {
+            return fmData.append("photo", item?.response);
           });
-          fmData.append("userId", values?.userId);
           fmData.append("id", selectedRowKeys[1][0]?.id);
-          selectedRowKeys[1][0]?.id && editAchievement(fmData);
+          fmData.append("name", values?.name);
+          fmData.append("branchId", usersDataReducer?.branch?.id);
+          fmData.append("day", values?.day);
+          fmData.append("time", values?.time);
+          selectedRowKeys[1][0]?.id && editDailyMeal(fmData);
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -124,13 +163,14 @@ function Achievement({
         .validateFields()
         .then((values) => {
           const fmData = new FormData();
-          fmData.append("name", values?.name);
-          fmData.append("aboutAchievement", values?.aboutAchievement);
-          values?.photoCertificate && values?.photoCertificate?.fileList?.map((item) => {
-            return fmData.append("photoCertificate", item?.response);
+          values?.photo && values?.photo?.fileList?.map((item) => {
+            return fmData.append("photo", item?.response);
           });
-          fmData.append("userId", values?.userId);
-          saveAchievement(fmData);
+          fmData.append("name", values?.name);
+          fmData.append("branchId", usersDataReducer?.branch?.id);
+          fmData.append("day", values?.day);
+          fmData.append("time", values?.time);
+          saveDailyMeal(fmData);
           setOnedit(false);
         })
         .catch((info) => {
@@ -144,16 +184,16 @@ function Achievement({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Hodim erishgan yutuqlari</h3>
+      <h3 className="text-2xl font-bold mb-5">Kunlik ovqatlar</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
             onClick={() => {
               setOnedit(true);
               setVisible(true);
+              form.setFieldValue("time", selectedRowKeys[1][0]?.time);
+              form.setFieldValue("day", selectedRowKeys[1][0]?.day);
               form.setFieldValue("name", selectedRowKeys[1][0]?.name);
-              form.setFieldValue("aboutAchievement", selectedRowKeys[1][0]?.aboutAchievement);
-              form.setFieldValue("userId", selectedRowKeys[1][0]?.userId);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -223,8 +263,8 @@ function Achievement({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Xona turi
-            {onedit ? "ni taxrirlash" : "ni qo'shish"}
+            Kunlik ovqat
+            {onedit ? "ni taxrirlash" : " qo'shish"}
           </h3>
         )}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
@@ -245,37 +285,64 @@ function Achievement({
               <Form.Item
                 key="name"
                 name="name"
-                label={<span className="text-base font-medium">Yutuq nomi</span>}
+                label={<span className="text-base font-medium">Nomi</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Yutuq nomini kiriting",
+                    message: "Nomini kiriting",
                   },
                 ]}
               >
-                <Input placeholder="Yutuq nomini kiriting..." />
+                <Input placeholder="Nomini kiriting..." />
               </Form.Item>
-            </Col>
-            <Col span={24}>
               <Form.Item
-                key="aboutAchievement"
-                name="aboutAchievement"
-                label={<span className="text-base font-medium">Yutuq haqida ma&apos;lumot</span>}
+                key="day"
+                name="day"
+                label={<span className="text-base font-medium">Kun</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Yutuq haqida ma'lumotni kiriting",
+                    message: "Kunni tanlang",
                   },
                 ]}
               >
-                <TextArea rows={3} placeholder="Yutuq haqida ma'lumotni kiriting..." />
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Kunni tanlang..."
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {week?.map((option) => {
+                    return (
+                      <Option value={option.value} key={option.value}>
+                        {option.name}
+                      </Option>
+                    );
+                  })}
+                </Select>
               </Form.Item>
-            </Col>
-            <Col span={24}>
               <Form.Item
-                key="photoCertificate"
-                name="photoCertificate"
-                label={<span className="text-base font-medium">Yutuq sertifikati rasmi</span>}
+                key="time"
+                name="time"
+                label={<span className="text-base font-medium">Vaqti</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vaqtini kiriting",
+                  },
+                ]}
+              >
+                <Input placeholder="Vaqtini kiriting..." />
+              </Form.Item>
+              <Form.Item
+                key="photo"
+                name="photo"
+                label={<span className="text-base font-medium">Rasmi</span>}
               >
                 <Upload
                   customRequest={async (options) => {
@@ -293,35 +360,6 @@ function Achievement({
                   </Button>
                 </Upload>
               </Form.Item>
-              <Form.Item
-                key="userId"
-                name="userId"
-                label={<span className="text-base font-medium">Hodim</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Hodimni tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Hodimni tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {employeeReducer?.employeesAllBranch?.map((room) => {
-                    return (
-                      <Option value={room.id} key={room.id}>{room?.name}</Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
             </Col>
           </Row>
         </Form>
@@ -331,7 +369,10 @@ function Achievement({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={achievementReducer?.achievement}
+        totalItems={dailyMealReducer?.dailyMealTotalCount}
+        tableData={dailyMealReducer?.dailyMeal?.map((item) => {
+          return ({ ...item, levelName: item.level?.level, subjectName: item.subject?.name });
+        })}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
@@ -341,6 +382,9 @@ function Achievement({
   );
 }
 
-export default connect((achievementReducer, employeeReducer, usersDataReducer), {
-  deleteAchievement, editAchievement, saveAchievement, getAchievementUserId, getEmployeeBranchId
-})(Achievement);
+export default connect((dailyMealReducer, usersDataReducer), {
+  deleteDailyMeal,
+  editDailyMeal,
+  saveDailyMeal,
+  getDailyMealByBranch
+})(DailyMeal);

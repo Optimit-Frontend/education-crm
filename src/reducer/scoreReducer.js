@@ -13,10 +13,12 @@ export const slice = createSlice({
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.scores = action.payload?.data;
+        state.scores = action.payload?.data?.scoreResponses;
+        state.scoreTotalCount = action.payload?.data?.totalElement;
       } else {
         state.message = action.payload.message;
         state.scores = null;
+        state.scoreTotalCount = 0;
       }
       state.changeData = false;
     },

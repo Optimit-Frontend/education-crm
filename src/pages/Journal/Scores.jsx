@@ -1,27 +1,29 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, InputNumber, Modal, Row, Select,
+  Form, Input, InputNumber, Modal, Row, Select,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import subjectReducer, { getSubject } from "../../reducer/subjectReducer.js";
-import classReducer, { getClassesAll } from "../../reducer/classReducer.js";
-import employeeReducer, { getEmployeeBranch, getUserLists } from "../../reducer/employeeReducer.js";
+import classReducer, { getClassesAll } from "../../reducer/classReducer";
+import employeeReducer, { getEmployeeBranch, getUserLists } from "../../reducer/employeeReducer";
 import scoreReducer, {
   deleteScore,
   editScore,
   getScores,
   saveScore,
-} from "../../reducer/scoreReducer.js";
-import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer.js";
-import studentReducer, { getStudentsAll } from "../../reducer/studentReducer.js";
-import journalReducer, { getJournal } from "../../reducer/journalReducer.js";
+} from "../../reducer/scoreReducer";
+import studentReducer, { getStudentsAll } from "../../reducer/studentReducer";
+import journalReducer, { getJournal } from "../../reducer/journalReducer";
+import FormLayoutComp from "../../components/FormLayoutComp";
+import subjectForLevelReducer, {
+  getSubjectForLevelAllByBranchId
+} from "../../reducer/subjectForLevelReducer";
 
 const { Option } = Select;
-
+const { TextArea } = Input;
 const columns = [
   {
     title: "Talaba",
@@ -68,36 +70,34 @@ const columns = [
 ];
 
 function StudentHomework({
-  usersDataReducer, getStudentsAll,
-  employeeReducer, getUserLists, scoreReducer, getScores, saveScore, editScore, deleteScore,
-  subjectReducer, getSubject, getClassesAll, getBusinessBranch,
-  businessBranchesReducer, studentReducer, getJournal, journalReducer,
+  usersDataReducer, getStudentsAll, employeeReducer, getUserLists, scoreReducer, getScores,
+  saveScore, editScore, deleteScore, subjectForLevelReducer, getSubjectForLevelAllByBranchId,
+  getClassesAll, studentReducer, getJournal, journalReducer,
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const size = localStorage.getItem("PageSize") || 10;
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
   const page = searchParams.get("page");
+  const size = searchParams.get("size");
   const [pageData, setPageData] = useState({
-    page: 1,
-    size,
+    page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
+    size: size ? parseInt(size, 10) : 10,
     loading: false,
   });
 
   useEffect(() => {
     getClassesAll({ id: usersDataReducer?.branch?.id });
-    getSubject(usersDataReducer?.branch?.id);
+    getSubjectForLevelAllByBranchId(usersDataReducer?.branch?.id);
     getJournal({
       branchId: usersDataReducer.branch?.id,
       page: pageData.page,
       size: pageData.size
     });
-    getBusinessBranch(usersDataReducer?.branch?.id);
     getUserLists();
     getStudentsAll({
       branchId: usersDataReducer.branch?.id,
@@ -144,7 +144,10 @@ function StudentHomework({
 
   const onChange = (pageNumber, page) => {
     setPageData({ size: page, page: pageNumber, loading: false });
+    searchParams.set("size", page);
+    searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
+    navigate(`/scores?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
@@ -178,64 +181,51 @@ function StudentHomework({
     formValidate();
   }
 
-  const [journalId, setJournalId] = useState(null);
-
-  function changeJournal(event) {
-    getScores({
-      journalId: event,
-      page: pageData.page,
-      size: pageData.size
-    });
-  }
-
   return (
     <div>
       <h3 className="text-2xl font-bold mb-5">Baholar</h3>
-      <Form.Item
-        key="journalId"
-        name="journalId"
-        // label={<span className="text-base font-medium">Jurnal tanlash</span>}
-        rules={[
-          {
-            required: false,
-            message: "Jurnalni kiriting",
-          },
-        ]}
-      >
-        <Select
-          value={journalId}
-          showSearch
-          allowClear
-          onChange={changeJournal}
-          placeholder="Jurnal tanlash"
-          optionFilterProp="children"
-          style={{ width: "100%" }}
-          key="id"
-          filterOption={(input, option) => {
-            return option.children.toLowerCase()?.includes(input.toLowerCase());
-          }}
-        >
-          {journalReducer?.journal?.journalResponses?.map((journal) => {
-            return (
-              <Option value={journal.id} key={journal.id}>{journal?.studentClass?.className}</Option>
-            );
-          })}
-        </Select>
-      </Form.Item>
-      <div className="flex items-center justify-end gap-5 mb-3">
-        {selectedRowKeys[0].length === 1 && (
+      <div className="flex items-center justify-between gap-5 mb-3">
+        <div className="w-40">
+          <Select
+            showSearch
+            allowClear
+            onChange={(e) => {
+              return e && getScores({
+                journalId: e,
+                page: pageData.page,
+                size: pageData.size
+              });
+            }}
+            placeholder="Jurnal tanlash"
+            optionFilterProp="children"
+            style={{ width: "100%" }}
+            key="id"
+            filterOption={(input, option) => {
+              return option.children.toLowerCase()?.includes(input.toLowerCase());
+            }}
+          >
+            {journalReducer?.journal?.journalResponses?.map((journal) => {
+              return (
+                <Option value={journal.id} key={journal.id}>
+                  {journal?.studentClass?.className}
+                </Option>
+              );
+            })}
+          </Select>
+        </div>
+        <div className="flex items-center gap-5">
+          {selectedRowKeys[0].length === 1 && (
           <button
             onClick={() => {
               setOnedit(true);
               setVisible(true);
               form.setFieldValue("studentId", selectedRowKeys[1][0]?.student?.id);
-              form.setFieldValue("subjectId", selectedRowKeys[1][0]?.subject?.id);
+              form.setFieldValue("subjectLevelId", selectedRowKeys[1][0]?.subject?.id);
               form.setFieldValue("description", selectedRowKeys[1][0]?.description);
               form.setFieldValue("journalId", selectedRowKeys[1][0]?.journal?.id);
               form.setFieldValue("date", selectedRowKeys[1][0]?.date);
               form.setFieldValue("score", selectedRowKeys[1][0]?.score);
               form.setFieldValue("teacherId", selectedRowKeys[1][0]?.teacherId);
-              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -256,57 +246,58 @@ function StudentHomework({
             </svg>
             <span>Taxrirlsh</span>
           </button>
-        )}
-        <button
-          onClick={() => {
-            setVisible(true);
-          }}
-          type="button"
-          className="flex items-center gap-2 px-4 py-[6px] bg-blue-600 text-white rounded-lg"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
+          )}
+          <button
+            onClick={() => {
+              setVisible(true);
+            }}
+            type="button"
+            className="flex items-center gap-2 px-4 py-[6px] bg-blue-600 text-white rounded-lg"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          <span>Qo&apos;shish</span>
-        </button>
-        <button
-          onClick={() => {
-            handleDelete(selectedRowKeys[1]);
-            setSelectedRowKeys([[], []]);
-          }}
-          type="button"
-          className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>Qo&apos;shish</span>
+          </button>
+          <button
+            onClick={() => {
+              handleDelete(selectedRowKeys[1]);
+              setSelectedRowKeys([[], []]);
+            }}
+            type="button"
+            className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-            />
-          </svg>
-          <span>O&apos;chirish</span>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+              />
+            </svg>
+            <span>O&apos;chirish</span>
+          </button>
+        </div>
       </div>
       <Modal
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Talaba hisob raqami
-            {onedit ? "ni taxrirlash" : " "}
+            Baho
+            {onedit ? "ni taxrirlash" : "ni qo'shish"}
           </h3>
         )}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
@@ -323,24 +314,24 @@ function StudentHomework({
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
           <Row gutter={24}>
-            <Col span={12}>
+            <FormLayoutComp>
               <Form.Item
                 key="studentId"
                 name="studentId"
-                label={<span className="text-base font-medium">Talaba tanlash</span>}
+                label={<span className="text-base font-medium">Talaba</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Talabani kiriting",
+                    message: "Talabani tanlang",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Talaba tanlash"
+                  placeholder="Talabani tanlang..."
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
@@ -353,19 +344,23 @@ function StudentHomework({
                   })}
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="score"
                 name="score"
                 label={<span className="text-base font-medium">Baho</span>}
                 rules={[
                   {
-                    required: false,
-                    message: "Dars vaqti",
+                    required: true,
+                    message: "Bahoni kiriting",
                   },
                 ]}
               >
                 <InputNumber type="number" className="w-full" placeholder="Baho kiriting ( 1...5 )" />
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="journalId"
                 name="journalId"
@@ -390,13 +385,15 @@ function StudentHomework({
                 >
                   {journalReducer?.journal?.journalResponses?.map((journal) => {
                     return (
-                      <Option value={journal.id} key={journal.id}>{journal?.studentClass?.className}</Option>
+                      <Option value={journal.id} key={journal.id}>
+                        {journal?.studentClass?.className}
+                      </Option>
                     );
                   })}
                 </Select>
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="teacherId"
                 name="teacherId"
@@ -426,9 +423,11 @@ function StudentHomework({
                   })}
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
-                key="subjectId"
-                name="subjectId"
+                key="subjectLevelId"
+                name="subjectLevelId"
                 label={<span className="text-base font-medium">Fan tanlash</span>}
                 rules={[
                   {
@@ -440,21 +439,27 @@ function StudentHomework({
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Fan tanlash"
+                  placeholder="Fanni tanlang..."
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  {subjectReducer?.subjects?.map((student) => {
-                    return (
-                      <Option value={student.id} key={student.id}>{student?.name}</Option>
-                    );
-                  })}
+                  {
+                          subjectForLevelReducer?.subjectForLevelAllBranch?.map((barnch) => {
+                            return (
+                              <Option value={barnch?.id} key={barnch?.id}>
+                                {`${barnch?.level?.level}-sinf ${barnch?.subject?.name}`}
+                              </Option>
+                            );
+                          })
+                      }
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="description"
                 name="description"
@@ -466,9 +471,9 @@ function StudentHomework({
                   },
                 ]}
               >
-                <Input placeholder="Qisqa eslatma" />
+                <TextArea rows={3} placeholder="Qisqa eslatma..." />
               </Form.Item>
-            </Col>
+            </FormLayoutComp>
           </Row>
         </Form>
       </Modal>
@@ -477,7 +482,8 @@ function StudentHomework({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={scoreReducer?.scores?.scoreResponses?.map((item) => {
+        totalItems={scoreReducer?.scoreTotalCount}
+        tableData={scoreReducer?.scores?.map((item) => {
           return ({
             ...item,
             teacher: item.teacher?.name,
@@ -498,10 +504,10 @@ function StudentHomework({
 
 export default connect(
   (
-    usersDataReducer, employeeReducer, businessBranchesReducer, studentReducer,
-    subjectReducer, classReducer, scoreReducer, journalReducer
+    usersDataReducer, employeeReducer, studentReducer,
+    subjectForLevelReducer, classReducer, scoreReducer, journalReducer
   ), {
-    getSubject,
+    getSubjectForLevelAllByBranchId,
     getClassesAll,
     getEmployeeBranch,
     getUserLists,
@@ -510,7 +516,6 @@ export default connect(
     getStudentsAll,
     editScore,
     deleteScore,
-    getBusinessBranch,
     getJournal
   }
 )(StudentHomework);

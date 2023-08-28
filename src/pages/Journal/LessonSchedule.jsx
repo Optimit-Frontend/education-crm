@@ -1,139 +1,126 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  DatePicker, Form, InputNumber, Modal, Row, Select
+  Form, InputNumber, Modal, Row, Select
 } from "antd";
-import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import moment from "moment";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import employeeReducer, { getEmployeeBranch, getUserLists } from "../../reducer/employeeReducer";
-import teachingHourReducer, {
-  deleteTeachingHours,
-  editTeachingHours,
-  getTeachingHour, getTeachingHoursByTeacherId,
-  saveTeachingHours,
-} from "../../reducer/teachingHourReducer";
-import subjectForLevelReducer, {
-  getSubjectForLevelAllByBranchId
-} from "../../reducer/subjectForLevelReducer";
-import classReducer, { getClassesAll } from "../../reducer/classReducer";
-import typeOfWorkReducer, {
-  getAllTypeOfWork
-} from "../../reducer/typeOfWorkReducer";
+import lessonScheduleReducer, {
+  deleteLessonSchedule,
+  editLessonSchedule,
+  getLessonScheduleByStudentClass,
+  getLessonScheduleByTeacher,
+  saveLessonSchedule
+} from "../../reducer/lessonScheduleReducer";
+import employeeReducer, { getEmployeeBranchId } from "../../reducer/employeeReducer";
 import FormLayoutComp from "../../components/FormLayoutComp";
+import subjectForLevelReducer, { getSubjectForLevelAllByBranchId } from "../../reducer/subjectForLevelReducer";
+import classReducer, { getClassesAll } from "../../reducer/classReducer";
+import roomReducer, { getAllRoomBranch } from "../../reducer/roomReducer";
+import typeOfWorkReducer, { getAllTypeOfWork } from "../../reducer/typeOfWorkReducer";
+import { week } from "../../const";
 
 const { Option } = Select;
 const columns = [
   {
-    title: "Xodim",
-    dataIndex: "teacher",
-    key: "teacehr",
-    width: "30%",
-    search: true,
+    title: "Vaqti",
+    dataIndex: "lessonHour",
+    key: "lessonHour",
+    width: "10%",
+    search: false,
   },
   {
-    title: "Dars soati",
-    dataIndex: "lessonHours",
-    key: "lessonHours",
-    width: "30%",
-    search: true,
+    title: "Fan",
+    dataIndex: "subjectName",
+    key: "subjectName",
+    width: "20%",
+    search: false,
   },
   {
-    title: "Sana",
-    dataIndex: "date",
-    key: "date",
-    width: "30%",
+    title: "Xona",
+    dataIndex: "roomName",
+    key: "roomName",
+    width: "10%",
+    search: false,
+  },
+  {
+    title: "Sinf",
+    dataIndex: "studentClassName",
+    key: "studentClassName",
+    width: "20%",
+    search: false,
+  },
+  {
+    title: "O'qituvchi",
+    dataIndex: "teacherName",
+    key: "teacherName",
+    width: "20%",
     search: false,
   },
   {
     title: "Ish turi",
-    dataIndex: "typeOfWork",
-    key: "typeOfWork",
+    dataIndex: "typeOfWorkName",
+    key: "typeOfWorkName",
     width: "20%",
     search: false,
   }
 ];
 
-function TeachingHours({
-  usersDataReducer, getAllTypeOfWork, typeOfWorkReducer,
-  employeeReducer, getUserLists, subjectForLevelReducer,
-  getSubjectForLevelAllByBranchId, getClassesAll, classReducer,
-  teachingHourReducer, getTeachingHour, editTeachingHours, saveTeachingHours, deleteTeachingHours,
-  getTeachingHoursByTeacherId
+function LessonSchedule({
+  getAllTypeOfWork,
+  getAllRoomBranch,
+  getClassesAll,
+  getSubjectForLevelAllByBranchId,
+  getEmployeeBranchId,
+  deleteLessonSchedule,
+  editLessonSchedule,
+  saveLessonSchedule,
+  getLessonScheduleByTeacher,
+  getLessonScheduleByStudentClass,
+  usersDataReducer,
+  lessonScheduleReducer,
+  employeeReducer,
+  subjectForLevelReducer,
+  classReducer,
+  roomReducer,
+  typeOfWorkReducer
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const navigate = useNavigate();
-  const page = searchParams.get("page");
-  const size = searchParams.get("size");
+  const size = localStorage.getItem("PageSize") || 10;
   const [pageData, setPageData] = useState({
-    page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
-    size: size ? parseInt(size, 10) : 10,
+    page: 1,
+    size,
     loading: false,
   });
 
   useEffect(() => {
-    getSubjectForLevelAllByBranchId(usersDataReducer?.branch?.id);
-    getUserLists();
     getAllTypeOfWork(usersDataReducer?.branch?.id);
+    getAllRoomBranch(usersDataReducer?.branch?.id);
     getClassesAll({ id: usersDataReducer?.branch?.id });
-    getTeachingHour({
-      page: pageData.page,
-      size: pageData.size,
-    });
+    getSubjectForLevelAllByBranchId(usersDataReducer?.branch?.id);
+    getEmployeeBranchId(usersDataReducer?.branch?.id);
     setVisible(false);
     setOnedit(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
-  }, [teachingHourReducer?.changeData]);
-
-  useEffect(() => {
-    const pageSize = parseInt(size, 10);
-    const pageCount = parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1;
-    if (pageSize >= 100) {
-      setPageData((prev) => {
-        return { ...prev, size: 100 };
-      });
-      navigate(`/teaching-hours?page=${pageCount}&size=100`);
-    } else if (pageSize >= 50) {
-      setPageData((prev) => {
-        return { ...prev, size: 50 };
-      });
-      navigate(`/teaching-hours?page=${pageCount}&size=50`);
-    } else if (pageSize >= 20) {
-      setPageData((prev) => {
-        return { ...prev, size: 20 };
-      });
-      navigate(`/teaching-hours?page=${pageCount}&size=20`);
-    } else {
-      setPageData((prev) => {
-        return { ...prev, size: 10 };
-      });
-      navigate(`/teaching-hours?page=${pageCount}&size=10`);
-    }
-  }, []);
+  }, [lessonScheduleReducer?.changeData]);
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteTeachingHours(item.id);
+      deleteLessonSchedule(item);
       return null;
     });
   };
 
   const onChange = (pageNumber, page) => {
     setPageData({ size: page, page: pageNumber, loading: false });
-    searchParams.set("size", page);
-    searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
-    navigate(`/teaching-hours?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
@@ -141,10 +128,10 @@ function TeachingHours({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editTeachingHours({
+          selectedRowKeys[1][0]?.id && editLessonSchedule({
             ...values,
-            date: moment(new Date(values?.date)?.toLocaleDateString()).format("YYYY-MM-DD"),
-            id: selectedRowKeys[1][0]?.id
+            id: selectedRowKeys[1][0]?.id,
+            branchId: selectedRowKeys[1][0]?.branch?.id
           });
         })
         .catch((info) => {
@@ -153,10 +140,7 @@ function TeachingHours({
       : form
         .validateFields()
         .then((values) => {
-          saveTeachingHours({
-            ...values,
-            date: moment(new Date(values?.date)?.toLocaleDateString()).format("YYYY-MM-DD")
-          });
+          saveLessonSchedule({ ...values, branchId: usersDataReducer?.branch?.id });
           setOnedit(false);
         })
         .catch((info) => {
@@ -170,19 +154,12 @@ function TeachingHours({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Dars soatlari</h3>
+      <h3 className="text-2xl font-bold mb-5">Dars jadvali</h3>
       <div className="flex items-center justify-between gap-5 mb-3">
         <div className="w-40">
           <Select
             onChange={(e) => {
-              e ? getTeachingHoursByTeacherId({
-                page: pageData.page,
-                size: pageData.size,
-                teacherId: e,
-              }) : getTeachingHour({
-                page: 1,
-                size: pageData.size,
-              });
+              e && getLessonScheduleByTeacher(e);
             }}
             showSearch
             allowClear
@@ -207,12 +184,13 @@ function TeachingHours({
               onClick={() => {
                 setOnedit(true);
                 setVisible(true);
-                form.setFieldValue("typeOfWorkId", selectedRowKeys[1][0]?.typeOfWorkId);
-                form.setFieldValue("date", dayjs(selectedRowKeys[1][0]?.date));
-                form.setFieldValue("lessonHours", selectedRowKeys[1][0]?.lessonHours);
-                form.setFieldValue("teacherId", selectedRowKeys[1][0]?.teacherId);
-                form.setFieldValue("subjectLevelId", selectedRowKeys[1][0]?.subjectLevelId);
-                form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
+                form.setFieldValue("subjectLevelId", selectedRowKeys[1][0]?.subject?.id);
+                form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.typeOfWorkId);
+                form.setFieldValue("teacherId", dayjs(selectedRowKeys[1][0]?.teacher?.id));
+                form.setFieldValue("roomId", selectedRowKeys[1][0]?.room?.id);
+                form.setFieldValue("typeOfWorkId", selectedRowKeys[1][0]?.typeOfWork?.id);
+                form.setFieldValue("lessonHour", selectedRowKeys[1][0]?.subjectLevelId);
+                form.setFieldValue("weekDays", selectedRowKeys[1][0]?.studentClassId);
               }}
               type="button"
               className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -283,14 +261,14 @@ function TeachingHours({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Dars soati
+            Dars vaqti
             {onedit ? "ni taxrirlash" : "ni qo'shish"}
           </h3>
-        )}
+                )}
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
         okButtonProps={{ className: "bg-blue-600" }}
         cancelText="Bekor qilish"
-        width={700}
+        width={600}
         onCancel={() => {
           setVisible(false);
           setOnedit(false);
@@ -300,7 +278,7 @@ function TeachingHours({
         forceRender
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
-          <Row gutter={24}>
+          <Row gutter={12}>
             <FormLayoutComp>
               <Form.Item
                 key="subjectLevelId"
@@ -325,67 +303,14 @@ function TeachingHours({
                   }}
                 >
                   {
-                      subjectForLevelReducer?.subjectForLevelAllBranch?.map((barnch) => {
-                        return (
-                          <Option value={barnch?.id} key={barnch?.id}>
-                            {`${barnch?.level?.level}-sinf ${barnch?.subject?.name}`}
-                          </Option>
-                        );
-                      })
-                    }
-                </Select>
-              </Form.Item>
-            </FormLayoutComp>
-            <FormLayoutComp>
-              <Form.Item
-                key="date"
-                name="date"
-                label={<span className="text-base font-medium">Sana</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Sana",
-                  },
-                ]}
-              >
-                <DatePicker
-                  className="w-full"
-                  placeholder="Sana..."
-                />
-              </Form.Item>
-            </FormLayoutComp>
-            <FormLayoutComp>
-              <Form.Item
-                key="studentClassId"
-                name="studentClassId"
-                label={<span className="text-base font-medium">Xona</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Xonani tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Xonani tanlang..."
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {
-                      classReducer?.class?.map((barnch) => {
-                        return (
-                          <Option value={barnch?.id} key={barnch?.id}>
-                            {barnch?.className}
-                          </Option>
-                        );
-                      })
-                    }
+                    subjectForLevelReducer?.subjectForLevelAllBranch?.map((barnch) => {
+                      return (
+                        <Option value={barnch?.id} key={barnch?.id}>
+                          {`${barnch?.level?.level}-sinf ${barnch?.subject?.name}`}
+                        </Option>
+                      );
+                    })
+                  }
                 </Select>
               </Form.Item>
             </FormLayoutComp>
@@ -393,20 +318,20 @@ function TeachingHours({
               <Form.Item
                 key="teacherId"
                 name="teacherId"
-                label={<span className="text-base font-medium">Xodim tanlash</span>}
+                label={<span className="text-base font-medium">O`qituvchi</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Xodim kiriting",
+                    message: "O`qituvchini tanlang",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Xodim tanlash"
+                  placeholder="O`qituvchi tanlang..."
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
@@ -422,17 +347,64 @@ function TeachingHours({
             </FormLayoutComp>
             <FormLayoutComp>
               <Form.Item
-                key="lessonHours"
-                name="lessonHours"
-                label={<span className="text-base font-medium">Dars soati</span>}
+                key="studentClassId"
+                name="studentClassId"
+                label={<span className="text-base font-medium">Sinf</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Dars soati",
+                    message: "Sinf tanlang",
                   },
                 ]}
               >
-                <InputNumber className="w-full" placeholder="Dars soati" />
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Sinf tanlang..."
+                  optionFilterProp="children"
+                  className="w-full"
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {classReducer?.class?.map((classes) => {
+                    return (
+                      <Option value={classes.id} key={classes.id}>{classes?.className}</Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
+              <Form.Item
+                key="roomId"
+                name="roomId"
+                label={<span className="text-base font-medium">Xona</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Xona kiriting",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Xona tanlang"
+                  optionFilterProp="children"
+                  className="w-full"
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {roomReducer?.roomAllBarnch?.map((room) => {
+                    return (
+                      <Option value={room.id} key={room.id}>{room?.roomNumber}</Option>
+                    );
+                  })}
+                </Select>
               </Form.Item>
             </FormLayoutComp>
             <FormLayoutComp>
@@ -452,7 +424,7 @@ function TeachingHours({
                   allowClear
                   placeholder="Ish turini tanlang..."
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
@@ -470,6 +442,54 @@ function TeachingHours({
                 </Select>
               </Form.Item>
             </FormLayoutComp>
+            <FormLayoutComp>
+              <Form.Item
+                key="lessonHour"
+                name="lessonHour"
+                label={<span className="text-base font-medium">Dars soati</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Dars soati",
+                  },
+                ]}
+              >
+                <InputNumber className="w-full" placeholder="Dars soati" />
+              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
+              <Form.Item
+                key="weekDays"
+                name="weekDays"
+                label={<span className="text-base font-medium">Kun</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Kunni tanlang",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Kunni tanlang..."
+                  optionFilterProp="children"
+                  className="w-full"
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {week?.map((option) => {
+                    return (
+                      <Option value={option.value} key={option.value}>
+                        {option.name}
+                      </Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+            </FormLayoutComp>
           </Row>
         </Form>
       </Modal>
@@ -478,16 +498,14 @@ function TeachingHours({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        totalItems={teachingHourReducer?.teachingHourTotalCount}
-        tableData={teachingHourReducer?.teachingHour?.map((item) => {
+        tableData={lessonScheduleReducer?.lessonSchedule?.map((item) => {
           return ({
             ...item,
-            teacher: item.teacher?.name,
-            typeOfWork: item.typeOfWork?.name,
-            teacherId: item.teacher?.id,
-            subjectLevelId: item.subject?.subject?.id,
-            studentClassId: item.studentClass?.id,
-            typeOfWorkId: item.typeOfWork?.id,
+            roomName: item.room?.roomNumber,
+            subjectName: item.subject?.name,
+            studentClassName: item.studentClass?.className,
+            teacherName: item.teacher?.name,
+            typeOfWorkName: item.typeOfWork?.name,
           });
         })}
         loading={pageData?.loading}
@@ -501,19 +519,18 @@ function TeachingHours({
 
 export default connect(
   (
-    usersDataReducer, employeeReducer,
-    subjectForLevelReducer, classReducer,
-    typeOfWorkReducer, teachingHourReducer
+    lessonScheduleReducer, employeeReducer, subjectForLevelReducer, classReducer, roomReducer,
+    typeOfWorkReducer, usersDataReducer
   ), {
-    getEmployeeBranch,
-    getUserLists,
-    deleteTeachingHours,
-    editTeachingHours,
-    getTeachingHour,
-    getTeachingHoursByTeacherId,
-    saveTeachingHours,
+    deleteLessonSchedule,
+    editLessonSchedule,
+    saveLessonSchedule,
+    getLessonScheduleByTeacher,
+    getLessonScheduleByStudentClass,
+    getEmployeeBranchId,
     getSubjectForLevelAllByBranchId,
     getClassesAll,
+    getAllRoomBranch,
     getAllTypeOfWork
   }
-)(TeachingHours);
+)(LessonSchedule);
