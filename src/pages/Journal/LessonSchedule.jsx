@@ -184,12 +184,13 @@ function LessonSchedule({
               onClick={() => {
                 setOnedit(true);
                 setVisible(true);
-                form.setFieldValue("typeOfWorkId", selectedRowKeys[1][0]?.typeOfWorkId);
-                form.setFieldValue("date", dayjs(selectedRowKeys[1][0]?.date));
-                form.setFieldValue("lessonHours", selectedRowKeys[1][0]?.lessonHours);
-                form.setFieldValue("teacherId", selectedRowKeys[1][0]?.teacherId);
-                form.setFieldValue("subjectLevelId", selectedRowKeys[1][0]?.subjectLevelId);
-                form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
+                form.setFieldValue("subjectLevelId", selectedRowKeys[1][0]?.subject?.id);
+                form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.typeOfWorkId);
+                form.setFieldValue("teacherId", dayjs(selectedRowKeys[1][0]?.teacher?.id));
+                form.setFieldValue("roomId", selectedRowKeys[1][0]?.room?.id);
+                form.setFieldValue("typeOfWorkId", selectedRowKeys[1][0]?.typeOfWork?.id);
+                form.setFieldValue("lessonHour", selectedRowKeys[1][0]?.subjectLevelId);
+                form.setFieldValue("weekDays", selectedRowKeys[1][0]?.studentClassId);
               }}
               type="button"
               className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
