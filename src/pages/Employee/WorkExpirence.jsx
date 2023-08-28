@@ -109,8 +109,8 @@ function WorkExpirence({
           selectedRowKeys[1][0]?.id && editWorkExperience({
             ...values,
             id: selectedRowKeys[1][0]?.id,
-            startDate: moment(new Date(values?.startDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
-            endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
+            startDate: dayjs(values?.startDate).format("YYYY-MM-DD"),
+            endDate: dayjs(values?.endDate).format("YYYY-MM-DD"),
           });
         })
         .catch((info) => {
@@ -119,10 +119,11 @@ function WorkExpirence({
       : form
         .validateFields()
         .then((values) => {
+          console.log(values, moment(new Date(values?.endDate)).format("YYYY-MM-DD"));
           saveWorkExperience({
             ...values,
-            startDate: moment(new Date(values?.startDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
-            endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
+            startDate: dayjs(values?.startDate).format("YYYY-MM-DD"),
+            endDate: dayjs(values?.endDate).format("YYYY-MM-DD"),
           });
           setOnedit(false);
         })
