@@ -3,34 +3,30 @@ import { toast } from "react-toastify";
 import { apiCall } from "../api";
 
 export const slice = createSlice({
-  name: "roomData",
+  name: "lessonSchedule",
   initialState: {
-    room: null,
-    roomAllBarnch: null,
-    roomTotalCount: 0,
+    lessonSchedule: null,
     message: null,
     changeData: false,
   },
   reducers: {
-    getFrom: (state, action) => {
+    getFromByStudentClass: (state, action) => {
       if (action.payload.success) {
-        state.room = action.payload?.data?.roomResponseDtoList;
-        state.roomTotalCount = action.payload?.data?.allSize;
+        state.lessonSchedule = action.payload?.data?.lessonScheduleResponseList;
       } else {
         state.message = action.payload.message;
         toast.warning(action.payload.message || "Xonalarni yuklashda muammo bo'ldi");
-        state.room = null;
-        state.roomTotalCount = 0;
+        state.lessonSchedule = null;
       }
       state.changeData = false;
     },
-    getAllFrom: (state, action) => {
+    getFromByTeacher: (state, action) => {
       if (action.payload.success) {
-        state.roomAllBarnch = action.payload?.data;
+        state.lessonSchedule = action.payload?.data?.lessonScheduleResponseList;
       } else {
         state.message = action.payload.message;
         toast.warning(action.payload.message || "Xonalarni yuklashda muammo bo'ldi");
-        state.roomAllBarnch = null;
+        state.lessonSchedule = null;
       }
       state.changeData = false;
     },
@@ -61,27 +57,27 @@ export const slice = createSlice({
   },
 });
 
-export const getRoomBranch = (data) => {
+export const getLessonScheduleByStudentClass = (data) => {
   return apiCall({
-    url: `/room/getAll?page=${data.page - 1}&size=${data.size}&branchId=${data.branchId}`,
+    url: `/schedule/getAllByStudentClassLevel?page=${data.page - 1}&size=${data.size}&branchId=${data.branchId}`,
     method: "get",
-    onSuccess: slice.actions.getFrom.type,
-    onFail: slice.actions.getFrom.type,
+    onSuccess: slice.actions.getFromByStudentClass.type,
+    onFail: slice.actions.getFromByStudentClass.type,
   });
 };
 
-export const getAllRoomBranch = (data) => {
+export const getLessonScheduleByTeacher = (data) => {
   return apiCall({
-    url: `/room/getAll/${data}`,
+    url: `/schedule/getAllByTeacherId/${data}`,
     method: "get",
-    onSuccess: slice.actions.getAllFrom.type,
-    onFail: slice.actions.getAllFrom.type,
+    onSuccess: slice.actions.getFromByTeacher.type,
+    onFail: slice.actions.getFromByTeacher.type,
   });
 };
 
-export const saveRoom = (data) => {
+export const saveLessonSchedule = (data) => {
   return apiCall({
-    url: "/room/create",
+    url: "/schedule/create",
     method: "post",
     data,
     onSuccess: slice.actions.saveFrom.type,
@@ -89,9 +85,9 @@ export const saveRoom = (data) => {
   });
 };
 
-export const editRoom = (data) => {
+export const editLessonSchedule = (data) => {
   return apiCall({
-    url: "/room/update",
+    url: "/schedule/update",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,
@@ -99,9 +95,9 @@ export const editRoom = (data) => {
   });
 };
 
-export const deleteRoom = (data) => {
+export const deleteLessonSchedule = (data) => {
   return apiCall({
-    url: `/room/delete/${data}`,
+    url: `/schedule/delete/${data}`,
     method: "delete",
     onSuccess: slice.actions.deleteFrom.type,
     onFail: slice.actions.deleteFrom.type,

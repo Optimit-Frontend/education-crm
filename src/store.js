@@ -28,6 +28,7 @@ import transactionReducer from "./reducer/transactionReducer";
 import studentAccountReducer from "./reducer/studentAccountReducer";
 import salaryReducer from "./reducer/salaryReducer";
 import journalReducer from "./reducer/journalReducer";
+import lessonScheduleReducer from "./reducer/lessonScheduleReducer";
 import studentHomeworkReducer from "./reducer/studentHomeworkReducer";
 import scoreReducer from "./reducer/scoreReducer";
 import attendanceReducer from "./reducer/attendanceReducer";
@@ -63,6 +64,7 @@ export default configureStore({
     studentAccountReducer,
     salaryReducer,
     journalReducer,
+    lessonScheduleReducer,
     studentHomeworkReducer,
     scoreReducer,
     attendanceReducer,

@@ -73,6 +73,9 @@ const Product = lazy(() => {
 const Drinks = lazy(() => {
   return import("../pages/Kitchen/Drinks");
 });
+const LessonSchedule = lazy(() => {
+  return import("../pages/Journal/LessonSchedule");
+});
 const DailyMeal = lazy(() => {
   return import("../pages/Kitchen/DailyMeal");
 });
@@ -131,6 +134,7 @@ function RoutesPage() {
           <Route path="salaries" element={<Salary />} />
           <Route path="partly-salaries" element={<PartlySalary />} />
           <Route path="journal" element={<Journal />} />
+          <Route path="lesson-schedule" element={<LessonSchedule />} />
           <Route path="student-homework" element={<StudentHomework />} />
           <Route path="scores" element={<Scores />} />
           <Route path="attendance" element={<Attendance />} />

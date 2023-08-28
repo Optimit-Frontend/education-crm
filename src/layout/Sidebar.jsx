@@ -749,7 +749,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 }`;
                               }}
                             >
-                              {/* eslint-disable-next-line react/no-unescaped-entities */}
                               Jurnal
                             </NavLink>
                           </li>
@@ -765,7 +764,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 }`;
                               }}
                             >
-                              {/* eslint-disable-next-line react/no-unescaped-entities */}
                               Baholar
                             </NavLink>
                           </li>
@@ -781,7 +779,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 }`;
                               }}
                             >
-                              {/* eslint-disable-next-line react/no-unescaped-entities */}
                               Keldi-ketdi
                             </NavLink>
                           </li>
@@ -799,6 +796,21 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             >
                               {/* eslint-disable-next-line react/no-unescaped-entities */}
                               Dars soati
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/lesson-schedule"
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Dars jadvali
                             </NavLink>
                           </li>
                         </ul>
