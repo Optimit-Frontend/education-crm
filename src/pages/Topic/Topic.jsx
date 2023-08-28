@@ -1,9 +1,11 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, InputNumber, Modal, Row, Select
+  Button,
+  Col, Form, Input, InputNumber, Modal, Row, Select, Upload,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
+import { UploadOutlined } from "@ant-design/icons";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -28,6 +30,9 @@ import topicReducer, {
   getTopic,
   saveTopic,
 } from "../../reducer/topicReducer.js";
+import subjectForLevelReducer, {
+  getSubjectForLevel,
+} from "../../reducer/subjectForLevelReducer.js";
 
 const { Option } = Select;
 
@@ -92,9 +97,8 @@ const columns = [
 
 function StudentPayment({
   usersDataReducer, topicReducer,
-  businessBranchesReducer,
-  transactionReducer, editStudentTransaction, studentAccountReducer,
-  balanceReducer, deleteTransaction, saveStudentTransaction, getBusinessBranch, editTopic, saveTopic, deleteTopic, getTopic
+  businessBranchesReducer, getSubjectForLevel, subjectForLevelReducer,
+  editTopic, saveTopic, deleteTopic, getTopic
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -114,8 +118,8 @@ function StudentPayment({
   });
 
   useEffect(() => {
-    getBusinessBranch(usersDataReducer?.branch?.id);
     getTopic(usersDataReducer?.branch?.id);
+    getSubjectForLevel(usersDataReducer?.branch?.id);
     // getEmployeeBranchId(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
@@ -150,7 +154,7 @@ function StudentPayment({
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteTopic(item);
+      deleteTopic(item?.id);
       return null;
     });
   };
@@ -165,7 +169,7 @@ function StudentPayment({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editStudentTransaction({ ...values });
+          selectedRowKeys[1][0]?.id && editTopic({ ...values });
           setOnedit(false);
         })
         .catch((info) => {
@@ -289,127 +293,92 @@ function StudentPayment({
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item
-                key="money"
-                name="money"
-                label={<span className="text-base font-medium">Pul miqdori</span>}
+                key="name"
+                name="name"
+                label={<span className="text-base font-medium">Ism</span>}
                 rules={[
                   {
                     required: true,
-                    message: "So`mmani kiritng",
+                    message: "Ism kiritng",
                   },
                 ]}
               >
                 <Input
-                  type="number"
-                  placeholder="So`mmani kiriting ..."
+                  type="text"
+                  placeholder="Ism kiriting ..."
                 />
               </Form.Item>
               <Form.Item
-                key="accountNumber"
-                name="accountNumber"
-                label={<span className="text-base font-medium">Talaba hisob raqami</span>}
+                key="lessonFiles"
+                name="lessonFiles"
+                label={<span className="text-base font-medium">Dars uchun file</span>}
                 rules={[
                   {
-                    required: true,
-                    message: "Hisob raqami",
+                    required: false,
+                    message: "File kiriting",
                   },
                 ]}
               >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Talaba hisob raqami"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                <Upload
+                  customRequest={async (options) => {
+                    const { onSuccess, file } = options;
+                    onSuccess(file);
                   }}
+                  listType="file"
+                  multiple
+                  maxCount={4}
+                  accept="image/*"
+                  className="w-full"
                 >
-                  {studentAccountReducer?.account?.map((account) => {
-                    return (
-                      <Option value={account?.accountNumber} key={account.id}>{account?.accountNumber}</Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="expenseType"
-                name="expenseType"
-                label={<span className="text-base font-medium">O`tkazma turi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Xarajat turini kiriting",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="O`tkazma turini tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  <Option value="SALARY">Maosh</Option>
-                  <Option value="PAYMENT">Tulov</Option>
-                  <Option value="ADDITIONAL_PAYMENT">Qo`shimcha to`lov</Option>
-                  <Option value="ADDITIONAL_EXPENSE">Qo`shimcha xarajat</Option>
-                  <Option value="STUDENT_PAYMENT">Talaba to`lov</Option>
-                  <Option value="STUDENT_EXPENSE">Talaba xarajati</Option>
-                  <Option value="MEAL_EXPENSE">Oziq-ovqat xarajati</Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="mainBalanceId"
-                name="mainBalanceId"
-                label={<span className="text-base font-medium">Balance raqam tanlash</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Balance pulni kiriting",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Balance raqam"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {balanceReducer?.balance?.map((balance) => {
-                    return (
-                      <Option value={balance.id} key={balance.id}>{balance?.accountNumber}</Option>
-                    );
-                  })}
-                </Select>
+                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
+                    Yuklash
+                  </Button>
+                </Upload>
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                key="branchId"
-                name="branchId"
-                label={<span className="text-base font-medium">Filial ( Branch )</span>}
+                key="useFullLinks"
+                name="useFullLinks"
+                label={<span className="text-base font-medium">Foydali linklar</span>}
                 rules={[
                   {
-                    required: true,
-                    message: "Filialni tanlang",
+                    required: false,
+                    message: "Foydali linklar kiriting",
+                  },
+                ]}
+              >
+                <Upload
+                  customRequest={async (options) => {
+                    const { onSuccess, file } = options;
+                    onSuccess(file);
+                  }}
+                  listType="file"
+                  multiple
+                  maxCount={4}
+                  accept="image/*"
+                  className="w-full"
+                >
+                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
+                    File yuklash
+                  </Button>
+                </Upload>
+              </Form.Item>
+              <Form.Item
+                key="subjectLevelId"
+                name="subjectLevelId"
+                label={<span className="text-base font-medium">Fan bosqichi</span>}
+                rules={[
+                  {
+                    required: false,
+                    message: "Fan bosqichni kiriting",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Filialni tanlang"
+                  placeholder="Fan bosqich tanlang"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -418,81 +387,14 @@ function StudentPayment({
                   }}
                 >
                   {
-                    businessBranchesReducer?.businessBranch?.map((barnch) => {
+                    subjectForLevelReducer?.subjectForLevel?.map((sub) => {
                       return (
-                        <Option value={barnch?.id} key={barnch?.id}>
-                          {barnch?.name}
+                        <Option value={sub?.id} key={sub?.id}>
+                          {sub?.subject?.name}
                         </Option>
                       );
                     })
                   }
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="paidInFull"
-                name="paidInFull"
-                label={<span className="text-base font-medium">Yillik tulov</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Yillik tulovni tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Balance raqam"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  <Option value="true">Ha</Option>
-                  <Option value="false">Yuq</Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="comment"
-                name="comment"
-                label={<span className="text-base font-medium">Qisqa eslatma</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "eslatma ni kiriting",
-                  },
-                ]}
-              >
-                <Input type="text" placeholder="qisqa eslatma..." />
-              </Form.Item>
-              <Form.Item
-                key="paymentType"
-                name="paymentType"
-                label={<span className="text-base font-medium">To`lov turi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Tulov turini tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Tulov turini tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  <Option value="CASH">Naqd</Option>
-                  <Option value="CARD">Karta</Option>
-                  <Option value="HISOBDAN_HISOBGA">Hisobdan hisobga</Option>
-                  <Option value="ELEKTRON">ELEKTRON</Option>
                 </Select>
               </Form.Item>
             </Col>
@@ -521,21 +423,13 @@ function StudentPayment({
 
 export default connect(
   (
-    usersDataReducer, transactionReducer, balanceReducer, studentAccountReducer, businessBranchesReducer, topicReducer
+    usersDataReducer, transactionReducer, balanceReducer, studentAccountReducer, businessBranchesReducer, topicReducer, subjectForLevelReducer
   ), {
-    getTransactionHistoryFindAllBranch,
-    getTransactionHistoryActiveTrue,
-    editTransaction,
-    getAllBalanceBranch,
-    getEmployeeBranch,
-    deleteTransaction,
-    saveStudentTransaction,
-    getStudentAccountByBranch,
-    editStudentTransaction,
     getBusinessBranch,
     getTopic,
     editTopic,
     saveTopic,
-    deleteTopic
+    deleteTopic,
+    getSubjectForLevel
   }
 )(StudentPayment);
