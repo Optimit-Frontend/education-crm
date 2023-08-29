@@ -31,7 +31,7 @@ import topicReducer, {
   saveTopic,
 } from "../../reducer/topicReducer.js";
 import subjectForLevelReducer, {
-  getSubjectForLevel,
+  getSubjectForLevel, getSubjectForLevelAllByBranchId,
 } from "../../reducer/subjectForLevelReducer.js";
 
 const { Option } = Select;
@@ -97,7 +97,7 @@ const columns = [
 
 function StudentPayment({
   usersDataReducer, topicReducer,
-  businessBranchesReducer, getSubjectForLevel, subjectForLevelReducer,
+  businessBranchesReducer, getSubjectForLevel, subjectForLevelReducer, getSubjectForLevelAllByBranchId,
   editTopic, saveTopic, deleteTopic, getTopic
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
@@ -119,7 +119,7 @@ function StudentPayment({
 
   useEffect(() => {
     getTopic(usersDataReducer?.branch?.id);
-    getSubjectForLevel(usersDataReducer?.branch?.id);
+    getSubjectForLevelAllByBranchId(usersDataReducer?.branch?.id);
     // getEmployeeBranchId(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
@@ -178,7 +178,16 @@ function StudentPayment({
       : form
         .validateFields()
         .then((values) => {
-          saveTopic({ ...values });
+          const fmData = new FormData();
+          fmData.append("name", values.name);
+          values?.lessonFiles && values?.lessonFiles?.fileList?.map((item) => {
+            return fmData.append("lessonFiles", item?.response);
+          });
+          fmData.append("subjectLevelId", parseInt(values?.subjectLevelId, 10));
+          values?.useFullLinks && values?.useFullLinks?.fileList?.map((item) => {
+            return fmData.append("useFullLinks", item?.response);
+          });
+          saveTopic(fmData);
           setOnedit(false);
         })
         .catch((info) => {
@@ -327,7 +336,7 @@ function StudentPayment({
                   listType="file"
                   multiple
                   maxCount={4}
-                  accept="image/*"
+                  // accept="image/*"
                   className="w-full"
                 >
                   <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
@@ -356,7 +365,7 @@ function StudentPayment({
                   listType="file"
                   multiple
                   maxCount={4}
-                  accept="image/*"
+                  // accept="image/*"
                   className="w-full"
                 >
                   <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
@@ -387,7 +396,7 @@ function StudentPayment({
                   }}
                 >
                   {
-                    subjectForLevelReducer?.subjectForLevel?.map((sub) => {
+                    subjectForLevelReducer?.subjectForLevelAllBranch?.map((sub) => {
                       return (
                         <Option value={sub?.id} key={sub?.id}>
                           {sub?.subject?.name}
@@ -406,7 +415,7 @@ function StudentPayment({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={transactionReducer?.transaction?.map((item) => {
+        tableData={topicReducer?.topic?.map((item) => {
           return ({
             ...item,
             firstName: item?.student?.firstName,
@@ -430,6 +439,7 @@ export default connect(
     editTopic,
     saveTopic,
     deleteTopic,
-    getSubjectForLevel
+    getSubjectForLevel,
+    getSubjectForLevelAllByBranchId
   }
 )(StudentPayment);

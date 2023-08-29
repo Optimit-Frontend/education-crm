@@ -16,6 +16,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
 import moment from "moment";
+import dayjs from "dayjs";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -181,7 +182,7 @@ function Employee({
           fmData.append("name", values?.name);
           fmData.append(
             "birthDate",
-            moment(new Date(values?.birthDate)?.toLocaleDateString()).format("YYYY-MM-DD")
+            dayjs(values?.birthDate).format("YYYY-MM-DD")
           );
           fmData.append("biography", values?.biography);
           fmData.append("inps", values?.inps);

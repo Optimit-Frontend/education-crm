@@ -60,6 +60,8 @@ export const saveTopic = (data) => {
   return apiCall({
     url: "/topic/create",
     method: "post",
+    // eslint-disable-next-line no-underscore-dangle
+    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.saveFrom.type,
     onFail: slice.actions.saveFrom.type,

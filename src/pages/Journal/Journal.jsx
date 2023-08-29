@@ -166,10 +166,7 @@ function Salary({
       : form
         .validateFields()
         .then((values) => {
-          saveJournal({
-            ...values,
-            // endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
-          });
+          saveJournal(values);
           setOnedit(false);
         })
         .catch((info) => {

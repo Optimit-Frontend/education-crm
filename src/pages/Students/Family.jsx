@@ -296,7 +296,7 @@ function Family({
                   },
                 ]}
               >
-                <Input type="number" placeholder="Tel raqam" />
+                <Input addonBefore="+998" type="number" placeholder="Tel raqam" />
               </Form.Item>
               <Form.Item
                 key="password"

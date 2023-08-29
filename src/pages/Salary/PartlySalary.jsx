@@ -156,11 +156,9 @@ function Salary({
         .validateFields()
         .then((values) => {
           savePartlySalary({
-            // ...values,
             phoneNumber: values.phoneNumber,
             partlySalary: parseFloat(values.partlySalary),
             paymentType: values.paymentType
-            // endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
           });
           setOnedit(false);
         })
@@ -258,7 +256,7 @@ function Salary({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Talaba
+            Maosh
             {onedit ? "ni taxrirlash" : " qo'shish"}
           </h3>
         )}
@@ -331,7 +329,7 @@ function Salary({
                   },
                 ]}
               >
-                <Input type="number" placeholder="Tel raqam kiriting . . ." />
+                <Input addonBefore="+998" type="number" placeholder="Tel raqam kiriting . . ." />
               </Form.Item>
             </Col>
           </Row>

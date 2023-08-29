@@ -109,8 +109,8 @@ function WorkExpirence({
           selectedRowKeys[1][0]?.id && editWorkExperience({
             ...values,
             id: selectedRowKeys[1][0]?.id,
-            startDate: moment(new Date(values?.startDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
-            endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
+            startDate: dayjs(values?.startDate).format("YYYY-MM-DD"),
+            endDate: dayjs(values?.endDate).format("YYYY-MM-DD"),
           });
         })
         .catch((info) => {
@@ -121,8 +121,8 @@ function WorkExpirence({
         .then((values) => {
           saveWorkExperience({
             ...values,
-            startDate: moment(new Date(values?.startDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
-            endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
+            startDate: dayjs(values?.startDate).format("YYYY-MM-DD"),
+            endDate: dayjs(values?.endDate).format("YYYY-MM-DD"),
           });
           setOnedit(false);
         })
@@ -341,7 +341,9 @@ function WorkExpirence({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={workExpirenceReducer?.workExpirence}
+        tableData={workExpirenceReducer?.workExpirence.map((workExpe) => {
+          return ({ ...workExpe, employeeFullName: workExpe?.userResponse?.name });
+        })}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}

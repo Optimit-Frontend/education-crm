@@ -157,7 +157,6 @@ function Salary({
             phoneNumber: values.phoneNumber,
             partlySalary: parseFloat(values.partlySalary),
             paymentType: values.paymentType
-            // endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
           });
           setOnedit(false);
         })
