@@ -210,9 +210,7 @@ function Students({
           fmData.append("firstName", values?.firstName);
           fmData.append("lastName", values?.lastName);
           fmData.append("fatherName", values?.fatherName);
-          fmData.append("birthDate", moment(
-            new Date(values?.birthDate)?.toLocaleDateString()
-          ).format("YYYY-MM-DD"));
+          fmData.append("birthDate", dayjs(values?.birthDate).format("YYYY-MM-DD"));
           fmData.append("docNumber", values?.docNumber);
           values?.docPhoto && values?.docPhoto?.fileList?.map((item) => {
             return fmData.append("docPhoto", item?.response);
@@ -260,6 +258,11 @@ function Students({
               form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
               form.setFieldValue("paymentAmount", selectedRowKeys[1][0]?.paymentAmount);
               form.setFieldValue("birthDate", dayjs(selectedRowKeys[1][0]?.birthDate));
+              form.setFieldValue("photo", dayjs(selectedRowKeys[1][0]?.photo));
+              form.setFieldValue("reference", dayjs(selectedRowKeys[1][0]?.reference));
+              form.setFieldValue("medDocPhoto", dayjs(selectedRowKeys[1][0]?.medDocPhoto));
+              form.setFieldValue("docPhoto", dayjs(selectedRowKeys[1][0]?.docPhoto));
+              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -422,7 +425,7 @@ function Students({
                   },
                 ]}
               >
-                <InputNumber className="w-full" placeholder="Tel raqam ..." />
+                <Input addonBefore="+998" type="number" className="w-full" placeholder="Tel raqam ..." />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -478,7 +481,7 @@ function Students({
                 label={<span className="text-base font-medium">To`lovni kiriting</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "password kiriting",
                   },
                 ]}

@@ -146,9 +146,6 @@ function Salary({
           selectedRowKeys[1][0]?.id && editSalary({
             ...values,
             id: selectedRowKeys[1][0]?.id,
-            // startDate: moment(
-            //   new Date(values?.startDate)?.toLocaleDateString()
-            // ).format("YYYY-MM-DD"),
           });
           setOnedit(false);
         })
@@ -161,10 +158,7 @@ function Salary({
           saveSalary({
             ...values,
             fix: parseFloat(values?.fix),
-            date: moment(
-              new Date(values?.date)?.toLocaleDateString()
-            ).format("YYYY-MM-DD"),
-            // endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
+            date: dayjs(values?.date).format("YYYY-MM-DD"),
           });
           setOnedit(false);
         })
@@ -187,7 +181,6 @@ function Salary({
               setOnedit(true);
               setVisible(true);
               form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.user?.phoneNumber);
-              form.setFieldValue("startDate", dayjs(selectedRowKeys[1][0]?.startDate));
               form.setFieldValue("date", dayjs(selectedRowKeys[1][0]?.date));
               form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
               form.setFieldValue("fix", selectedRowKeys[1][0]?.fix);
@@ -262,7 +255,7 @@ function Salary({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Talaba
+            Maosh
             {onedit ? "ni taxrirlash" : " qo'shish"}
           </h3>
         )}
@@ -385,7 +378,7 @@ function Salary({
                   },
                 ]}
               >
-                <Input type="number" placeholder="Tel raqam kiriting . . ." />
+                <Input addonBefore="+998" type="number" placeholder="Tel raqam kiriting . . ." />
               </Form.Item>
             </Col>
           </Row>

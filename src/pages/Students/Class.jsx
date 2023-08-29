@@ -127,10 +127,8 @@ function Class({
           selectedRowKeys[1][0]?.id && editClass({
             ...values,
             id: selectedRowKeys[1][0]?.id,
-            startDate: moment(
-              new Date(values?.startDate)?.toLocaleDateString()
-            ).format("YYYY-MM-DD"),
-            endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
+            startDate: dayjs(values?.startDate).format("YYYY-MM-DD"),
+            endDate: dayjs(values?.endDate).format("YYYY-MM-DD"),
           });
           setOnedit(false);
         })
@@ -142,10 +140,8 @@ function Class({
         .then((values) => {
           saveClass({
             ...values,
-            startDate: moment(
-              new Date(values?.startDate)?.toLocaleDateString()
-            ).format("YYYY-MM-DD"),
-            endDate: moment(new Date(values?.endDate)?.toLocaleDateString()).format("YYYY-MM-DD"),
+            startDate: dayjs(values?.startDate).format("YYYY-MM-DD"),
+            endDate: dayjs(values?.endDate).format("YYYY-MM-DD"),
           });
           setOnedit(false);
         })

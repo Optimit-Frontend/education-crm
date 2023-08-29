@@ -143,7 +143,7 @@ function TeachingHours({
         .then((values) => {
           selectedRowKeys[1][0]?.id && editTeachingHours({
             ...values,
-            date: moment(new Date(values?.date)?.toLocaleDateString()).format("YYYY-MM-DD"),
+            date: dayjs(values?.date).format("YYYY-MM-DD"),
             id: selectedRowKeys[1][0]?.id
           });
         })
@@ -155,7 +155,7 @@ function TeachingHours({
         .then((values) => {
           saveTeachingHours({
             ...values,
-            date: moment(new Date(values?.date)?.toLocaleDateString()).format("YYYY-MM-DD")
+            date: dayjs(values?.date).format("YYYY-MM-DD")
           });
           setOnedit(false);
         })

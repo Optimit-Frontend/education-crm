@@ -119,7 +119,6 @@ function WorkExpirence({
       : form
         .validateFields()
         .then((values) => {
-          console.log(values, moment(new Date(values?.endDate)).format("YYYY-MM-DD"));
           saveWorkExperience({
             ...values,
             startDate: dayjs(values?.startDate).format("YYYY-MM-DD"),
@@ -342,7 +341,9 @@ function WorkExpirence({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={workExpirenceReducer?.workExpirence}
+        tableData={workExpirenceReducer?.workExpirence.map((workExpe) => {
+          return ({ ...workExpe, employeeFullName: workExpe?.userResponse?.name });
+        })}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
