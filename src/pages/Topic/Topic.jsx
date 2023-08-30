@@ -9,16 +9,6 @@ import { UploadOutlined } from "@ant-design/icons";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import employeeReducer, {
-  getEmployeeBranch,
-} from "../../reducer/employeeReducer";
-import transactionReducer, {
-  deleteTransaction, editStudentTransaction,
-  editTransaction,
-  getTransactionHistoryActiveTrue,
-  getTransactionHistoryFindAllBranch,
-  getTrasactionHistoryById, saveStudentTransaction, saveTransaction,
-} from "../../reducer/transactionReducer";
 import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
 import studentAccountReducer, { getStudentAccountByBranch } from "../../reducer/studentAccountReducer.js";
 import businessBranchesReducer, {
@@ -38,61 +28,33 @@ const { Option } = Select;
 
 const columns = [
   {
-    title: "Talaba",
-    dataIndex: "firstName",
-    key: "firstName",
+    title: "Ism",
+    dataIndex: "name",
+    key: "name",
     width: "30%",
     search: true,
   },
   {
-    title: "Otkazma",
-    dataIndex: "moneyAmount",
-    key: "moneyAmount",
+    title: "Mavzu",
+    dataIndex: "subject",
+    key: "subject",
     width: "30%",
     search: true,
   },
   {
-    title: "Tulov usuli",
-    dataIndex: "paymentType",
-    key: "paymentType",
+    title: "Filial",
+    dataIndex: "branch",
+    key: "branch",
     width: "25%",
     search: false,
   },
   {
-    title: "Otkazma turi",
-    dataIndex: "expenseType",
-    key: "expenseType",
-    width: "25%",
-    search: false,
-  },
-  {
-    title: "Sana",
-    dataIndex: "date",
-    key: "date",
+    title: "Link",
+    dataIndex: "link",
+    key: "link",
     width: "30%",
     search: false,
-  },
-  {
-    title: "Qisqa eslatma",
-    dataIndex: "comment",
-    key: "comment",
-    width: "20%",
-    search: false,
-  },
-  {
-    title: "Amallar",
-    dataIndex: "getOneId",
-    key: "getOneId",
-    width: "30%",
-    search: false,
-    render: (eski) => {
-      return (
-        <button style={{ background: "gold", padding: "5px", borderRadius: "5px" }} type="button" onClick={() => { return console.log(eski); }}>
-          Ko`rish
-        </button>
-      );
-    }
-  },
+  }
 ];
 
 function StudentPayment({
@@ -120,7 +82,6 @@ function StudentPayment({
   useEffect(() => {
     getTopic(usersDataReducer?.branch?.id);
     getSubjectForLevelAllByBranchId(usersDataReducer?.branch?.id);
-    // getEmployeeBranchId(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
@@ -154,7 +115,7 @@ function StudentPayment({
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteTopic(item?.id);
+      deleteTopic(item);
       return null;
     });
   };
@@ -209,8 +170,8 @@ function StudentPayment({
               setOnedit(true);
               setVisible(true);
               // form.setFieldValue("moneyAmount", parseFloat(selectedRowKeys[1][0]?.moneyAmount));
-              form.setFieldValue("money", selectedRowKeys[1][0]?.moneyAmount);
-              form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
+              form.setFieldValue("name", selectedRowKeys[1][0]?.name);
+              form.setFieldValue("subjectLevelId", selectedRowKeys[1][0]?.subjectLevel?.id);
               console.log(selectedRowKeys[1][0]);
             }}
             type="button"
@@ -418,7 +379,9 @@ function StudentPayment({
         tableData={topicReducer?.topic?.map((item) => {
           return ({
             ...item,
-            firstName: item?.student?.firstName,
+            subject: item?.subjectLevel?.subject?.name,
+            branch: item?.subjectLevel?.branch?.name,
+            branchId: item?.subjectLevel?.branch?.id,
           });
         })}
         loading={pageData?.loading}
@@ -432,7 +395,7 @@ function StudentPayment({
 
 export default connect(
   (
-    usersDataReducer, transactionReducer, balanceReducer, studentAccountReducer, businessBranchesReducer, topicReducer, subjectForLevelReducer
+    usersDataReducer, balanceReducer, studentAccountReducer, businessBranchesReducer, topicReducer, subjectForLevelReducer
   ), {
     getBusinessBranch,
     getTopic,

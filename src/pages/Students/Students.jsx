@@ -84,9 +84,17 @@ const columns = [
     search: false,
     render: (eski) => {
       return eski ? (
-        <span className="bg-green-200 text-green-700 py-1 px-3 whitespace-nowrap rounded-full text-xs">Active</span>
+        <span
+          className="bg-green-200 text-green-700 py-1 px-3 whitespace-nowrap rounded-full text-xs"
+        >
+          Active
+        </span>
       ) : (
-        <span className="bg-red-200 text-red-600 py-1 px-3 whitespace-nowrap rounded-full text-xs">Nofaol</span>
+        <span
+          className="bg-red-200 text-red-600 py-1 px-3 whitespace-nowrap rounded-full text-xs"
+        >
+          Nofaol
+        </span>
       );
     },
   },
@@ -100,7 +108,7 @@ function Students({
   getStudentsAll,
   deleteStudent,
   editStudent,
-  saveStudent
+  saveStudent,
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -122,7 +130,7 @@ function Students({
     getStudentsAll({
       branchId: usersDataReducer.branch?.id,
       page: pageData.page,
-      size: pageData.size
+      size: pageData.size,
     });
     getClassesAll({ id: usersDataReducer?.branch?.id });
     setVisible(false);
@@ -135,22 +143,34 @@ function Students({
     const pageCount = parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1;
     if (pageSize >= 100) {
       setPageData((prev) => {
-        return { ...prev, size: 100 };
+        return {
+          ...prev,
+          size: 100,
+        };
       });
       navigate(`/students?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
-        return { ...prev, size: 50 };
+        return {
+          ...prev,
+          size: 50,
+        };
       });
       navigate(`/students?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
-        return { ...prev, size: 20 };
+        return {
+          ...prev,
+          size: 20,
+        };
       });
       navigate(`/students?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
-        return { ...prev, size: 10 };
+        return {
+          ...prev,
+          size: 10,
+        };
       });
       navigate(`/students?page=${pageCount}&size=10`);
     }
@@ -164,19 +184,28 @@ function Students({
   };
 
   const onChange = (pageNumber, page) => {
-    setPageData({ size: page, page: pageNumber, loading: false });
+    setPageData({
+      size: page,
+      page: pageNumber,
+      loading: false,
+    });
     searchParams.set("size", page);
     searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
     navigate(`/students?page=${pageNumber}&size=${page}`);
   };
 
+  const [photoList, setPhotoList] = useState([]);
+
   const formValidate = () => {
     onedit
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editStudent({ ...values, id: selectedRowKeys[1][0]?.id });
+          selectedRowKeys[1][0]?.id && editStudent({
+            ...values,
+            id: selectedRowKeys[1][0]?.id,
+          });
           // const fmData = new FormData();
           // file && fmData.append("file", file);
           // fmData.append("firstName", values?.firstName);
@@ -199,6 +228,7 @@ function Students({
           // fmData.append("password", values?.password);
           // editStudent(fmData);
           setOnedit(false);
+          console.log(values);
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -210,7 +240,8 @@ function Students({
           fmData.append("firstName", values?.firstName);
           fmData.append("lastName", values?.lastName);
           fmData.append("fatherName", values?.fatherName);
-          fmData.append("birthDate", dayjs(values?.birthDate).format("YYYY-MM-DD"));
+          fmData.append("birthDate", dayjs(values?.birthDate)
+            .format("YYYY-MM-DD"));
           fmData.append("docNumber", values?.docNumber);
           values?.docPhoto && values?.docPhoto?.fileList?.map((item) => {
             return fmData.append("docPhoto", item?.response);
@@ -230,6 +261,7 @@ function Students({
           fmData.append("phoneNumber", values?.phoneNumber);
           fmData.append("password", values?.password);
           fmData.append("paymentAmount", values?.paymentAmount);
+          console.log(values);
           saveStudent(fmData);
           setOnedit(false);
         })
@@ -240,6 +272,8 @@ function Students({
   if (enter && visible) {
     formValidate();
   }
+
+  console.log(photoList);
 
   return (
     <div>
@@ -258,10 +292,23 @@ function Students({
               form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
               form.setFieldValue("paymentAmount", selectedRowKeys[1][0]?.paymentAmount);
               form.setFieldValue("birthDate", dayjs(selectedRowKeys[1][0]?.birthDate));
-              form.setFieldValue("photo", dayjs(selectedRowKeys[1][0]?.photo));
-              form.setFieldValue("reference", dayjs(selectedRowKeys[1][0]?.reference));
-              form.setFieldValue("medDocPhoto", dayjs(selectedRowKeys[1][0]?.medDocPhoto));
-              form.setFieldValue("docPhoto", dayjs(selectedRowKeys[1][0]?.docPhoto));
+              // form.setFieldValue("photo", {
+              //   file: {
+              //     uid: 0,
+              //     name: "slfkslfk.png",
+              //     status: "done",
+              //     url: selectedRowKeys[1][0]?.photo,
+              //   },
+              //   fileList: [{
+              //     uid: 0,
+              //     name: "slfkslfk.png",
+              //     status: "done",
+              //     url: selectedRowKeys[1][0]?.photo,
+              //   }]
+              // });
+              form.setFieldValue("reference", selectedRowKeys[1][0]?.reference);
+              form.setFieldValue("medDocPhoto", selectedRowKeys[1][0]?.medDocPhoto);
+              form.setFieldValue("docPhoto", selectedRowKeys[1][0]?.docPhoto);
               console.log(selectedRowKeys[1][0]);
             }}
             type="button"
@@ -425,7 +472,12 @@ function Students({
                   },
                 ]}
               >
-                <Input addonBefore="+998" type="number" className="w-full" placeholder="Tel raqam ..." />
+                <Input
+                  addonBefore="+998"
+                  type="number"
+                  className="w-full"
+                  placeholder="Tel raqam ..."
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -448,7 +500,8 @@ function Students({
                   style={{ width: "100%" }}
                   key="id"
                   filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                    return option.children.toLowerCase()
+                      ?.includes(input.toLowerCase());
                   }}
                 >
                   {classReducer?.class?.map((room) => {
@@ -486,7 +539,7 @@ function Students({
                   },
                 ]}
               >
-                <InputNumber className="w-full" placeholder="T`olanadigan summa . . ." />
+                <Input type="number" className="w-full" placeholder="T`olanadigan summa . . ." />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -518,7 +571,10 @@ function Students({
               >
                 <Upload
                   customRequest={async (options) => {
-                    const { onSuccess, file } = options;
+                    const {
+                      onSuccess,
+                      file,
+                    } = options;
                     onSuccess(file);
                   }}
                   listType="picture"
@@ -547,7 +603,10 @@ function Students({
               >
                 <Upload
                   customRequest={async (options) => {
-                    const { onSuccess, file } = options;
+                    const {
+                      onSuccess,
+                      file,
+                    } = options;
                     onSuccess(file);
                   }}
                   listType="picture"
@@ -576,7 +635,10 @@ function Students({
               >
                 <Upload
                   customRequest={async (options) => {
-                    const { onSuccess, file } = options;
+                    const {
+                      onSuccess,
+                      file,
+                    } = options;
                     onSuccess(file);
                   }}
                   listType="picture"
@@ -605,7 +667,10 @@ function Students({
               >
                 <Upload
                   customRequest={async (options) => {
-                    const { onSuccess, file } = options;
+                    const {
+                      onSuccess,
+                      file,
+                    } = options;
                     onSuccess(file);
                   }}
                   listType="picture"
@@ -655,5 +720,5 @@ export default connect((usersDataReducer, studentReducer, classReducer), {
   deleteStudent,
   editStudent,
   saveStudent,
-  getClassesAll
+  getClassesAll,
 })(Students);

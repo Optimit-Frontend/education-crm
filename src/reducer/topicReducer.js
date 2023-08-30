@@ -49,7 +49,7 @@ export const slice = createSlice({
 
 export const getTopic = (data) => {
   return apiCall({
-    url: `/topic/getById${data}`,
+    url: `/topic/findAllByBranchId/${data}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
