@@ -206,27 +206,6 @@ function Students({
             ...values,
             id: selectedRowKeys[1][0]?.id,
           });
-          // const fmData = new FormData();
-          // file && fmData.append("file", file);
-          // fmData.append("firstName", values?.firstName);
-          // fmData.append("lastName", values?.lastName);
-          // fmData.append("fatherName", values?.fatherName);
-          // fmData.append("birthDate", moment(
-          //   new Date(values?.birthDate)?.toLocaleDateString()
-          // ).format("YYYY-MM-DD"));
-          // fmData.append("docNumber", values?.docNumber);
-          // docPhoto.map((item) => {
-          //   return fmData.append("docPhoto", item);
-          // });
-          // fmData.append("reference", file);
-          // fmData.append("photo", file);
-          // fmData.append("studentClassId", values?.studentClassId);
-          // fmData.append("branchId", usersDataReducer?.branch?.id);
-          // fmData.append("active", true);
-          // fmData.append("medDocPhoto", medDocPhoto);
-          // fmData.append("username", values?.username);
-          // fmData.append("password", values?.password);
-          // editStudent(fmData);
           setOnedit(false);
           console.log(values);
         })
@@ -245,9 +224,6 @@ function Students({
           fmData.append("docNumber", values?.docNumber);
           values?.docPhoto && values?.docPhoto?.fileList?.map((item) => {
             return fmData.append("docPhoto", item?.response);
-          });
-          values?.reference && values?.reference?.fileList?.map((item) => {
-            return fmData.append("reference", item?.response);
           });
           values?.photo && values?.photo?.fileList?.map((item) => {
             return fmData.append("photo", item?.response);
@@ -531,10 +507,10 @@ function Students({
               <Form.Item
                 key="paymentAmount"
                 name="paymentAmount"
-                label={<span className="text-base font-medium">To`lovni kiriting</span>}
+                label={<span className="text-base font-medium">Birinchi to`lov</span>}
                 rules={[
                   {
-                    required: true,
+                    required: false,
                     message: "password kiriting",
                   },
                 ]}
@@ -546,15 +522,15 @@ function Students({
               <Form.Item
                 key="docNumber"
                 name="docNumber"
-                label={<span className="text-base font-medium">Passport raqami</span>}
+                label={<span className="text-base font-medium">Passport / Guvohnoma / raqami</span>}
                 rules={[
                   {
-                    required: true,
+                    required: false,
                     message: "Passport raqami . . .",
                   },
                 ]}
               >
-                <Input placeholder="Passport raqami ..." />
+                <Input placeholder="Passport / Guvohnoma raqami..." />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -623,41 +599,9 @@ function Students({
             </Col>
             <Col span={12}>
               <Form.Item
-                key="reference"
-                name="reference"
-                label={<span className="text-base font-medium">Ota - ona ish ma`lumotnoma</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Reference",
-                  },
-                ]}
-              >
-                <Upload
-                  customRequest={async (options) => {
-                    const {
-                      onSuccess,
-                      file,
-                    } = options;
-                    onSuccess(file);
-                  }}
-                  listType="picture"
-                  multiple={false}
-                  maxCount={1}
-                  accept="image/*"
-                  className="w-full"
-                >
-                  <Button style={{ width: "100%" }} icon={<UploadOutlined />}>
-                    Yuklash ( Ota - ona ish ma`lumotnoma )
-                  </Button>
-                </Upload>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
                 key="photo"
                 name="photo"
-                label={<span className="text-base font-medium">Photo 3X4</span>}
+                label={<span className="text-base font-medium">Rasm ( 3X4 )</span>}
                 rules={[
                   {
                     required: false,

@@ -334,7 +334,7 @@ function Transaction({
                 label={<span className="text-base font-medium">Balance raqam tanlash</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Balance pulni kiriting",
                   },
                 ]}
@@ -365,7 +365,7 @@ function Transaction({
                 label={<span className="text-base font-medium">Filial ( Branch )</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Filialni tanlang",
                   },
                 ]}
@@ -398,7 +398,7 @@ function Transaction({
                 label={<span className="text-base font-medium">Qisqa eslatma</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "eslatma ni kiriting",
                   },
                 ]}
@@ -411,7 +411,7 @@ function Transaction({
                 label={<span className="text-base font-medium">To`lov turi</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Tulov turini tanlang",
                   },
                 ]}
