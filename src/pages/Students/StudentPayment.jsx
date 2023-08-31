@@ -68,20 +68,6 @@ const columns = [
     width: "20%",
     search: false,
   },
-  {
-    title: "Amallar",
-    dataIndex: "getOneId",
-    key: "getOneId",
-    width: "30%",
-    search: false,
-    render: (eski) => {
-      return (
-        <button style={{ background: "gold", padding: "5px", borderRadius: "5px" }} type="button" onClick={() => { return console.log(eski); }}>
-          Ko`rish
-        </button>
-      );
-    }
-  },
 ];
 
 function StudentPayment({

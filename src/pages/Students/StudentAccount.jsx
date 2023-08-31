@@ -59,20 +59,6 @@ const columns = [
     width: "20%",
     search: false,
   },
-  {
-    title: "Amallar",
-    dataIndex: "getOneId",
-    key: "getOneId",
-    width: "30%",
-    search: false,
-    render: (eski) => {
-      return (
-        <button style={{ background: "gold", padding: "5px", borderRadius: "5px" }} type="button" onClick={() => { return console.log(eski); }}>
-          Ko`rish
-        </button>
-      );
-    }
-  },
 ];
 
 function StudentAccount({
@@ -308,7 +294,7 @@ function StudentAccount({
                 label={<span className="text-base font-medium">Chegirma % </span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Chegirma %",
                   },
                 ]}
@@ -321,7 +307,7 @@ function StudentAccount({
                 label={<span className="text-base font-medium">Hisob raqam tanlash</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Hisobdagi pulni kiriting",
                   },
                 ]}
@@ -373,7 +359,7 @@ function StudentAccount({
                 label={<span className="text-base font-medium">Filial ( Branch )</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Filialni tanlang",
                   },
                 ]}
