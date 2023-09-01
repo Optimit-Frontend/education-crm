@@ -237,8 +237,8 @@ function Students({
           fmData.append("phoneNumber", values?.phoneNumber);
           fmData.append("password", values?.password);
           fmData.append("paymentAmount", values?.paymentAmount);
-          console.log(values);
-          saveStudent(fmData);
+          console.log(values.photo === undefined ? null : values.photo);
+          saveStudent(...values);
           setOnedit(false);
         })
         .catch((info) => {
@@ -249,11 +249,18 @@ function Students({
     formValidate();
   }
 
-  console.log(photoList);
-
   return (
     <div>
       <h3 className="text-2xl font-bold mb-5">Hamma Talabalar</h3>
+      <div>
+        <input
+          placeholder="Enter name..."
+          type="text"
+          style={{
+            width: "100%", margin: "10px", padding: "4px", borderRadius: "5px", background: "transparent", outline: "none", border: "1px solid "
+          }}
+        />
+      </div>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -268,20 +275,6 @@ function Students({
               form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
               form.setFieldValue("paymentAmount", selectedRowKeys[1][0]?.paymentAmount);
               form.setFieldValue("birthDate", dayjs(selectedRowKeys[1][0]?.birthDate));
-              // form.setFieldValue("photo", {
-              //   file: {
-              //     uid: 0,
-              //     name: "slfkslfk.png",
-              //     status: "done",
-              //     url: selectedRowKeys[1][0]?.photo,
-              //   },
-              //   fileList: [{
-              //     uid: 0,
-              //     name: "slfkslfk.png",
-              //     status: "done",
-              //     url: selectedRowKeys[1][0]?.photo,
-              //   }]
-              // });
               form.setFieldValue("reference", selectedRowKeys[1][0]?.reference);
               form.setFieldValue("medDocPhoto", selectedRowKeys[1][0]?.medDocPhoto);
               form.setFieldValue("docPhoto", selectedRowKeys[1][0]?.docPhoto);
