@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, InputNumber, Modal, Row, Select
+  Col, Form, Input, InputNumber, Modal, Row, Select,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
@@ -278,15 +278,15 @@ function StudentAccount({
               <Form.Item
                 key="accountNumber"
                 name="accountNumber"
-                label={<span className="text-base font-medium">Shot raqam </span>}
+                label={<span className="text-base font-medium">Hisob raqam ( Talaba )</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Hisobdagi pulni kiriting",
+                    message: "Hisobdagi raqam kiriting",
                   },
                 ]}
               >
-                <InputNumber className="w-full" placeholder="Shot raqam kiriting" />
+                <Input type="number" className="w-full" placeholder="Hisobn raqam kiriting" />
               </Form.Item>
               <Form.Item
                 key="discount"
@@ -304,7 +304,7 @@ function StudentAccount({
               <Form.Item
                 key="mainBalanceId"
                 name="mainBalanceId"
-                label={<span className="text-base font-medium">Hisob raqam tanlash</span>}
+                label={<span className="text-base font-medium">Hisob raqam tanlash ( Maktab )</span>}
                 rules={[
                   {
                     required: true,
@@ -414,6 +414,19 @@ function StudentAccount({
                     );
                   })}
                 </Select>
+              </Form.Item>
+              <Form.Item
+                key="payment"
+                name="payment"
+                label={<span className="text-base font-medium">Shartnoma puli ( Yillik )</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Hisobdagi pulni kiriting",
+                  },
+                ]}
+              >
+                <Input type="number" className="w-full" placeholder="Shartnoma puli" />
               </Form.Item>
             </Col>
           </Row>
