@@ -2,7 +2,7 @@ import axios from "axios";
 import httpStatusCodes from "http-status-codes";
 
 const tokenLocal = localStorage.getItem("EducationCRM");
-const BASE_URL = import.meta.env.VITE_API_KEY;
+export const BASE_URL = import.meta.env.VITE_API_KEY;
 
 const instance = axios.create({
   baseURL: `${BASE_URL}/`,

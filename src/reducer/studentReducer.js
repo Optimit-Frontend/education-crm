@@ -5,7 +5,7 @@ import { apiCall } from "../api";
 export const slice = createSlice({
   name: "students",
   initialState: {
-    students: null,
+    students: [],
     studentsTotalCount: 0,
     message: null,
     changeData: false,
@@ -17,6 +17,7 @@ export const slice = createSlice({
         state.studentsTotalCount = action.payload?.data?.allSize;
       } else {
         state.message = action.payload.message;
+        state.students = [];
       }
       state.changeData = false;
     },
@@ -63,6 +64,14 @@ export const getStudentsAll = (data) => {
     onFail: slice.actions.getFrom.type,
   });
 };
+export const getSearchStudents = (data) => {
+  return apiCall({
+    url: `/student/search?name=${data.name}&page=${data.page - 1}&size=${data.size}`,
+    method: "get",
+    onSuccess: slice.actions.getFrom.type,
+    onFail: slice.actions.getFrom.type,
+  });
+};
 
 export const getStudentsAllNeActive = (data) => {
   return apiCall({
@@ -85,8 +94,6 @@ export const saveStudent = (data) => {
   return apiCall({
     url: "/student/create",
     method: "post",
-    // eslint-disable-next-line no-underscore-dangle
-    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.saveFrom.type,
     onFail: slice.actions.saveFrom.type,
@@ -97,8 +104,6 @@ export const editStudent = (data) => {
   return apiCall({
     url: "/student/update",
     method: "put",
-    // eslint-disable-next-line no-underscore-dangle
-    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.editFrom.type,
     onFail: slice.actions.editFrom.type,
