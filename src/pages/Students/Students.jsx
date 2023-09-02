@@ -6,12 +6,12 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import moment from "moment";
+import axios from "axios";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import studentReducer, {
   deleteStudent,
-  editStudent,
+  editStudent, getSearchStudents,
   getStudentById,
   getStudentsAll,
   getStudentsAllByClass,
@@ -20,6 +20,8 @@ import studentReducer, {
 } from "../../reducer/studentReducer";
 import usersDataReducer from "../../reducer/usersDataReducer";
 import classReducer, { getClassesAll } from "../../reducer/classReducer";
+import photoReducer, { clearPhotoReducer, savePhoto } from "../../reducer/photoReducer.js";
+import { BASE_URL } from "../../services/Axios.jsx";
 
 const { Option } = Select;
 
@@ -61,8 +63,8 @@ const columns = [
   },
   {
     title: "Photo",
-    dataIndex: "photo",
-    key: "photo",
+    dataIndex: "photoId",
+    key: "photoId",
     width: "30%",
     search: false,
     render: (eski) => {
@@ -70,7 +72,7 @@ const columns = [
         <Image
           width={50}
           height={50}
-          src={eski}
+          src={`${BASE_URL}/attachment/download/${eski}`}
           fallback="data:image/png;base64,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"
         />
       );
@@ -109,6 +111,10 @@ function Students({
   deleteStudent,
   editStudent,
   saveStudent,
+  photoReducer,
+  savePhoto,
+  clearPhotoReducer,
+  getSearchStudents
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -120,6 +126,7 @@ function Students({
   const searchParams = new URLSearchParams(location.search);
   const page = searchParams.get("page");
   const size = searchParams.get("size");
+  const [sum, setsum] = useState(null);
   const [pageData, setPageData] = useState({
     page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
     size: size ? parseInt(size, 10) : 10,
@@ -134,6 +141,7 @@ function Students({
     });
     getClassesAll({ id: usersDataReducer?.branch?.id });
     setVisible(false);
+    setOnedit(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
   }, [studentReducer?.changeData]);
@@ -195,19 +203,26 @@ function Students({
     navigate(`/students?page=${pageNumber}&size=${page}`);
   };
 
-  const [photoList, setPhotoList] = useState([]);
-
   const formValidate = () => {
     onedit
       ? form
         .validateFields()
         .then((values) => {
+          const docPhotoIds = values?.docPhotoIds?.fileList?.map((item) => {
+            return item?.response;
+          });
+          const photoId = values?.photoId?.file?.response;
+          const medDocPhotoId = values?.medDocPhotoId?.file?.response;
           selectedRowKeys[1][0]?.id && editStudent({
             ...values,
+            docPhotoIds,
+            photoId,
+            medDocPhotoId,
             id: selectedRowKeys[1][0]?.id,
+            branchId: usersDataReducer?.branch?.id,
+            birthDate: dayjs(values?.birthDate)
+              .format("YYYY-MM-DD")
           });
-          setOnedit(false);
-          console.log(values);
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -215,30 +230,20 @@ function Students({
       : form
         .validateFields()
         .then((values) => {
-          const fmData = new FormData();
-          fmData.append("firstName", values?.firstName);
-          fmData.append("lastName", values?.lastName);
-          fmData.append("fatherName", values?.fatherName);
-          fmData.append("birthDate", dayjs(values?.birthDate)
-            .format("YYYY-MM-DD"));
-          fmData.append("docNumber", values?.docNumber);
-          values?.docPhoto && values?.docPhoto?.fileList?.map((item) => {
-            return fmData.append("docPhoto", item?.response);
+          const docPhotoIds = values?.docPhotoIds?.fileList?.map((item) => {
+            return item?.response;
           });
-          values?.photo && values?.photo?.fileList?.map((item) => {
-            return fmData.append("photo", item?.response);
+          const photoId = values?.photoId?.file?.response;
+          const medDocPhotoId = values?.medDocPhotoId?.file?.response;
+          saveStudent({
+            ...values,
+            docPhotoIds,
+            photoId,
+            medDocPhotoId,
+            branchId: usersDataReducer?.branch?.id,
+            birthDate: dayjs(values?.birthDate)
+              .format("YYYY-MM-DD")
           });
-          fmData.append("studentClassId", values?.studentClassId);
-          fmData.append("branchId", usersDataReducer?.branch?.id);
-          fmData.append("active", true);
-          values?.medDocPhoto && values?.medDocPhoto?.fileList?.map((item) => {
-            return fmData.append("medDocPhoto", item?.response);
-          });
-          fmData.append("phoneNumber", values?.phoneNumber);
-          fmData.append("password", values?.password);
-          fmData.append("paymentAmount", values?.paymentAmount);
-          console.log(values.photo === undefined ? null : values.photo);
-          saveStudent(...values);
           setOnedit(false);
         })
         .catch((info) => {
@@ -249,6 +254,8 @@ function Students({
     formValidate();
   }
 
+  const [search, setSearch] = useState(null);
+
   return (
     <div>
       <h3 className="text-2xl font-bold mb-5">Hamma Talabalar</h3>
@@ -256,6 +263,15 @@ function Students({
         <input
           placeholder="Enter name..."
           type="text"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value);
+            getSearchStudents({
+              name: e.target.value,
+              page: pageData.page,
+              size: pageData.size,
+            });
+          }}
           style={{
             width: "100%", margin: "10px", padding: "4px", borderRadius: "5px", background: "transparent", outline: "none", border: "1px solid "
           }}
@@ -275,9 +291,6 @@ function Students({
               form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
               form.setFieldValue("paymentAmount", selectedRowKeys[1][0]?.paymentAmount);
               form.setFieldValue("birthDate", dayjs(selectedRowKeys[1][0]?.birthDate));
-              form.setFieldValue("reference", selectedRowKeys[1][0]?.reference);
-              form.setFieldValue("medDocPhoto", selectedRowKeys[1][0]?.medDocPhoto);
-              form.setFieldValue("docPhoto", selectedRowKeys[1][0]?.docPhoto);
               console.log(selectedRowKeys[1][0]);
             }}
             type="button"
@@ -441,9 +454,8 @@ function Students({
                   },
                 ]}
               >
-                <Input
+                <InputNumber
                   addonBefore="+998"
-                  type="number"
                   className="w-full"
                   placeholder="Tel raqam ..."
                 />
@@ -488,7 +500,7 @@ function Students({
                 label={<span className="text-base font-medium">Parol</span>}
                 rules={[
                   {
-                    required: true,
+                    required: !onedit,
                     message: "Parolni kiriting",
                   },
                 ]}
@@ -500,15 +512,15 @@ function Students({
               <Form.Item
                 key="paymentAmount"
                 name="paymentAmount"
-                label={<span className="text-base font-medium">Birinchi to`lov</span>}
+                label={<span className="text-base font-medium">Umumiy summa</span>}
                 rules={[
                   {
                     required: false,
-                    message: "password kiriting",
+                    message: "umumiy summani kiriting",
                   },
                 ]}
               >
-                <Input type="number" className="w-full" placeholder="T`olanadigan summa . . ." />
+                <Input toLocaleString type="number" value={sum} className="w-full" placeholder="Umumiy summa . . ." />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -528,8 +540,8 @@ function Students({
             </Col>
             <Col span={12}>
               <Form.Item
-                key="docPhoto"
-                name="docPhoto"
+                key="docPhotoIds"
+                name="docPhotoIds"
                 label={<span className="text-base font-medium">Passport rasm</span>}
                 rules={[
                   {
@@ -544,6 +556,13 @@ function Students({
                       onSuccess,
                       file,
                     } = options;
+                    const files = new FormData();
+                    files.append("file", file);
+                    axios.post(`${BASE_URL}/attachment/upload`, files).then((data) => {
+                      data.data.success && onSuccess(data.data?.data?.id);
+                    }).catch((err) => {
+                      console.error(err);
+                    });
                     onSuccess(file);
                   }}
                   listType="picture"
@@ -560,8 +579,8 @@ function Students({
             </Col>
             <Col span={12}>
               <Form.Item
-                key="medDocPhoto"
-                name="medDocPhoto"
+                key="medDocPhotoId"
+                name="medDocPhotoId"
                 label={<span className="text-base font-medium">0/83 Yoki 0/86</span>}
                 rules={[
                   {
@@ -576,7 +595,13 @@ function Students({
                       onSuccess,
                       file,
                     } = options;
-                    onSuccess(file);
+                    const files = new FormData();
+                    files.append("file", file);
+                    axios.post(`${BASE_URL}/attachment/upload`, files).then((data) => {
+                      data.data.success && onSuccess(data.data?.data?.id);
+                    }).catch((err) => {
+                      console.error(err);
+                    });
                   }}
                   listType="picture"
                   multiple={false}
@@ -592,8 +617,8 @@ function Students({
             </Col>
             <Col span={12}>
               <Form.Item
-                key="photo"
-                name="photo"
+                key="photoId"
+                name="photoId"
                 label={<span className="text-base font-medium">Rasm ( 3X4 )</span>}
                 rules={[
                   {
@@ -608,7 +633,13 @@ function Students({
                       onSuccess,
                       file,
                     } = options;
-                    onSuccess(file);
+                    const files = new FormData();
+                    files.append("file", file);
+                    axios.post(`${BASE_URL}/attachment/upload`, files).then((data) => {
+                      data.data.success && onSuccess(data.data?.data?.id);
+                    }).catch((err) => {
+                      console.error(err);
+                    });
                   }}
                   listType="picture"
                   multiple={false}
@@ -625,6 +656,7 @@ function Students({
           </Row>
         </Form>
       </Modal>
+
       <CustomTable
         columns={columns}
         pageSizeOptions={[10, 20, 50, 100]}
@@ -638,6 +670,7 @@ function Students({
             studentClassId: student?.studentClass?.id,
             photo: student?.photo,
             Ismi: `${student?.firstName} ${student?.lastName} ${student?.fatherName}`,
+            branchId: student?.branch?.id,
           };
         })}
         loading={pageData?.loading}
@@ -649,7 +682,7 @@ function Students({
   );
 }
 
-export default connect((usersDataReducer, studentReducer, classReducer), {
+export default connect((usersDataReducer, studentReducer, classReducer, photoReducer), {
   getStudentsAll,
   getStudentById,
   getStudentsAllNeActive,
@@ -658,4 +691,7 @@ export default connect((usersDataReducer, studentReducer, classReducer), {
   editStudent,
   saveStudent,
   getClassesAll,
+  getSearchStudents,
+  savePhoto,
+  clearPhotoReducer
 })(Students);
