@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Button, Col, DatePicker, Form, Image, Input, InputNumber, Modal, Row, Select, Upload,
+  Button, DatePicker, Form, Image, Input, InputNumber, Modal, Row, Select, Upload,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
@@ -20,8 +20,8 @@ import studentReducer, {
 } from "../../reducer/studentReducer";
 import usersDataReducer from "../../reducer/usersDataReducer";
 import classReducer, { getClassesAll } from "../../reducer/classReducer";
-import photoReducer, { clearPhotoReducer, savePhoto } from "../../reducer/photoReducer.js";
-import { BASE_URL } from "../../services/Axios.jsx";
+import { BASE_URL } from "../../services/Axios";
+import FormLayoutComp from "../../components/FormLayoutComp";
 
 const { Option } = Select;
 
@@ -111,9 +111,6 @@ function Students({
   deleteStudent,
   editStudent,
   saveStudent,
-  photoReducer,
-  savePhoto,
-  clearPhotoReducer,
   getSearchStudents
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
@@ -126,7 +123,6 @@ function Students({
   const searchParams = new URLSearchParams(location.search);
   const page = searchParams.get("page");
   const size = searchParams.get("size");
-  const [sum, setsum] = useState(null);
   const [pageData, setPageData] = useState({
     page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
     size: size ? parseInt(size, 10) : 10,
@@ -260,10 +256,12 @@ function Students({
     <div>
       <h3 className="text-2xl font-bold mb-5">Hamma Talabalar</h3>
       <div>
-        <input
+        <Input
           placeholder="Enter name..."
           type="text"
           value={search}
+          className="mb-5"
+          size="large"
           onChange={(e) => {
             setSearch(e.target.value);
             getSearchStudents({
@@ -271,9 +269,6 @@ function Students({
               page: pageData.page,
               size: pageData.size,
             });
-          }}
-          style={{
-            width: "100%", margin: "10px", padding: "4px", borderRadius: "5px", background: "transparent", outline: "none", border: "1px solid "
           }}
         />
       </div>
@@ -291,7 +286,6 @@ function Students({
               form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
               form.setFieldValue("paymentAmount", selectedRowKeys[1][0]?.paymentAmount);
               form.setFieldValue("birthDate", dayjs(selectedRowKeys[1][0]?.birthDate));
-              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -379,7 +373,7 @@ function Students({
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
           <Row gutter={24}>
-            <Col span={12}>
+            <FormLayoutComp>
               <Form.Item
                 key="firstName"
                 name="firstName"
@@ -393,8 +387,8 @@ function Students({
               >
                 <Input placeholder="Talaba Familiyasini kiriting..." />
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="lastName"
                 name="lastName"
@@ -408,8 +402,8 @@ function Students({
               >
                 <Input placeholder="Talaba familiya nomini kiriting..." />
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="fatherName"
                 name="fatherName"
@@ -423,8 +417,8 @@ function Students({
               >
                 <Input placeholder="Talaba familiya nomini kiriting..." />
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="birthDate"
                 name="birthDate"
@@ -441,8 +435,8 @@ function Students({
                   placeholder="Hodim tug'ilgan kunini kiriting..."
                 />
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="phoneNumber"
                 name="phoneNumber"
@@ -450,7 +444,7 @@ function Students({
                 rules={[
                   {
                     required: true,
-                    message: "phoneNumber",
+                    message: "Telefon raqamni kiriting",
                   },
                 ]}
               >
@@ -460,8 +454,8 @@ function Students({
                   placeholder="Tel raqam ..."
                 />
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="studentClassId"
                 name="studentClassId"
@@ -492,8 +486,8 @@ function Students({
                   })}
                 </Select>
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="password"
                 name="password"
@@ -507,8 +501,8 @@ function Students({
               >
                 <Input placeholder="Parolni kiriting..." />
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="paymentAmount"
                 name="paymentAmount"
@@ -516,14 +510,14 @@ function Students({
                 rules={[
                   {
                     required: false,
-                    message: "umumiy summani kiriting",
+                    message: "Umumiy summani kiriting",
                   },
                 ]}
               >
-                <Input toLocaleString type="number" value={sum} className="w-full" placeholder="Umumiy summa . . ." />
+                <InputNumber className="w-full" placeholder="Umumiy summa . . ." />
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="docNumber"
                 name="docNumber"
@@ -537,8 +531,8 @@ function Students({
               >
                 <Input placeholder="Passport / Guvohnoma raqami..." />
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="docPhotoIds"
                 name="docPhotoIds"
@@ -576,8 +570,8 @@ function Students({
                   </Button>
                 </Upload>
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="medDocPhotoId"
                 name="medDocPhotoId"
@@ -614,8 +608,8 @@ function Students({
                   </Button>
                 </Upload>
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="photoId"
                 name="photoId"
@@ -652,7 +646,7 @@ function Students({
                   </Button>
                 </Upload>
               </Form.Item>
-            </Col>
+            </FormLayoutComp>
           </Row>
         </Form>
       </Modal>
@@ -682,7 +676,7 @@ function Students({
   );
 }
 
-export default connect((usersDataReducer, studentReducer, classReducer, photoReducer), {
+export default connect((usersDataReducer, studentReducer, classReducer), {
   getStudentsAll,
   getStudentById,
   getStudentsAllNeActive,
@@ -692,6 +686,4 @@ export default connect((usersDataReducer, studentReducer, classReducer, photoRed
   saveStudent,
   getClassesAll,
   getSearchStudents,
-  savePhoto,
-  clearPhotoReducer
 })(Students);

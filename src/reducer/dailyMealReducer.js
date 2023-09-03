@@ -63,8 +63,6 @@ export const saveDailyMeal = (data) => {
   return apiCall({
     url: "/dailyMeal/",
     method: "post",
-    // eslint-disable-next-line no-underscore-dangle
-    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.saveFrom.type,
     onFail: slice.actions.saveFrom.type,
@@ -75,8 +73,6 @@ export const editDailyMeal = (data) => {
   return apiCall({
     url: "/dailyMeal/",
     method: "put",
-    // eslint-disable-next-line no-underscore-dangle
-    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.editFrom.type,
     onFail: slice.actions.editFrom.type,
