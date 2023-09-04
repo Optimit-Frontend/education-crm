@@ -14,10 +14,12 @@ export const slice = createSlice({
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.account = action.payload?.data;
+        state.account = action.payload?.data?.allStudentAccount;
+        state.accountTotalCount = action.payload?.data?.totalItem;
       } else {
         state.message = action.payload.message;
         state.account = null;
+        state.accountTotalCount = 0;
       }
       state.changeData = false;
     },
@@ -57,17 +59,18 @@ export const slice = createSlice({
   },
 });
 
-export const getStudentAccountById = (data) => {
+export const getStudentAccountByBranch = (data) => {
   return apiCall({
-    url: `/studentAccountById/getById${data}`,
+    url: `/studentAccount/getByBranchId/${data?.branchId}?page=${data.page - 1}&size=${data.size}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
   });
 };
-export const getStudentAccountByBranch = (data) => {
+
+export const getStudentAccountByBranchByClass = (data) => {
   return apiCall({
-    url: `/studentAccount/getByBranchId/${data}`,
+    url: `/studentAccount/getByBranchId/${data?.branchId}?classId=${data.classId}&page=${data.page - 1}&size=${data.size}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
@@ -101,9 +104,9 @@ export const saveStudentPayment = (data) => {
   });
 };
 
-export const editStudentAccount = (data) => {
+export const editStudentAccount = (data, id) => {
   return apiCall({
-    url: "/studentAccount/update",
+    url: `/studentAccount/update/${id}`,
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,

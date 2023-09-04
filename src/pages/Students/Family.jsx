@@ -8,14 +8,6 @@ import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
 import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
-import studentAccountReducer, {
-  deleteStudentAccount,
-  editStudentAccount,
-  getStudentAccountByBranch,
-  getStudentAccountById,
-  saveStudentAccount,
-  saveStudentPayment,
-} from "../../reducer/studentAccountReducer";
 import studentReducer, { getStudentsAll } from "../../reducer/studentReducer";
 import familiyReducer, {
   deleteFamily, editFamily, getFamily, saveFamily
@@ -395,7 +387,7 @@ function Family({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  {studentReducer?.students?.studentResponseDtoList?.map((student) => {
+                  {studentReducer?.students?.map((student) => {
                     return (
                       <Option value={student.id} key={student.id}>{student?.firstName}</Option>
                     );
@@ -429,7 +421,7 @@ function Family({
 
 export default connect(
   (
-    usersDataReducer, studentReducer, balanceReducer, studentAccountReducer, businessBranchesReducer
+    usersDataReducer, studentReducer, balanceReducer, businessBranchesReducer
   ), {
     getAllBalanceBranch,
     getStudentsAll,

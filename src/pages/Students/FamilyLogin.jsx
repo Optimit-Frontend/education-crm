@@ -1,21 +1,13 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, InputNumber, Modal, Row, Select,
+  Col, Form, InputNumber, Modal, Row, Select,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
 import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
-import studentAccountReducer, {
-  deleteStudentAccount,
-  editStudentAccount,
-  getStudentAccountByBranch,
-  getStudentAccountById,
-  saveStudentAccount,
-  saveStudentPayment,
-} from "../../reducer/studentAccountReducer";
 import studentReducer, { getStudentsAll } from "../../reducer/studentReducer";
 import familiyReducer, {
   deleteFamily, editFamily, getFamily, saveFamily, saveFamilyLogin,
@@ -353,7 +345,7 @@ function Family({
 
 export default connect(
   (
-    usersDataReducer, studentReducer, balanceReducer, studentAccountReducer, businessBranchesReducer
+    usersDataReducer, studentReducer, balanceReducer, businessBranchesReducer
   ), {
     getAllBalanceBranch,
     getStudentsAll,

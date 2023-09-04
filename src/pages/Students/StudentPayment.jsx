@@ -15,13 +15,13 @@ import transactionReducer, {
   editTransaction,
   getTransactionHistoryActiveTrue,
   getTransactionHistoryFindAllBranch,
-  getTrasactionHistoryById, saveStudentTransaction, saveTransaction,
+  getTrasactionHistoryById,
+  saveStudentTransaction,
+  saveTransaction,
 } from "../../reducer/transactionReducer";
 import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
-import studentAccountReducer, { getStudentAccountByBranch } from "../../reducer/studentAccountReducer.js";
-import businessBranchesReducer, {
-  getBusinessBranch,
-} from "../../reducer/businessBranchesReducer.js";
+import studentAccountReducer, { getStudentAccountByBranch } from "../../reducer/studentAccountReducer";
+import FormLayoutComp from "../../components/FormLayoutComp.jsx";
 
 const { Option } = Select;
 
@@ -74,9 +74,9 @@ function StudentPayment({
   usersDataReducer,
   getAllBalanceBranch,
   getTransactionHistoryFindAllBranch,
-  getStudentAccountByBranch, businessBranchesReducer,
+  getStudentAccountByBranch,
   transactionReducer, editStudentTransaction, studentAccountReducer,
-  balanceReducer, deleteTransaction, saveStudentTransaction, getBusinessBranch
+  balanceReducer, deleteTransaction, saveStudentTransaction
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -98,10 +98,14 @@ function StudentPayment({
   useEffect(() => {
     getTransactionHistoryFindAllBranch(usersDataReducer?.branch?.id);
     getAllBalanceBranch(usersDataReducer?.branch?.id);
-    getBusinessBranch(usersDataReducer?.branch?.id);
-    getStudentAccountByBranch(usersDataReducer?.branch?.id);
+    getStudentAccountByBranch({
+      branchId: usersDataReducer.branch?.id,
+      page: pageData.page,
+      size: pageData.size
+    });
     // getEmployeeBranchId(usersDataReducer?.branch?.id);
     setVisible(false);
+    setOnedit(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
   }, [transactionReducer?.changeData]);
@@ -149,8 +153,9 @@ function StudentPayment({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editStudentTransaction({ ...values });
-          setOnedit(false);
+          selectedRowKeys[1][0]?.id && editStudentTransaction({
+            ...values
+          });
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -158,9 +163,11 @@ function StudentPayment({
       : form
         .validateFields()
         .then((values) => {
-          saveStudentTransaction({ ...values, accountNumber: values?.accountNumber.toString() });
-          setOnedit(false);
-          console.log(values?.accountNumber.toString());
+          saveStudentTransaction({
+            ...values,
+            accountNumber: values?.accountNumber.toString(),
+            branchId: usersDataReducer?.branch?.id
+          });
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -189,7 +196,6 @@ function StudentPayment({
               form.setFieldValue("paymentType", selectedRowKeys[1][0]?.paymentType);
               form.setFieldValue("accountNumber", selectedRowKeys[1][0]?.accountNumber);
               form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalanceResponse?.accountNumber);
-              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -234,7 +240,6 @@ function StudentPayment({
           onClick={() => {
             handleDelete(selectedRowKeys[0]);
             setSelectedRowKeys([[], []]);
-            console.log(selectedRowKeys);
           }}
           type="button"
           className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
@@ -278,7 +283,7 @@ function StudentPayment({
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
           <Row gutter={24}>
-            <Col span={12}>
+            <FormLayoutComp>
               <Form.Item
                 key="money"
                 name="money"
@@ -290,11 +295,13 @@ function StudentPayment({
                   },
                 ]}
               >
-                <Input
-                  type="number"
+                <InputNumber
+                  className="w-full"
                   placeholder="So`mmani kiriting ..."
                 />
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="accountNumber"
                 name="accountNumber"
@@ -319,11 +326,15 @@ function StudentPayment({
                 >
                   {studentAccountReducer?.account?.map((account) => {
                     return (
-                      <Option value={account?.accountNumber} key={account.id}>{account?.accountNumber}</Option>
+                      <Option value={account?.accountNumber} key={account.id}>
+                        {account?.accountNumber}
+                      </Option>
                     );
                   })}
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="expenseType"
                 name="expenseType"
@@ -355,6 +366,8 @@ function StudentPayment({
                   <Option value="MEAL_EXPENSE">Oziq-ovqat xarajati</Option>
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="mainBalanceId"
                 name="mainBalanceId"
@@ -384,41 +397,8 @@ function StudentPayment({
                   })}
                 </Select>
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                key="branchId"
-                name="branchId"
-                label={<span className="text-base font-medium">Filial ( Branch )</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Filialni tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Filialni tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {
-                    businessBranchesReducer?.businessBranch?.map((barnch) => {
-                      return (
-                        <Option value={barnch?.id} key={barnch?.id}>
-                          {barnch?.name}
-                        </Option>
-                      );
-                    })
-                  }
-                </Select>
-              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="paidInFull"
                 name="paidInFull"
@@ -445,6 +425,8 @@ function StudentPayment({
                   <Option value="false">Yuq</Option>
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="comment"
                 name="comment"
@@ -456,8 +438,10 @@ function StudentPayment({
                   },
                 ]}
               >
-                <Input type="text" placeholder="qisqa eslatma..." />
+                <Input placeholder="qisqa eslatma..." />
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="paymentType"
                 name="paymentType"
@@ -486,7 +470,7 @@ function StudentPayment({
                   <Option value="ELEKTRON">ELEKTRON</Option>
                 </Select>
               </Form.Item>
-            </Col>
+            </FormLayoutComp>
           </Row>
         </Form>
       </Modal>
@@ -512,7 +496,7 @@ function StudentPayment({
 
 export default connect(
   (
-    usersDataReducer, transactionReducer, balanceReducer, studentAccountReducer, businessBranchesReducer
+    usersDataReducer, transactionReducer, balanceReducer, studentAccountReducer
   ), {
     getTransactionHistoryFindAllBranch,
     getTransactionHistoryActiveTrue,
@@ -522,7 +506,6 @@ export default connect(
     deleteTransaction,
     saveStudentTransaction,
     getStudentAccountByBranch,
-    editStudentTransaction,
-    getBusinessBranch
+    editStudentTransaction
   }
 )(StudentPayment);

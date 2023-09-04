@@ -337,7 +337,7 @@ function StudentHomework({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  {studentReducer?.students?.studentResponseDtoList?.map((room) => {
+                  {studentReducer?.students?.map((room) => {
                     return (
                       <Option value={room.id} key={room.id}>{room?.firstName}</Option>
                     );
