@@ -1,10 +1,9 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, DatePicker, Form, Input, Modal, Row, Select
+  DatePicker, Form, Input, InputNumber, Modal, Row, Select
 } from "antd";
 import dayjs from "dayjs";
-import moment from "moment";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -19,7 +18,7 @@ import classReducer, {
 import roomReducer, { getAllRoomBranch } from "../../reducer/roomReducer";
 import levelReducer, { getLevels } from "../../reducer/levelReducer";
 import employeeReducer, { getEmployeeBranchId } from "../../reducer/employeeReducer";
-import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer";
+import FormLayoutComp from "../../components/FormLayoutComp";
 
 const { Option } = Select;
 
@@ -28,43 +27,50 @@ const columns = [
     title: "Sinf",
     dataIndex: "className",
     key: "className",
-    width: "30%",
+    width: "20%",
     search: true,
   },
   {
-    title: "Filial",
-    dataIndex: "branchName",
-    key: "branchName",
-    width: "25%",
+    title: "To'lov",
+    dataIndex: "overallSum",
+    key: "overallSum",
+    width: "10%",
     search: false,
   },
   {
     title: "Sinf rahbar",
     dataIndex: "classLeaderName",
     key: "classLeaderName",
-    width: "30%",
+    width: "20%",
     search: false,
   },
   {
     title: "Boshlangan sana",
     dataIndex: "startDate",
     key: "startDate",
-    width: "20%",
+    width: "15%",
     search: false,
   },
   {
-    title: "Amallar",
-    dataIndex: "getOneId",
-    key: "getOneId",
-    width: "30%",
+    title: "Tugash sana",
+    dataIndex: "endDate",
+    key: "endDate",
+    width: "15%",
     search: false,
-    render: (eski) => {
-      return (
-        <button style={{ background: "gold", padding: "5px", borderRadius: "5px" }} type="button" onClick={() => { return console.log(eski); }}>
-          Ko`rish
-        </button>
-      );
-    }
+  },
+  {
+    title: "Bosqich",
+    dataIndex: "levelName",
+    key: "levelName",
+    width: "10%",
+    search: false,
+  },
+  {
+    title: "Xona",
+    dataIndex: "roomNumber",
+    key: "roomNumber",
+    width: "10%",
+    search: false,
   },
 ];
 
@@ -80,9 +86,7 @@ function Class({
   levelReducer,
   getLevels,
   getEmployeeBranchId,
-  getBusinessBranch,
   employeeReducer,
-  businessBranchesReducer
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -98,7 +102,6 @@ function Class({
 
   useEffect(() => {
     getClassesAll({ id: usersDataReducer?.branch?.id });
-    getBusinessBranch(usersDataReducer?.businessId);
     getLevels();
     getEmployeeBranchId(usersDataReducer?.branch?.id);
     getAllRoomBranch(usersDataReducer?.branch?.id);
@@ -142,6 +145,7 @@ function Class({
             ...values,
             startDate: dayjs(values?.startDate).format("YYYY-MM-DD"),
             endDate: dayjs(values?.endDate).format("YYYY-MM-DD"),
+            branchId: usersDataReducer?.branch?.id,
           });
           setOnedit(false);
         })
@@ -164,6 +168,7 @@ function Class({
               setOnedit(true);
               setVisible(true);
               form.setFieldValue("className", selectedRowKeys[1][0]?.className);
+              form.setFieldValue("overallSum", selectedRowKeys[1][0]?.overallSum);
               form.setFieldValue("startDate", dayjs(selectedRowKeys[1][0]?.startDate));
               form.setFieldValue("endDate", dayjs(selectedRowKeys[1][0]?.endDate));
               form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
@@ -246,7 +251,7 @@ function Class({
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
         okButtonProps={{ className: "bg-blue-600" }}
         cancelText="Bekor qilish"
-        width={600}
+        width={700}
         onCancel={() => {
           setVisible(false);
           setOnedit(false);
@@ -257,7 +262,7 @@ function Class({
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
           <Row gutter={24}>
-            <Col span={12}>
+            <FormLayoutComp>
               <Form.Item
                 key="className"
                 name="className"
@@ -271,6 +276,54 @@ function Class({
               >
                 <Input placeholder="Sinf nomi kiriting..." />
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
+              <Form.Item
+                key="levelId"
+                name="levelId"
+                label={<span className="text-base font-medium">Sinf bosqich</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Bosqichni tanlang",
+                  },
+                ]}
+              >
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Sinf bosqichini tanlang..."
+                  optionFilterProp="children"
+                  className="w-full"
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {levelReducer?.level?.map((room) => {
+                    return (
+                      <Option value={room.id} key={room.id}>{room?.level}</Option>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
+              <Form.Item
+                key="overallSum"
+                name="overallSum"
+                label={<span className="text-base font-medium">O&apos;qish narxi</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "O'qish narxini kiriting",
+                  },
+                ]}
+              >
+                <InputNumber min="0" className="w-full" placeholder="O'qish narxini kiriting..." />
+              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="startDate"
                 name="startDate"
@@ -287,6 +340,26 @@ function Class({
                   placeholder="Boshlagan sanasini kiriting..."
                 />
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
+              <Form.Item
+                key="endDate"
+                name="endDate"
+                label={<span className="text-base font-medium">Tugash sana</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Sanani kiriting",
+                  },
+                ]}
+              >
+                <DatePicker
+                  className="w-full"
+                  placeholder="Tugash sanasini kiriting..."
+                />
+              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="classLeaderId"
                 name="classLeaderId"
@@ -303,7 +376,7 @@ function Class({
                   allowClear
                   placeholder="Rahbar tanlang"
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
@@ -316,13 +389,15 @@ function Class({
                   })}
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="roomId"
                 name="roomId"
                 label={<span className="text-base font-medium">Xona</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Xona kiriting",
                   },
                 ]}
@@ -332,7 +407,7 @@ function Class({
                   allowClear
                   placeholder="Xona tanlang"
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
@@ -345,87 +420,7 @@ function Class({
                   })}
                 </Select>
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                key="branchId"
-                name="branchId"
-                label={<span className="text-base font-medium">Filial ( Branch )</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Filialni tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Filialni tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {
-                    businessBranchesReducer?.businessBranch?.map((barnch) => {
-                      return (
-                        <Option value={barnch?.id} key={barnch?.id}>
-                          {barnch?.name}
-                        </Option>
-                      );
-                    })
-                  }
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="endDate"
-                name="endDate"
-                label={<span className="text-base font-medium">Tugash sana</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Sanani kiriting",
-                  },
-                ]}
-              >
-                <DatePicker
-                  className="w-full"
-                  placeholder="Tugash sanasini kiriting..."
-                />
-              </Form.Item>
-              <Form.Item
-                key="levelId"
-                name="levelId"
-                label={<span className="text-base font-medium">Sinf bosqich</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Level tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Sinf bosqichini tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {levelReducer?.level?.map((room) => {
-                    return (
-                      <Option value={room.id} key={room.id}>{room?.level}</Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-            </Col>
+            </FormLayoutComp>
           </Row>
         </Form>
       </Modal>
@@ -437,9 +432,9 @@ function Class({
         tableData={classReducer?.class?.map((item) => {
           return ({
             ...item,
-            branchName: item.branch?.name,
             classLeaderName: item.classLeader.name,
-            getOneId: item.id
+            roomNumber: item.room?.roomNumber,
+            levelName: item.level?.level
           });
         })}
         loading={pageData?.loading}
@@ -457,8 +452,7 @@ export default connect(
     classReducer,
     roomReducer,
     levelReducer,
-    employeeReducer,
-    businessBranchesReducer
+    employeeReducer
   ), {
     getClassById,
     getClassesAll,
@@ -468,7 +462,6 @@ export default connect(
     deleteClass,
     getAllRoomBranch,
     getLevels,
-    getEmployeeBranchId,
-    getBusinessBranch
+    getEmployeeBranchId
   }
 )(Class);

@@ -13,3 +13,9 @@ export const week = [
   { value: "SATURDAY", name: "Shanba" },
   { value: "SUNDAY", name: "Yakshanba" }
 ];
+
+export const mealsTime = [
+  { value: "breakfast", name: "Nonushta" },
+  { value: "lunch", name: "Tushlik" },
+  { value: "dinner", name: "Poldnik" },
+];

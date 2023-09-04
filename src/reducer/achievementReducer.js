@@ -60,8 +60,6 @@ export const saveAchievement = (data) => {
   return apiCall({
     url: "/achievement/save",
     method: "post",
-    // eslint-disable-next-line no-underscore-dangle
-    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.saveFrom.type,
     onFail: slice.actions.saveFrom.type,
@@ -72,8 +70,6 @@ export const editAchievement = (data) => {
   return apiCall({
     url: "/achievement/update",
     method: "put",
-    // eslint-disable-next-line no-underscore-dangle
-    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.editFrom.type,
     onFail: slice.actions.editFrom.type,
