@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, InputNumber, Modal, Row, Select,
+  Col, Form, Input, InputNumber, Modal, Row, Select,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
@@ -14,12 +14,13 @@ import studentAccountReducer, {
   getStudentAccountByBranch,
   getStudentAccountByBranchByClass,
   saveStudentAccount,
-  saveStudentPayment,
+  saveStudentPayment, searchStudentAccaunt,
 } from "../../reducer/studentAccountReducer";
 import studentReducer, { getSearchStudents, getStudentsAllByClass } from "../../reducer/studentReducer";
 import classReducer, { getClassesAll } from "../../reducer/classReducer";
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 const columns = [
   {
@@ -33,7 +34,7 @@ const columns = [
     title: "Talaba",
     dataIndex: "studentName",
     key: "studentName",
-    width: "30%",
+    width: "15%",
     search: true,
   },
   {
@@ -48,6 +49,13 @@ const columns = [
     dataIndex: "discount",
     key: "discount",
     width: "10%",
+    search: false,
+  },
+  {
+    title: "Sabab",
+    dataIndex: "description",
+    key: "description",
+    width: "15%",
     search: false,
   },
   {
@@ -80,36 +88,46 @@ function StudentAccount({
   getStudentAccountByBranchByClass,
   getSearchStudents,
   getClassesAll,
-  getStudentsAllByClass
+  getStudentsAllByClass,
+  searchStudentAccaunt
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const size = localStorage.getItem("PageSize") || 10;
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
   const page = searchParams.get("page");
+  const size = searchParams.get("size");
   const [pageData, setPageData] = useState({
-    page: 1,
-    size,
+    page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
+    size: size ? parseInt(size, 10) : 10,
     loading: false,
   });
   const [selectData, setSelectData] = useState(null);
+  const [search, setSearch] = useState(null);
 
   useEffect(() => {
-    selectData ? getStudentAccountByBranchByClass({
-      classId: selectData,
-      branchId: usersDataReducer.branch?.id,
-      page: pageData.page,
-      size: pageData.size
-    }) : getStudentAccountByBranch({
-      branchId: usersDataReducer.branch?.id,
-      page: pageData.page,
-      size: pageData.size
-    });
+    if (search) {
+      searchStudentAccaunt({
+        search,
+        page: pageData.page,
+        size: pageData.size,
+      });
+    } else {
+      selectData ? getStudentAccountByBranchByClass({
+        classId: selectData,
+        branchId: usersDataReducer.branch?.id,
+        page: pageData.page,
+        size: pageData.size
+      }) : getStudentAccountByBranch({
+        branchId: usersDataReducer.branch?.id,
+        page: pageData.page,
+        size: pageData.size
+      });
+    }
     getAllBalanceBranch(usersDataReducer?.branch?.id);
     getClassesAll({ id: usersDataReducer?.branch?.id });
     setOnedit(false);
@@ -174,7 +192,8 @@ function StudentAccount({
             discount: values.discount,
             mainBalanceId: values.mainBalanceId,
             studentId: values.studentId,
-            branchId: usersDataReducer?.branch?.id
+            branchId: usersDataReducer?.branch?.id,
+            description: values.description,
           }, selectedRowKeys[1][0]?.id);
         })
         .catch((info) => {
@@ -185,6 +204,7 @@ function StudentAccount({
         .then((values) => {
           saveStudentAccount({
             accountNumber: values.accountNumber,
+            description: values.description,
             discount: values.discount,
             mainBalanceId: values.mainBalanceId,
             studentId: values.studentId,
@@ -203,6 +223,26 @@ function StudentAccount({
   return (
     <div>
       <h3 className="text-2xl font-bold mb-5">Talaba hisob raqamlari</h3>
+      <div>
+        <Input
+          placeholder="Student to'lov raqami yoki ismi orqali izlang..."
+          className="mb-5"
+          size="large"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value !== "" ? e.target.value : null);
+            e.target.value !== "" ? searchStudentAccaunt({
+              search: e.target.value,
+              page: 1,
+              size: pageData.size,
+            }) : getStudentAccountByBranch({
+              branchId: usersDataReducer.branch?.id,
+              page: 1,
+              size: pageData.size
+            });
+          }}
+        />
+      </div>
       <div className="flex items-center justify-between gap-5 mb-3">
         <div className="w-40">
           <Select
@@ -210,7 +250,7 @@ function StudentAccount({
               e ? getStudentAccountByBranchByClass({
                 classId: e,
                 branchId: usersDataReducer.branch?.id,
-                page: pageData.page,
+                page: 1,
                 size: pageData.size
               }) : getStudentAccountByBranch({
                 branchId: usersDataReducer.branch?.id,
@@ -365,15 +405,22 @@ function StudentAccount({
               <Form.Item
                 key="discount"
                 name="discount"
-                label={<span className="text-base font-medium">Chegirma % </span>}
+                label={<span className="text-base font-medium">Chegirma</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Chegirma %",
+                    message: "Chegirmani so'mda kiriting",
                   },
                 ]}
               >
-                <InputNumber className="w-full" placeholder="Chegirma %" />
+                <InputNumber className="w-full" placeholder="Chegirmani so'mda kiriting..." />
+              </Form.Item>
+              <Form.Item
+                key="description"
+                name="description"
+                label={<span className="text-base font-medium">Sabab</span>}
+              >
+                <TextArea row={3} placeholder="Chegirma sababini kiriting.." />
               </Form.Item>
               <Form.Item
                 key="mainBalanceId"
@@ -508,6 +555,7 @@ export default connect(
     deleteStudentAccount,
     getSearchStudents,
     getClassesAll,
-    getStudentsAllByClass
+    getStudentsAllByClass,
+    searchStudentAccaunt
   }
 )(StudentAccount);

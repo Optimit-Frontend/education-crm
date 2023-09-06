@@ -131,15 +131,25 @@ function Students({
     loading: false,
   });
   const [selectData, setSelectData] = useState(null);
+  const [search, setSearch] = useState(null);
+
   useEffect(() => {
-    selectData ? getStudentsAllByClass({
-      classId: selectData,
-      branchId: usersDataReducer.branch?.id,
-    }) : getStudentsAll({
-      branchId: usersDataReducer.branch?.id,
-      page: pageData.page,
-      size: pageData.size,
-    });
+    if (search) {
+      getSearchStudents({
+        name: search,
+        page: pageData.page,
+        size: pageData.size,
+      });
+    } else {
+      selectData ? getStudentsAllByClass({
+        classId: selectData,
+        branchId: usersDataReducer.branch?.id,
+      }) : getStudentsAll({
+        branchId: usersDataReducer.branch?.id,
+        page: pageData.page,
+        size: pageData.size,
+      });
+    }
     getClassesAll({ id: usersDataReducer?.branch?.id });
     setVisible(false);
     setOnedit(false);
@@ -255,23 +265,24 @@ function Students({
     formValidate();
   }
 
-  const [search, setSearch] = useState(null);
-
   return (
     <div>
       <h3 className="text-2xl font-bold mb-5">Hamma Talabalar</h3>
       <div>
         <Input
           placeholder="Enter name..."
-          type="text"
           value={search}
           className="mb-5"
           size="large"
           onChange={(e) => {
-            setSearch(e.target.value);
-            getSearchStudents({
+            setSearch(e.target.value !== "" ? e.target.value : null);
+            e.target.value !== "" ? getSearchStudents({
               name: e.target.value,
-              page: pageData.page,
+              page: 1,
+              size: pageData.size,
+            }) : getStudentsAll({
+              branchId: usersDataReducer.branch?.id,
+              page: 1,
               size: pageData.size,
             });
           }}
