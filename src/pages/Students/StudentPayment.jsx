@@ -1,27 +1,25 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, InputNumber, Modal, Row, Select
+  Form, Input, InputNumber, Modal, Row, Select
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
+import moment from "moment";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import employeeReducer, {
-  getEmployeeBranch,
-} from "../../reducer/employeeReducer";
 import transactionReducer, {
-  deleteTransaction, editStudentTransaction,
-  editTransaction,
-  getTransactionHistoryActiveTrue,
-  getTransactionHistoryFindAllBranch,
-  getTrasactionHistoryById, saveStudentTransaction, saveTransaction,
+  deleteTransaction,
+  editStudentTransaction,
+  getTransactionByStudent,
+  getTransactionByBranchByStudent,
+  saveStudentTransaction
 } from "../../reducer/transactionReducer";
 import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
-import studentAccountReducer, { getStudentAccountByBranch } from "../../reducer/studentAccountReducer.js";
-import businessBranchesReducer, {
-  getBusinessBranch,
-} from "../../reducer/businessBranchesReducer.js";
+import studentAccountReducer, { getStudentAccountByBranch } from "../../reducer/studentAccountReducer";
+import FormLayoutComp from "../../components/FormLayoutComp";
+import { expenseType, paymentType } from "../../const";
+import studentReducer, { getSearchStudents } from "../../reducer/studentReducer";
 
 const { Option } = Select;
 
@@ -46,6 +44,10 @@ const columns = [
     key: "paymentType",
     width: "25%",
     search: false,
+    render: (eski) => {
+      const payment = paymentType?.find((item) => { return item.value === eski; });
+      return payment?.name;
+    }
   },
   {
     title: "Otkazma turi",
@@ -53,6 +55,10 @@ const columns = [
     key: "expenseType",
     width: "25%",
     search: false,
+    render: (eski) => {
+      const expense = expenseType?.find((item) => { return item.value === eski; });
+      return expense?.name;
+    }
   },
   {
     title: "Sana",
@@ -60,6 +66,9 @@ const columns = [
     key: "date",
     width: "30%",
     search: false,
+    render: (eski) => {
+      return moment(eski).format("HH:mm:ss DD:MM:YYYY");
+    }
   },
   {
     title: "Qisqa eslatma",
@@ -72,36 +81,54 @@ const columns = [
 
 function StudentPayment({
   usersDataReducer,
+  studentReducer,
   getAllBalanceBranch,
-  getTransactionHistoryFindAllBranch,
-  getStudentAccountByBranch, businessBranchesReducer,
-  transactionReducer, editStudentTransaction, studentAccountReducer,
-  balanceReducer, deleteTransaction, saveStudentTransaction, getBusinessBranch
+  getTransactionByBranchByStudent,
+  getTransactionByStudent,
+  getStudentAccountByBranch,
+  transactionReducer,
+  editStudentTransaction,
+  studentAccountReducer,
+  balanceReducer,
+  deleteTransaction,
+  saveStudentTransaction,
+  getSearchStudents
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const size = localStorage.getItem("PageSize") || 10;
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
-  const [money, setMoney] = useState(0);
   const page = searchParams.get("page");
+  const size = searchParams.get("size");
   const [pageData, setPageData] = useState({
-    page: 1,
-    size,
+    page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
+    size: size ? parseInt(size, 10) : 10,
     loading: false,
   });
+  const [selectData, setSelectData] = useState(null);
 
   useEffect(() => {
-    getTransactionHistoryFindAllBranch(usersDataReducer?.branch?.id);
+    selectData ? getTransactionByStudent({
+      studentId: selectData,
+      page: pageData.page,
+      size: pageData.size
+    }) : getTransactionByBranchByStudent({
+      branchId: usersDataReducer?.branch?.id,
+      page: pageData.page,
+      size: pageData.size
+    });
     getAllBalanceBranch(usersDataReducer?.branch?.id);
-    getBusinessBranch(usersDataReducer?.branch?.id);
-    getStudentAccountByBranch(usersDataReducer?.branch?.id);
-    // getEmployeeBranchId(usersDataReducer?.branch?.id);
+    getStudentAccountByBranch({
+      branchId: usersDataReducer.branch?.id,
+      page: pageData.page,
+      size: pageData.size
+    });
     setVisible(false);
+    setOnedit(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
   }, [transactionReducer?.changeData]);
@@ -149,8 +176,9 @@ function StudentPayment({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editStudentTransaction({ ...values });
-          setOnedit(false);
+          selectedRowKeys[1][0]?.id && editStudentTransaction({
+            ...values
+          });
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -158,9 +186,11 @@ function StudentPayment({
       : form
         .validateFields()
         .then((values) => {
-          saveStudentTransaction({ ...values, accountNumber: values?.accountNumber.toString() });
-          setOnedit(false);
-          console.log(values?.accountNumber.toString());
+          saveStudentTransaction({
+            ...values,
+            accountNumber: values?.accountNumber.toString(),
+            branchId: usersDataReducer?.branch?.id
+          });
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -174,8 +204,48 @@ function StudentPayment({
   return (
     <div>
       <h3 className="text-2xl font-bold mb-5">Talaba o`tkazmalari</h3>
-      <div className="flex items-center justify-end gap-5 mb-3">
-        {selectedRowKeys[0].length === 1 && (
+      <div className="flex items-center justify-between gap-5 mb-3">
+        <div className="w-40">
+          <Select
+            onChange={(e) => {
+              e ? getTransactionByStudent({
+                studentId: e,
+                page: 1,
+                size: pageData.size
+              }) : getTransactionByBranchByStudent({
+                branchId: usersDataReducer.branch?.id,
+                page: 1,
+                size: pageData.size
+              });
+              e ? setSelectData(e) : setSelectData(null);
+            }}
+            showSearch
+            allowClear
+            placeholder="Talabani tanlang..."
+            optionFilterProp="children"
+            className="w-full"
+            key="id"
+            onSearch={(input) => {
+              input !== "" && getSearchStudents({
+                name: input.toLowerCase(),
+                page: 1,
+                size: pageData.size,
+              });
+            }}
+          >
+            {studentReducer?.students?.map((student) => {
+              return (
+                <Option value={student.id} key={student.id}>
+                  {student?.firstName}
+                  {" "}
+                  {student?.studentClass?.className}
+                </Option>
+              );
+            })}
+          </Select>
+        </div>
+        <div className="flex items-center justify-end gap-5">
+          {selectedRowKeys[0].length === 1 && (
           <button
             onClick={() => {
               setOnedit(true);
@@ -189,7 +259,6 @@ function StudentPayment({
               form.setFieldValue("paymentType", selectedRowKeys[1][0]?.paymentType);
               form.setFieldValue("accountNumber", selectedRowKeys[1][0]?.accountNumber);
               form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalanceResponse?.accountNumber);
-              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -210,51 +279,51 @@ function StudentPayment({
             </svg>
             <span>Taxrirlsh</span>
           </button>
-        )}
-        <button
-          onClick={() => {
-            setVisible(true);
-          }}
-          type="button"
-          className="flex items-center gap-2 px-4 py-[6px] bg-blue-600 text-white rounded-lg"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
+          )}
+          <button
+            onClick={() => {
+              setVisible(true);
+            }}
+            type="button"
+            className="flex items-center gap-2 px-4 py-[6px] bg-blue-600 text-white rounded-lg"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          <span>Qo&apos;shish</span>
-        </button>
-        <button
-          onClick={() => {
-            handleDelete(selectedRowKeys[0]);
-            setSelectedRowKeys([[], []]);
-            console.log(selectedRowKeys);
-          }}
-          type="button"
-          className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>Qo&apos;shish</span>
+          </button>
+          <button
+            onClick={() => {
+              handleDelete(selectedRowKeys[0]);
+              setSelectedRowKeys([[], []]);
+            }}
+            type="button"
+            className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-            />
-          </svg>
-          <span>O&apos;chirish</span>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+              />
+            </svg>
+            <span>O&apos;chirish</span>
+          </button>
+        </div>
       </div>
       <Modal
         open={visible}
@@ -267,7 +336,7 @@ function StudentPayment({
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
         okButtonProps={{ className: "bg-blue-600" }}
         cancelText="Bekor qilish"
-        width={600}
+        width={700}
         onCancel={() => {
           setVisible(false);
           setOnedit(false);
@@ -278,7 +347,7 @@ function StudentPayment({
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
           <Row gutter={24}>
-            <Col span={12}>
+            <FormLayoutComp>
               <Form.Item
                 key="money"
                 name="money"
@@ -290,11 +359,13 @@ function StudentPayment({
                   },
                 ]}
               >
-                <Input
-                  type="number"
+                <InputNumber
+                  className="w-full"
                   placeholder="So`mmani kiriting ..."
                 />
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="accountNumber"
                 name="accountNumber"
@@ -311,7 +382,7 @@ function StudentPayment({
                   allowClear
                   placeholder="Talaba hisob raqami"
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
@@ -319,11 +390,15 @@ function StudentPayment({
                 >
                   {studentAccountReducer?.account?.map((account) => {
                     return (
-                      <Option value={account?.accountNumber} key={account.id}>{account?.accountNumber}</Option>
+                      <Option value={account?.accountNumber} key={account.id}>
+                        {`${account?.student?.firstName} ${account?.student?.studentClass?.className} ${account?.accountNumber}`}
+                      </Option>
                     );
                   })}
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="expenseType"
                 name="expenseType"
@@ -340,21 +415,23 @@ function StudentPayment({
                   allowClear
                   placeholder="O`tkazma turini tanlang"
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  <Option value="SALARY">Maosh</Option>
-                  <Option value="PAYMENT">Tulov</Option>
-                  <Option value="ADDITIONAL_PAYMENT">Qo`shimcha to`lov</Option>
-                  <Option value="ADDITIONAL_EXPENSE">Qo`shimcha xarajat</Option>
-                  <Option value="STUDENT_PAYMENT">Talaba to`lov</Option>
-                  <Option value="STUDENT_EXPENSE">Talaba xarajati</Option>
-                  <Option value="MEAL_EXPENSE">Oziq-ovqat xarajati</Option>
+                  {expenseType?.map((option) => {
+                    return (
+                      <Option value={option.value} key={option.value}>
+                        {option.name}
+                      </Option>
+                    );
+                  })}
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="mainBalanceId"
                 name="mainBalanceId"
@@ -371,54 +448,21 @@ function StudentPayment({
                   allowClear
                   placeholder="Balance raqam"
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                    return option?.children?.toLowerCase()?.includes(input?.toLowerCase());
                   }}
                 >
                   {balanceReducer?.balance?.map((balance) => {
                     return (
-                      <Option value={balance.id} key={balance.id}>{balance?.accountNumber}</Option>
+                      <Option value={balance.id} key={balance.id}>{`${balance?.accountNumber}`}</Option>
                     );
                   })}
                 </Select>
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                key="branchId"
-                name="branchId"
-                label={<span className="text-base font-medium">Filial ( Branch )</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Filialni tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Filialni tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {
-                    businessBranchesReducer?.businessBranch?.map((barnch) => {
-                      return (
-                        <Option value={barnch?.id} key={barnch?.id}>
-                          {barnch?.name}
-                        </Option>
-                      );
-                    })
-                  }
-                </Select>
-              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="paidInFull"
                 name="paidInFull"
@@ -435,7 +479,7 @@ function StudentPayment({
                   allowClear
                   placeholder="Balance raqam"
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
@@ -445,6 +489,8 @@ function StudentPayment({
                   <Option value="false">Yuq</Option>
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="comment"
                 name="comment"
@@ -456,8 +502,10 @@ function StudentPayment({
                   },
                 ]}
               >
-                <Input type="text" placeholder="qisqa eslatma..." />
+                <Input placeholder="qisqa eslatma..." />
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="paymentType"
                 name="paymentType"
@@ -474,19 +522,22 @@ function StudentPayment({
                   allowClear
                   placeholder="Tulov turini tanlang"
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  <Option value="CASH">Naqd</Option>
-                  <Option value="CARD">Karta</Option>
-                  <Option value="HISOBDAN_HISOBGA">Hisobdan hisobga</Option>
-                  <Option value="ELEKTRON">ELEKTRON</Option>
+                  {paymentType?.map((option) => {
+                    return (
+                      <Option value={option.value} key={option.value}>
+                        {option.name}
+                      </Option>
+                    );
+                  })}
                 </Select>
               </Form.Item>
-            </Col>
+            </FormLayoutComp>
           </Row>
         </Form>
       </Modal>
@@ -495,7 +546,8 @@ function StudentPayment({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={transactionReducer?.transaction?.map((item) => {
+        totalItems={transactionReducer?.studentTransactionTotalCount}
+        tableData={transactionReducer?.studentTransaction?.map((item) => {
           return ({
             ...item,
             firstName: item?.student?.firstName,
@@ -512,17 +564,15 @@ function StudentPayment({
 
 export default connect(
   (
-    usersDataReducer, transactionReducer, balanceReducer, studentAccountReducer, businessBranchesReducer
+    usersDataReducer, transactionReducer, balanceReducer, studentAccountReducer, studentReducer
   ), {
-    getTransactionHistoryFindAllBranch,
-    getTransactionHistoryActiveTrue,
-    editTransaction,
+    getTransactionByBranchByStudent,
     getAllBalanceBranch,
-    getEmployeeBranch,
     deleteTransaction,
     saveStudentTransaction,
     getStudentAccountByBranch,
     editStudentTransaction,
-    getBusinessBranch
+    getSearchStudents,
+    getTransactionByStudent
   }
 )(StudentPayment);

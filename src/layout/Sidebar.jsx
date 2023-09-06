@@ -317,7 +317,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     <>
                       <NavLink
                         to="#"
-                        className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                           (pathname === "/students" || pathname.includes("students"))
                           && "bg-graydark dark:bg-meta-4"
                         }`}
@@ -376,7 +376,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                       </NavLink>
                       {/* <!-- Dropdown Menu Start --> */}
                       <div className={`translate transform overflow-hidden ${!open && "hidden"}`}>
-                        <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                        <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                           <li>
                             <NavLink
                               to={`/students?page=1&size=${pageSize}`}
@@ -409,7 +409,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           </li>
                           <li>
                             <NavLink
-                              to="/create-account"
+                              to={`/create-account?page=1&size=${pageSize}`}
                               onClick={() => {
                                 return setSidebarOpen(false);
                               }}
@@ -454,7 +454,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           </li>
                           <li>
                             <NavLink
-                              to="/student-debts"
+                              to={`/student-debts?page=1&size=${pageSize}`}
                               onClick={() => {
                                 return setSidebarOpen(false);
                               }}

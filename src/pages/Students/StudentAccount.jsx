@@ -12,93 +12,125 @@ import studentAccountReducer, {
   deleteStudentAccount,
   editStudentAccount,
   getStudentAccountByBranch,
-  getStudentAccountById,
+  getStudentAccountByBranchByClass,
   saveStudentAccount,
-  saveStudentPayment,
+  saveStudentPayment, searchStudentAccaunt,
 } from "../../reducer/studentAccountReducer";
-import studentReducer, { getStudentsAll } from "../../reducer/studentReducer";
-import businessBranchesReducer, {
-  getBusinessBranch,
-} from "../../reducer/businessBranchesReducer.js";
+import studentReducer, { getSearchStudents, getStudentsAllByClass } from "../../reducer/studentReducer";
+import classReducer, { getClassesAll } from "../../reducer/classReducer";
 
 const { Option } = Select;
+const { TextArea } = Input;
 
 const columns = [
-  {
-    title: "Talaba",
-    dataIndex: "student",
-    key: "student",
-    width: "30%",
-    search: true,
-  },
   {
     title: "Hisob raqam",
     dataIndex: "accountNumber",
     key: "accountNumber",
-    width: "30%",
+    width: "15%",
     search: true,
   },
   {
-    title: "Filial",
-    dataIndex: "branchId",
-    key: "branchId",
-    width: "25%",
+    title: "Talaba",
+    dataIndex: "studentName",
+    key: "studentName",
+    width: "15%",
+    search: true,
+  },
+  {
+    title: "Balans",
+    dataIndex: "balance",
+    key: "balance",
+    width: "15%",
+    search: false,
+  },
+  {
+    title: "Chegirma",
+    dataIndex: "discount",
+    key: "discount",
+    width: "10%",
+    search: false,
+  },
+  {
+    title: "Sabab",
+    dataIndex: "description",
+    key: "description",
+    width: "15%",
     search: false,
   },
   {
     title: "Sana",
     dataIndex: "date",
     key: "date",
-    width: "30%",
+    width: "15%",
     search: false,
   },
   {
     title: "Qarz",
     dataIndex: "amountOfDebit",
     key: "amountOfDebit",
-    width: "20%",
+    width: "10%",
     search: false,
   },
 ];
 
 function StudentAccount({
+  classReducer,
   usersDataReducer,
   getAllBalanceBranch,
   studentAccountReducer,
-  getStudentsAll,
   studentReducer,
   balanceReducer,
   deleteStudentAccount,
   editStudentAccount,
   saveStudentAccount,
-  getStudentAccountByBranch, getBusinessBranch, businessBranchesReducer
+  getStudentAccountByBranch,
+  getStudentAccountByBranchByClass,
+  getSearchStudents,
+  getClassesAll,
+  getStudentsAllByClass,
+  searchStudentAccaunt
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const [newAccountNumber, setNewAccountNumber] = useState(0);
-  const size = localStorage.getItem("PageSize") || 10;
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
   const page = searchParams.get("page");
+  const size = searchParams.get("size");
   const [pageData, setPageData] = useState({
-    page: 1,
-    size,
+    page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
+    size: size ? parseInt(size, 10) : 10,
     loading: false,
   });
+  const [selectData, setSelectData] = useState(null);
+  const [search, setSearch] = useState(null);
 
   useEffect(() => {
-    getStudentAccountByBranch(usersDataReducer?.branch?.id);
+    if (search) {
+      searchStudentAccaunt({
+        search,
+        page: pageData.page,
+        size: pageData.size,
+      });
+    } else {
+      selectData ? getStudentAccountByBranchByClass({
+        classId: selectData,
+        branchId: usersDataReducer.branch?.id,
+        page: pageData.page,
+        size: pageData.size
+      }) : getStudentAccountByBranch({
+        branchId: usersDataReducer.branch?.id,
+        page: pageData.page,
+        size: pageData.size
+      });
+    }
     getAllBalanceBranch(usersDataReducer?.branch?.id);
-    getBusinessBranch(usersDataReducer?.branch?.id);
-    getStudentsAll({
-      branchId: usersDataReducer.branch?.id,
-      page: pageData.page,
-      size: pageData.size
-    });
+    getClassesAll({ id: usersDataReducer?.branch?.id });
+    setOnedit(false);
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
@@ -132,14 +164,21 @@ function StudentAccount({
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteStudentAccount(parseInt(item?.accountNumber, 10));
+      deleteStudentAccount(item);
       return null;
     });
   };
 
   const onChange = (pageNumber, page) => {
-    setPageData({ size: page, page: pageNumber, loading: false });
+    setPageData({
+      size: page,
+      page: pageNumber,
+      loading: false,
+    });
+    searchParams.set("size", page);
+    searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
+    navigate(`/create-account?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
@@ -148,10 +187,14 @@ function StudentAccount({
         .validateFields()
         .then((values) => {
           selectedRowKeys[1][0]?.id && editStudentAccount({
-            ...values,
-            newAccountNumber: newAccountNumber || "0",
-          });
-          setOnedit(false);
+            newAccountNumber: values?.newAccountNumber?.toString() || "0",
+            accountNumber: values.accountNumber,
+            discount: values.discount,
+            mainBalanceId: values.mainBalanceId,
+            studentId: values.studentId,
+            branchId: usersDataReducer?.branch?.id,
+            description: values.description,
+          }, selectedRowKeys[1][0]?.id);
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -160,9 +203,13 @@ function StudentAccount({
         .validateFields()
         .then((values) => {
           saveStudentAccount({
-            ...values,
+            accountNumber: values.accountNumber,
+            description: values.description,
+            discount: values.discount,
+            mainBalanceId: values.mainBalanceId,
+            studentId: values.studentId,
+            branchId: usersDataReducer?.branch?.id
           });
-          setOnedit(false);
         })
         .catch((info) => {
           console.error("Validate Failed:", info);
@@ -176,8 +223,61 @@ function StudentAccount({
   return (
     <div>
       <h3 className="text-2xl font-bold mb-5">Talaba hisob raqamlari</h3>
-      <div className="flex items-center justify-end gap-5 mb-3">
-        {selectedRowKeys[0].length === 1 && (
+      <div>
+        <Input
+          placeholder="Student to'lov raqami yoki ismi orqali izlang..."
+          className="mb-5"
+          size="large"
+          value={search}
+          onChange={(e) => {
+            setSearch(e.target.value !== "" ? e.target.value : null);
+            e.target.value !== "" ? searchStudentAccaunt({
+              search: e.target.value,
+              page: 1,
+              size: pageData.size,
+            }) : getStudentAccountByBranch({
+              branchId: usersDataReducer.branch?.id,
+              page: 1,
+              size: pageData.size
+            });
+          }}
+        />
+      </div>
+      <div className="flex items-center justify-between gap-5 mb-3">
+        <div className="w-40">
+          <Select
+            onChange={(e) => {
+              e ? getStudentAccountByBranchByClass({
+                classId: e,
+                branchId: usersDataReducer.branch?.id,
+                page: 1,
+                size: pageData.size
+              }) : getStudentAccountByBranch({
+                branchId: usersDataReducer.branch?.id,
+                page: 1,
+                size: pageData.size
+              });
+              e ? setSelectData(e) : setSelectData(null);
+            }}
+            showSearch
+            allowClear
+            placeholder="Sinfni tanlang..."
+            optionFilterProp="children"
+            className="w-full"
+            key="id"
+            filterOption={(input, option) => {
+              return option.children.toLowerCase()?.includes(input.toLowerCase());
+            }}
+          >
+            {classReducer?.class?.map((room) => {
+              return (
+                <Option value={room.id} key={room.id}>{room?.className}</Option>
+              );
+            })}
+          </Select>
+        </div>
+        <div className="flex items-center justify-end gap-5 mb-3">
+          {selectedRowKeys[0].length === 1 && (
           <button
             onClick={() => {
               setOnedit(true);
@@ -207,50 +307,51 @@ function StudentAccount({
             </svg>
             <span>Taxrirlsh</span>
           </button>
-        )}
-        <button
-          onClick={() => {
-            setVisible(true);
-          }}
-          type="button"
-          className="flex items-center gap-2 px-4 py-[6px] bg-blue-600 text-white rounded-lg"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
+          )}
+          <button
+            onClick={() => {
+              setVisible(true);
+            }}
+            type="button"
+            className="flex items-center gap-2 px-4 py-[6px] bg-blue-600 text-white rounded-lg"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          <span>Qo&apos;shish</span>
-        </button>
-        <button
-          onClick={() => {
-            handleDelete(selectedRowKeys[1]);
-            setSelectedRowKeys([[], []]);
-          }}
-          type="button"
-          className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>Qo&apos;shish</span>
+          </button>
+          <button
+            onClick={() => {
+              handleDelete(selectedRowKeys[0]);
+              setSelectedRowKeys([[], []]);
+            }}
+            type="button"
+            className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-            />
-          </svg>
-          <span>O&apos;chirish</span>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+              />
+            </svg>
+            <span>O&apos;chirish</span>
+          </button>
+        </div>
       </div>
       <Modal
         open={visible}
@@ -263,7 +364,7 @@ function StudentAccount({
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
         okButtonProps={{ className: "bg-blue-600" }}
         cancelText="Bekor qilish"
-        width={600}
+        width={500}
         onCancel={() => {
           setVisible(false);
           setOnedit(false);
@@ -274,7 +375,7 @@ function StudentAccount({
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
           <Row gutter={24}>
-            <Col span={12}>
+            <Col span={24}>
               <Form.Item
                 key="accountNumber"
                 name="accountNumber"
@@ -282,24 +383,44 @@ function StudentAccount({
                 rules={[
                   {
                     required: true,
-                    message: "Hisobdagi raqam kiriting",
+                    message: "Hisob raqam kiriting",
                   },
                 ]}
               >
-                <Input type="number" className="w-full" placeholder="Hisobn raqam kiriting" />
+                <InputNumber className="w-full" placeholder="Hisob raqam kiriting..." />
               </Form.Item>
+              { onedit
+                ? (
+                  <Form.Item
+                    key="newAccountNumber"
+                    name="newAccountNumber"
+                    label={<span className="text-base font-medium">Yangi shot raqam</span>}
+                  >
+                    <InputNumber
+                      className="w-full"
+                      placeholder="Yangi shot raqam kiriting"
+                    />
+                  </Form.Item>
+                ) : null}
               <Form.Item
                 key="discount"
                 name="discount"
-                label={<span className="text-base font-medium">Chegirma % </span>}
+                label={<span className="text-base font-medium">Chegirma</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Chegirma %",
+                    message: "Chegirmani so'mda kiriting",
                   },
                 ]}
               >
-                <InputNumber className="w-full" placeholder="Chegirma %" />
+                <InputNumber className="w-full" placeholder="Chegirmani so'mda kiriting..." />
+              </Form.Item>
+              <Form.Item
+                key="description"
+                name="description"
+                label={<span className="text-base font-medium">Sabab</span>}
+              >
+                <TextArea row={3} placeholder="Chegirma sababini kiriting.." />
               </Form.Item>
               <Form.Item
                 key="mainBalanceId"
@@ -317,7 +438,7 @@ function StudentAccount({
                   allowClear
                   placeholder="Hisob raqam"
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
@@ -330,60 +451,34 @@ function StudentAccount({
                   })}
                 </Select>
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              { onedit
-                ? (
-                  <Form.Item
-                    key="newAccountNumber"
-                    name="newAccountNumber"
-                    label={<span className="text-base font-medium">Yangi shot raqam </span>}
-                    rules={[
-                      {
-                        required: false,
-                        message: "Hisobdagi pulni kiriting",
-                      },
-                    ]}
-                  >
-                    <InputNumber
-                      className="w-full"
-                      value={newAccountNumber}
-                      onChange={(e) => { return setNewAccountNumber(e.target.value); }}
-                      placeholder="yangi shot raqam kiriting"
-                    />
-                  </Form.Item>
-                ) : ""}
               <Form.Item
-                key="branchId"
-                name="branchId"
-                label={<span className="text-base font-medium">Filial ( Branch )</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Filialni tanlang",
-                  },
-                ]}
+                key="studentClassId"
+                name="studentClassId"
+                label={<span className="text-base font-medium">Sinf</span>}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Filialni tanlang"
+                  placeholder="Sinfni tanlang..."
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                    return option.children.toLowerCase()
+                      ?.includes(input.toLowerCase());
+                  }}
+                  onChange={(newValue) => {
+                    newValue && getStudentsAllByClass({
+                      classId: newValue,
+                      branchId: usersDataReducer.branch?.id,
+                    });
                   }}
                 >
-                  {
-                    businessBranchesReducer?.businessBranch?.map((barnch) => {
-                      return (
-                        <Option value={barnch?.id} key={barnch?.id}>
-                          {barnch?.name}
-                        </Option>
-                      );
-                    })
-                  }
+                  {classReducer?.class?.map((room) => {
+                    return (
+                      <Option value={room.id} key={room.id}>{room?.className}</Option>
+                    );
+                  })}
                 </Select>
               </Form.Item>
               <Form.Item
@@ -402,31 +497,22 @@ function StudentAccount({
                   allowClear
                   placeholder="Talaba tanlash"
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  onSearch={(input) => {
+                    input !== "" && getSearchStudents({
+                      name: input.toLowerCase(),
+                      page: 1,
+                      size: pageData.size,
+                    });
                   }}
                 >
-                  {studentReducer?.students?.studentResponseDtoList?.map((student) => {
+                  {studentReducer?.students?.map((student) => {
                     return (
                       <Option value={student.id} key={student.id}>{student?.firstName}</Option>
                     );
                   })}
                 </Select>
-              </Form.Item>
-              <Form.Item
-                key="payment"
-                name="payment"
-                label={<span className="text-base font-medium">Shartnoma puli ( Yillik )</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Hisobdagi pulni kiriting",
-                  },
-                ]}
-              >
-                <Input type="number" className="w-full" placeholder="Shartnoma puli" />
               </Form.Item>
             </Col>
           </Row>
@@ -437,11 +523,12 @@ function StudentAccount({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
+        totalItems={studentAccountReducer?.accountTotalCount}
         tableData={studentAccountReducer?.account?.map((item) => {
           return ({
             ...item,
             branchId: item.branch?.name,
-            student: item.student?.firstName,
+            studentName: item.student?.firstName,
             studentId: item.student?.id
           });
         })}
@@ -456,17 +543,19 @@ function StudentAccount({
 
 export default connect(
   (
-    usersDataReducer, studentReducer,
-    balanceReducer, studentAccountReducer, businessBranchesReducer
+    usersDataReducer, studentReducer, classReducer,
+    balanceReducer, studentAccountReducer
   ), {
     getAllBalanceBranch,
-    getStudentAccountById,
     getStudentAccountByBranch,
+    getStudentAccountByBranchByClass,
     saveStudentAccount,
     saveStudentPayment,
     editStudentAccount,
     deleteStudentAccount,
-    getStudentsAll,
-    getBusinessBranch
+    getSearchStudents,
+    getClassesAll,
+    getStudentsAllByClass,
+    searchStudentAccaunt
   }
 )(StudentAccount);

@@ -13,11 +13,22 @@ export const slice = createSlice({
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.students = action.payload?.data;
+        state.students = action.payload?.data?.studentResponseDtoList;
         state.studentsTotalCount = action.payload?.data?.allSize;
       } else {
         state.message = action.payload.message;
         state.students = [];
+        state.studentsTotalCount = 0;
+      }
+      state.changeData = false;
+    },
+    getFromByClass: (state, action) => {
+      if (action.payload.success) {
+        state.students = action.payload?.data;
+      } else {
+        state.message = action.payload.message;
+        state.students = [];
+        state.studentsTotalCount = 0;
       }
       state.changeData = false;
     },
@@ -83,10 +94,10 @@ export const getStudentsAllNeActive = (data) => {
 };
 export const getStudentsAllByClass = (data) => {
   return apiCall({
-    url: `/student/getAllByClassId?branchId=${data.branchId}&page=${data.page - 1}&size=${data.size}`,
+    url: `/student/getAllByClassId/${data.classId}/${data.branchId}`,
     method: "get",
-    onSuccess: slice.actions.getFrom.type,
-    onFail: slice.actions.getFrom.type,
+    onSuccess: slice.actions.getFromByClass.type,
+    onFail: slice.actions.getFromByClass.type,
   });
 };
 

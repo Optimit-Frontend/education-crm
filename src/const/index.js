@@ -19,3 +19,20 @@ export const mealsTime = [
   { value: "lunch", name: "Tushlik" },
   { value: "dinner", name: "Poldnik" },
 ];
+
+export const paymentType = [
+  { value: "CASH", name: "Naqd" },
+  { value: "CARD", name: "Karta" },
+  { value: "HISOBDAN_HISOBGA", name: "Hisobdan hisobga" },
+  { value: "ELEKTRON", name: "Elektron" },
+];
+
+export const expenseType = [
+  { value: "SALARY", name: "Maosh" },
+  { value: "PAYMENT", name: "To'lov" },
+  { value: "ADDITIONAL_PAYMENT", name: "Qo`shimcha to`lov" },
+  { value: "ADDITIONAL_EXPENSE", name: "Qo`shimcha xarajat" },
+  { value: "STUDENT_PAYMENT", name: "Talaba to`lov" },
+  { value: "STUDENT_EXPENSE", name: "Talaba xarajati" },
+  { value: "MEAL_EXPENSE", name: "Oziq-ovqat xarajati" },
+];

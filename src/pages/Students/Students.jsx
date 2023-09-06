@@ -11,7 +11,8 @@ import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import studentReducer, {
   deleteStudent,
-  editStudent, getSearchStudents,
+  editStudent,
+  getSearchStudents,
   getStudentById,
   getStudentsAll,
   getStudentsAllByClass,
@@ -111,7 +112,8 @@ function Students({
   deleteStudent,
   editStudent,
   saveStudent,
-  getSearchStudents
+  getSearchStudents,
+  getStudentsAllByClass
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -128,13 +130,26 @@ function Students({
     size: size ? parseInt(size, 10) : 10,
     loading: false,
   });
+  const [selectData, setSelectData] = useState(null);
+  const [search, setSearch] = useState(null);
 
   useEffect(() => {
-    getStudentsAll({
-      branchId: usersDataReducer.branch?.id,
-      page: pageData.page,
-      size: pageData.size,
-    });
+    if (search) {
+      getSearchStudents({
+        name: search,
+        page: pageData.page,
+        size: pageData.size,
+      });
+    } else {
+      selectData ? getStudentsAllByClass({
+        classId: selectData,
+        branchId: usersDataReducer.branch?.id,
+      }) : getStudentsAll({
+        branchId: usersDataReducer.branch?.id,
+        page: pageData.page,
+        size: pageData.size,
+      });
+    }
     getClassesAll({ id: usersDataReducer?.branch?.id });
     setVisible(false);
     setOnedit(false);
@@ -250,45 +265,121 @@ function Students({
     formValidate();
   }
 
-  const [search, setSearch] = useState(null);
-
   return (
     <div>
       <h3 className="text-2xl font-bold mb-5">Hamma Talabalar</h3>
       <div>
         <Input
           placeholder="Enter name..."
-          type="text"
           value={search}
           className="mb-5"
           size="large"
           onChange={(e) => {
-            setSearch(e.target.value);
-            getSearchStudents({
+            setSearch(e.target.value !== "" ? e.target.value : null);
+            e.target.value !== "" ? getSearchStudents({
               name: e.target.value,
-              page: pageData.page,
+              page: 1,
+              size: pageData.size,
+            }) : getStudentsAll({
+              branchId: usersDataReducer.branch?.id,
+              page: 1,
               size: pageData.size,
             });
           }}
         />
       </div>
-      <div className="flex items-center justify-end gap-5 mb-3">
-        {selectedRowKeys[0].length === 1 && (
+      <div className="flex items-center justify-between gap-5 mb-3">
+        <div className="w-40">
+          <Select
+            onChange={(e) => {
+              e ? getStudentsAllByClass({
+                classId: e,
+                branchId: usersDataReducer.branch?.id,
+              }) : getStudentsAll({
+                branchId: usersDataReducer.branch?.id,
+                page: 1,
+                size: pageData.size,
+              });
+              e ? setSelectData(e) : setSelectData(null);
+            }}
+            showSearch
+            allowClear
+            placeholder="Sinfni tanlang..."
+            optionFilterProp="children"
+            className="w-full"
+            key="id"
+            filterOption={(input, option) => {
+              return option.children.toLowerCase()?.includes(input.toLowerCase());
+            }}
+          >
+            {classReducer?.class?.map((room) => {
+              return (
+                <Option value={room.id} key={room.id}>{room?.className}</Option>
+              );
+            })}
+          </Select>
+        </div>
+        <div className="flex items-center justify-end gap-5">
+          {selectedRowKeys[0].length === 1 && (
+            <button
+              onClick={() => {
+                setOnedit(true);
+                setVisible(true);
+                form.setFieldValue("firstName", selectedRowKeys[1][0]?.firstName);
+                form.setFieldValue("lastName", selectedRowKeys[1][0]?.lastName);
+                form.setFieldValue("fatherName", selectedRowKeys[1][0]?.fatherName);
+                form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
+                form.setFieldValue("docNumber", selectedRowKeys[1][0]?.docNumber);
+                form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
+                form.setFieldValue("paymentAmount", selectedRowKeys[1][0]?.paymentAmount);
+                form.setFieldValue("birthDate", dayjs(selectedRowKeys[1][0]?.birthDate));
+              }}
+              type="button"
+              className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                />
+              </svg>
+              <span>Taxrirlsh</span>
+            </button>
+          )}
           <button
             onClick={() => {
-              setOnedit(true);
               setVisible(true);
-              form.setFieldValue("firstName", selectedRowKeys[1][0]?.firstName);
-              form.setFieldValue("lastName", selectedRowKeys[1][0]?.lastName);
-              form.setFieldValue("fatherName", selectedRowKeys[1][0]?.fatherName);
-              form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
-              form.setFieldValue("docNumber", selectedRowKeys[1][0]?.docNumber);
-              form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
-              form.setFieldValue("paymentAmount", selectedRowKeys[1][0]?.paymentAmount);
-              form.setFieldValue("birthDate", dayjs(selectedRowKeys[1][0]?.birthDate));
             }}
             type="button"
-            className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
+            className="flex items-center gap-2 px-4 py-[6px] bg-blue-600 text-white rounded-lg"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>Qo&apos;shish</span>
+          </button>
+          <button
+            onClick={() => {
+              handleDelete(selectedRowKeys[0]);
+              setSelectedRowKeys([[], []]);
+            }}
+            type="button"
+            className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -301,55 +392,12 @@ function Students({
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
               />
             </svg>
-            <span>Taxrirlsh</span>
+            <span>O&apos;chirish</span>
           </button>
-        )}
-        <button
-          onClick={() => {
-            setVisible(true);
-          }}
-          type="button"
-          className="flex items-center gap-2 px-4 py-[6px] bg-blue-600 text-white rounded-lg"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          <span>Qo&apos;shish</span>
-        </button>
-        <button
-          onClick={() => {
-            handleDelete(selectedRowKeys[0]);
-            setSelectedRowKeys([[], []]);
-          }}
-          type="button"
-          className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-5 h-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-            />
-          </svg>
-          <span>O&apos;chirish</span>
-        </button>
+        </div>
       </div>
       <Modal
         open={visible}
@@ -502,21 +550,24 @@ function Students({
                 <Input placeholder="Parolni kiriting..." />
               </Form.Item>
             </FormLayoutComp>
-            <FormLayoutComp>
-              <Form.Item
-                key="paymentAmount"
-                name="paymentAmount"
-                label={<span className="text-base font-medium">Umumiy summa</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Umumiy summani kiriting",
-                  },
-                ]}
-              >
-                <InputNumber className="w-full" placeholder="Umumiy summa . . ." />
-              </Form.Item>
-            </FormLayoutComp>
+            { onedit
+              ? (
+                <FormLayoutComp>
+                  <Form.Item
+                    key="paymentAmount"
+                    name="paymentAmount"
+                    label={<span className="text-base font-medium">To&apos;lov summasi</span>}
+                    rules={[
+                      {
+                        required: false,
+                        message: "To'lov summasini kiriting",
+                      },
+                    ]}
+                  >
+                    <InputNumber className="w-full" placeholder="To'lov summasini kiriting..." />
+                  </Form.Item>
+                </FormLayoutComp>
+              ) : null }
             <FormLayoutComp>
               <Form.Item
                 key="docNumber"
@@ -657,7 +708,7 @@ function Students({
         current={pageData?.page}
         pageSize={pageData?.size}
         totalItems={studentReducer?.studentsTotalCount}
-        tableData={studentReducer?.students?.studentResponseDtoList?.map((student) => {
+        tableData={studentReducer?.students?.map((student) => {
           return {
             ...student,
             studentClass: student?.studentClass?.className,
