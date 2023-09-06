@@ -319,7 +319,7 @@ function Students({
             })}
           </Select>
         </div>
-        <div className="flex items-center justify-end gap-5 mb-3">
+        <div className="flex items-center justify-end gap-5">
           {selectedRowKeys[0].length === 1 && (
             <button
               onClick={() => {

@@ -1,24 +1,22 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, InputNumber, Modal, Row, Select
+  Form, Input, InputNumber, Modal, Row, Select
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
+import moment from "moment";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
 import transactionReducer, {
   deleteTransaction,
   editTransaction,
-  getTransactionHistoryActiveTrue,
   getTransactionHistoryFindAllBranch,
-  getTrasactionHistoryById,
   saveTransaction,
 } from "../../reducer/transactionReducer";
 import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
-import businessBranchesReducer, {
-  getBusinessBranch,
-} from "../../reducer/businessBranchesReducer.js";
+import { expenseType, paymentType } from "../../const";
+import FormLayoutComp from "../../components/FormLayoutComp";
 
 const { Option } = Select;
 
@@ -28,7 +26,7 @@ const columns = [
     dataIndex: "moneyAmount",
     key: "moneyAmount",
     width: "30%",
-    search: true,
+    search: false,
   },
   {
     title: "Tulov usuli",
@@ -36,6 +34,10 @@ const columns = [
     key: "paymentType",
     width: "25%",
     search: false,
+    render: (eski) => {
+      const payment = paymentType?.find((item) => { return item.value === eski; });
+      return payment?.name;
+    }
   },
   {
     title: "Otkazma turi",
@@ -43,6 +45,10 @@ const columns = [
     key: "expenseType",
     width: "25%",
     search: false,
+    render: (eski) => {
+      const expense = expenseType?.find((item) => { return item.value === eski; });
+      return expense?.name;
+    }
   },
   {
     title: "Sana",
@@ -50,6 +56,9 @@ const columns = [
     key: "date",
     width: "30%",
     search: false,
+    render: (eski) => {
+      return moment(eski).format("HH:mm:ss DD:MM:YYYY");
+    }
   },
   {
     title: "Qisqa eslatma",
@@ -58,53 +67,40 @@ const columns = [
     width: "20%",
     search: false,
   },
-  {
-    title: "Amallar",
-    dataIndex: "getOneId",
-    key: "getOneId",
-    width: "30%",
-    search: false,
-    render: (eski) => {
-      return (
-        <button style={{ background: "gold", padding: "5px", borderRadius: "5px" }} type="button" onClick={() => { return console.log(eski); }}>
-          Ko`rish
-        </button>
-      );
-    }
-  },
 ];
 
 function Transaction({
   usersDataReducer,
   getAllBalanceBranch,
-  getTrasactionHistoryById,
   getTransactionHistoryFindAllBranch,
-  getTransactionHistoryActiveTrue,
   saveTransaction,
   editTransaction,
-  transactionReducer, getBusinessBranch,
-  balanceReducer, deleteTransaction, businessBranchesReducer
+  transactionReducer,
+  balanceReducer, deleteTransaction
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const size = localStorage.getItem("PageSize") || 10;
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
   const page = searchParams.get("page");
+  const size = searchParams.get("size");
   const [pageData, setPageData] = useState({
-    page: 1,
-    size,
+    page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
+    size: size ? parseInt(size, 10) : 10,
     loading: false,
   });
 
   useEffect(() => {
-    getTransactionHistoryFindAllBranch(usersDataReducer?.branch?.id);
+    getTransactionHistoryFindAllBranch({
+      branchId: usersDataReducer?.branch?.id,
+      page: pageData.page,
+      size: pageData.size
+    });
     getAllBalanceBranch(usersDataReducer?.branch?.id);
-    getBusinessBranch(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
@@ -144,8 +140,15 @@ function Transaction({
   };
 
   const onChange = (pageNumber, page) => {
-    setPageData({ size: page, page: pageNumber, loading: false });
+    setPageData({
+      size: page,
+      page: pageNumber,
+      loading: false,
+    });
+    searchParams.set("size", page);
+    searchParams.set("page", pageNumber);
     localStorage.setItem("PageSize", page);
+    navigate(`/transactions?page=${pageNumber}&size=${page}`);
   };
 
   const formValidate = () => {
@@ -153,7 +156,11 @@ function Transaction({
       ? form
         .validateFields()
         .then((values) => {
-          selectedRowKeys[1][0]?.id && editTransaction({ ...values, id: selectedRowKeys[1][0].id });
+          selectedRowKeys[1][0]?.id && editTransaction({
+            ...values,
+            id: selectedRowKeys[1][0].id,
+            branchId: usersDataReducer?.branch?.id,
+          });
           setOnedit(false);
         })
         .catch((info) => {
@@ -162,7 +169,10 @@ function Transaction({
       : form
         .validateFields()
         .then((values) => {
-          saveTransaction({ ...values });
+          saveTransaction({
+            ...values,
+            branchId: usersDataReducer?.branch?.id
+          });
           setOnedit(false);
         })
         .catch((info) => {
@@ -191,7 +201,6 @@ function Transaction({
               form.setFieldValue("paymentType", selectedRowKeys[1][0]?.paymentType);
               form.setFieldValue("accountNumber", selectedRowKeys[1][0]?.accountNumber);
               form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalanceResponse?.accountNumber);
-              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -236,7 +245,6 @@ function Transaction({
           onClick={() => {
             handleDelete(selectedRowKeys[0]);
             setSelectedRowKeys([[], []]);
-            console.log(selectedRowKeys);
           }}
           type="button"
           className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
@@ -280,7 +288,7 @@ function Transaction({
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
           <Row gutter={24}>
-            <Col span={12}>
+            <FormLayoutComp>
               <Form.Item
                 key="moneyAmount"
                 name="moneyAmount"
@@ -297,6 +305,8 @@ function Transaction({
                   placeholder="So`mmani kiriting ..."
                 />
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="expenseType"
                 name="expenseType"
@@ -319,15 +329,17 @@ function Transaction({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  <Option value="SALARY">Maosh</Option>
-                  <Option value="PAYMENT">Tulov</Option>
-                  <Option value="ADDITIONAL_PAYMENT">Qo`shimcha to`lov</Option>
-                  <Option value="ADDITIONAL_EXPENSE">Qo`shimcha xarajat</Option>
-                  <Option value="STUDENT_PAYMENT">Talaba to`lov</Option>
-                  <Option value="STUDENT_EXPENSE">Talaba xarajati</Option>
-                  <Option value="MEAL_EXPENSE">Oziq-ovqat xarajati</Option>
+                  {expenseType?.map((option) => {
+                    return (
+                      <Option value={option.value} key={option.value}>
+                        {option.name}
+                      </Option>
+                    );
+                  })}
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="mainBalanceId"
                 name="mainBalanceId"
@@ -357,41 +369,8 @@ function Transaction({
                   })}
                 </Select>
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                key="branchId"
-                name="branchId"
-                label={<span className="text-base font-medium">Filial ( Branch )</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Filialni tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Filialni tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {
-                    businessBranchesReducer?.businessBranch?.map((barnch) => {
-                      return (
-                        <Option value={barnch?.id} key={barnch?.id}>
-                          {barnch?.name}
-                        </Option>
-                      );
-                    })
-                  }
-                </Select>
-              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="comment"
                 name="comment"
@@ -403,8 +382,10 @@ function Transaction({
                   },
                 ]}
               >
-                <Input type="text" placeholder="qisqa eslatma..." />
+                <Input placeholder="qisqa eslatma..." />
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="paymentType"
                 name="paymentType"
@@ -427,13 +408,16 @@ function Transaction({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  <Option value="CASH">Naqd</Option>
-                  <Option value="CARD">Karta</Option>
-                  <Option value="HISOBDAN_HISOBGA">Hisobdan hisobga</Option>
-                  <Option value="ELEKTRON">ELEKTRON</Option>
+                  {paymentType?.map((option) => {
+                    return (
+                      <Option value={option.value} key={option.value}>
+                        {option.name}
+                      </Option>
+                    );
+                  })}
                 </Select>
               </Form.Item>
-            </Col>
+            </FormLayoutComp>
           </Row>
         </Form>
       </Modal>
@@ -442,11 +426,7 @@ function Transaction({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={transactionReducer?.transaction?.map((item) => {
-          return ({
-            ...item
-          });
-        })}
+        tableData={transactionReducer?.transaction}
         loading={pageData?.loading}
         setSelectedRowKeys={setSelectedRowKeys}
         selectedRowKeys={selectedRowKeys}
@@ -456,13 +436,14 @@ function Transaction({
   );
 }
 
-export default connect((usersDataReducer, transactionReducer, balanceReducer, businessBranchesReducer), {
-  getTrasactionHistoryById,
-  getTransactionHistoryFindAllBranch,
-  getTransactionHistoryActiveTrue,
-  saveTransaction,
-  editTransaction,
-  getAllBalanceBranch,
-  deleteTransaction,
-  getBusinessBranch
-})(Transaction);
+export default connect(
+  (
+    usersDataReducer, transactionReducer, balanceReducer
+  ), {
+    getTransactionHistoryFindAllBranch,
+    saveTransaction,
+    editTransaction,
+    getAllBalanceBranch,
+    deleteTransaction
+  }
+)(Transaction);

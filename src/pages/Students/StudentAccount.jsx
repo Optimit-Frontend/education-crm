@@ -461,7 +461,7 @@ function StudentAccount({
                   allowClear
                   placeholder="Sinfni tanlang..."
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()
@@ -502,7 +502,7 @@ function StudentAccount({
                   onSearch={(input) => {
                     input !== "" && getSearchStudents({
                       name: input.toLowerCase(),
-                      page: pageData.page,
+                      page: 1,
                       size: pageData.size,
                     });
                   }}

@@ -6,16 +6,32 @@ export const slice = createSlice({
   name: "transaction",
   initialState: {
     transaction: null,
+    studentTransaction: null,
     trasactionTotalCount: 0,
+    studentTransactionTotalCount: 0,
     message: null,
     changeData: false,
   },
   reducers: {
     getFrom: (state, action) => {
       if (action.payload.success) {
-        state.transaction = action.payload?.data;
+        state.transaction = action.payload?.data?.allTransaction;
+        state.studentTransactionTotalCount = action.payload?.data?.totalItem;
       } else {
         state.message = action.payload.message;
+        state.transaction = null;
+        state.studentTransactionTotalCount = 0;
+      }
+      state.changeData = false;
+    },
+    getFromStudentTransaction: (state, action) => {
+      if (action.payload.success) {
+        state.studentTransaction = action.payload?.data?.allTransactionHistory;
+        state.studentTransactionTotalCount = action.payload?.data?.totalItem;
+      } else {
+        state.message = action.payload.message;
+        state.studentTransaction = null;
+        state.studentTransactionTotalCount = 0;
       }
       state.changeData = false;
     },
@@ -56,10 +72,26 @@ export const getTrasactionHistoryById = (data) => {
 };
 export const getTransactionHistoryFindAllBranch = (data) => {
   return apiCall({
-    url: `/transactionHistory/findAllByBranch_IdAndActiveTrue/${data}`,
+    url: `/transactionHistory/findAllByBranch_IdAndActiveTrue/${data?.branchId}?page=${data.page - 1}&size=${data.size}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,
+  });
+}; export const getTransactionByBranchByStudent = (data) => {
+  return apiCall({
+    url: `/transactionHistory/getByBranchIdAndByStudent/${data?.branchId}?page=${data.page - 1}&size=${data.size}`,
+    method: "get",
+    onSuccess: slice.actions.getFromStudentTransaction.type,
+    onFail: slice.actions.getFromStudentTransaction.type,
+  });
+};
+
+export const getTransactionByStudent = (data) => {
+  return apiCall({
+    url: `/transactionHistory/getByStudentId/${data?.studentId}?page=${data.page - 1}&size=${data.size}`,
+    method: "get",
+    onSuccess: slice.actions.getFromStudentTransaction.type,
+    onFail: slice.actions.getFromStudentTransaction.type,
   });
 };
 
