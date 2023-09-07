@@ -679,6 +679,22 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                           </li>
                           <li>
                             <NavLink
+                              to={`/give-salaries?page=1&size=${pageSize}`}
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              {/* eslint-disable-next-line react/no-unescaped-entities */}
+                              Maosh Berish
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
                               to={`/partly-salaries?page=1&size=${pageSize}`}
                               onClick={() => {
                                 return setSidebarOpen(false);

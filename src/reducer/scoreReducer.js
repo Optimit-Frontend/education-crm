@@ -59,7 +59,7 @@ export const getScores = (data) => {
 };
 export const getScoreStudentSubjectId = (data) => {
   return apiCall({
-    url: `/score/getgetAllByStudentIdAndSubjectId?studentId=${data.studentId}&subjectId=${data.subjectId}&page=${data.page - 1}&size=${data.size}`,
+    url: `/score/getAllByStudentIdAndSubjectId?studentId=${data.studentId}&subjectId=${data.subjectId}&page=${data.page - 1}&size=${data.size}`,
     method: "get",
     onSuccess: slice.actions.getFrom.type,
     onFail: slice.actions.getFrom.type,

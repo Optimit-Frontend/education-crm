@@ -17,7 +17,7 @@ import salaryReducer, {
   saveGiveCashAdvance,
   saveGiveDebtToEmployee,
   getGiveSalary,
-  savePartlySalary, saveSalary,
+  savePartlySalary, saveSalary, giveSalary,
 } from "../../reducer/salaryReducer.js";
 import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer.js";
 
@@ -68,11 +68,11 @@ const columns = [
   },
 ];
 
-function Salary({
+function GiveSalary({
   usersDataReducer,
   getGiveSalary,
-  saveSalary, salaryReducer, employeeReducer, getUserLists,
-  editSalary, balanceReducer,
+  giveSalary, salaryReducer, getUserLists, employeeReducer,
+  editSalary, balanceReducer, savePartlySalary,
   deleteSalary, getAllBalanceBranch, businessBranchesReducer, getBusinessBranch
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
@@ -93,9 +93,9 @@ function Salary({
 
   useEffect(() => {
     getGiveSalary(usersDataReducer?.branch?.id);
+    getUserLists();
     getAllBalanceBranch(usersDataReducer?.branch?.id);
     getBusinessBranch(usersDataReducer?.branch?.id);
-    getUserLists();
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
@@ -108,22 +108,22 @@ function Salary({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/salaries?page=${pageCount}&size=100`);
+      navigate(`/partly-salaries?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/salaries?page=${pageCount}&size=50`);
+      navigate(`/partly-salaries?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/salaries?page=${pageCount}&size=20`);
+      navigate(`/partly-salaries?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/salaries?page=${pageCount}&size=10`);
+      navigate(`/partly-salaries?page=${pageCount}&size=10`);
     }
   }, []);
 
@@ -156,10 +156,10 @@ function Salary({
       : form
         .validateFields()
         .then((values) => {
-          saveSalary({
-            ...values,
-            fix: parseFloat(values?.fix),
-            date: dayjs(values?.date).format("YYYY-MM-DD"),
+          giveSalary({
+            userId: values.userId,
+            partlySalary: parseFloat(values.partlySalary),
+            paymentType: values.paymentType
           });
           setOnedit(false);
         })
@@ -174,7 +174,7 @@ function Salary({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Maoshlar</h3>
+      <h3 className="text-2xl font-bold mb-5">Maosh haqida</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
         {selectedRowKeys[0].length === 1 && (
           <button
@@ -182,6 +182,7 @@ function Salary({
               setOnedit(true);
               setVisible(true);
               form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.user?.phoneNumber);
+              form.setFieldValue("startDate", dayjs(selectedRowKeys[1][0]?.startDate));
               form.setFieldValue("date", dayjs(selectedRowKeys[1][0]?.date));
               form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
               form.setFieldValue("fix", selectedRowKeys[1][0]?.fix);
@@ -276,20 +277,20 @@ function Salary({
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item
-                key="mainBalanceId"
-                name="mainBalanceId"
-                label={<span className="text-base font-medium">Hisob raqam</span>}
+                key="paymentType"
+                name="paymentType"
+                label={<span className="text-base font-medium">Maosh turi</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Hisob raqam kiriting",
+                    message: "Maosh turi kiriting",
                   },
                 ]}
               >
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Hisob raqam tanlang"
+                  placeholder="Tulov turi tanlang"
                   optionFilterProp="children"
                   style={{ width: "100%" }}
                   key="id"
@@ -297,77 +298,27 @@ function Salary({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  {balanceReducer?.balance?.map((balance) => {
-                    return (
-                      <Option value={balance.id} key={balance.id}>{balance?.accountNumber}</Option>
-                    );
-                  })}
+                  <Option value="CASH">Naqd</Option>
+                  <Option value="CARD">Plastik Karta</Option>
+                  <Option value="HISOBDAN_HISOBGA">Hisobdan hisobga</Option>
+                  <Option value="ELEKTRON">Elektron</Option>
                 </Select>
               </Form.Item>
               <Form.Item
-                key="date"
-                name="date"
-                label={<span className="text-base font-medium">Sana</span>}
+                key="partlySalary"
+                name="partlySalary"
+                label={<span className="text-base font-medium">Maosh</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Sanani kiriting",
+                    message: "Maosh kiriting",
                   },
                 ]}
               >
-                <DatePicker
-                  className="w-full"
-                  placeholder="Sanani kiriting..."
-                />
-              </Form.Item>
-              <Form.Item
-                key="fix"
-                name="fix"
-                label={<span className="text-base font-medium">Oylik maosh ( Stabilniy )</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Oylik maoshni kiriting",
-                  },
-                ]}
-              >
-                <Input type="number" placeholder="Oylik maoshni kiriting . . ." />
+                <Input type="number" placeholder="Maoshni kiritng" />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                key="branchId"
-                name="branchId"
-                label={<span className="text-base font-medium">Filial ( Branch )</span>}
-                rules={[
-                  {
-                    required: false,
-                    message: "Filialni tanlang",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Filialni tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {
-                    businessBranchesReducer?.businessBranch?.map((barnch) => {
-                      return (
-                        <Option value={barnch?.id} key={barnch?.id}>
-                          {barnch?.name}
-                        </Option>
-                      );
-                    })
-                  }
-                </Select>
-              </Form.Item>
               <Form.Item
                 key="userId"
                 name="userId"
@@ -375,11 +326,11 @@ function Salary({
                 rules={[
                   {
                     required: true,
-                    message: "Tel raqam kiriting",
+                    message: "Xodim kiriting",
                   },
                 ]}
               >
-                {/* <Input addonBefore="+998" type="number" placeholder="Tel raqam kiriting . . ." /> */}
+                {/* <Input addonBefore="+998" type="number" placeholder="Xodim kiriting . . ." /> */}
                 <Select
                   showSearch
                   allowClear
@@ -434,10 +385,11 @@ export default connect(
     saveGiveDebtToEmployee,
     saveGiveCashAdvance,
     saveSalary,
-    getUserLists,
     editSalary,
     deleteSalary,
     getEmployeeBranchId,
-    getAllBalanceBranch
+    getAllBalanceBranch,
+    getUserLists,
+    giveSalary
   }
-)(Salary);
+)(GiveSalary);

@@ -367,7 +367,7 @@ function StudentHomework({
                 label={<span className="text-base font-medium">Jurnal tanlash</span>}
                 rules={[
                   {
-                    required: false,
+                    required: true,
                     message: "Jurnalni kiriting",
                   },
                 ]}
@@ -466,7 +466,7 @@ function StudentHomework({
                 label={<span className="text-base font-medium">Qisqa eslatma</span>}
                 rules={[
                   {
-                    required: true,
+                    required: false,
                     message: "Qisqa eslatma",
                   },
                 ]}
