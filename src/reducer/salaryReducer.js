@@ -66,7 +66,7 @@ export const savePartlySalary = (data) => {
 };
 export const giveSalary = (data) => {
   return apiCall({
-    url: `/salary/giveSalary?userId=${data.userId}&partlySalary=${data?.partlySalary}&paymentType=${data?.paymentType}`,
+    url: `/salary/giveSalary?id=${data.id}&withholdingOfDebtIfAny=${data?.withholdingOfDebtIfAny}&paymentType=${data?.paymentType}`,
     method: "post",
     // data,
     onSuccess: slice.actions.saveFrom.type,

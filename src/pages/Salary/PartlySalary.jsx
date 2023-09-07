@@ -174,9 +174,9 @@ function PartlySalary({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Maosh haqida</h3>
+      <h3 className="text-2xl font-bold mb-5">Qisman maosh berish</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
-        {selectedRowKeys[0].length === 1 && (
+        {selectedRowKeys[0].length === -1 && (
           <button
             onClick={() => {
               setOnedit(true);

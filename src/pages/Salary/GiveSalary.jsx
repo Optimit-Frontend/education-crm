@@ -108,22 +108,22 @@ function GiveSalary({
       setPageData((prev) => {
         return { ...prev, size: 100 };
       });
-      navigate(`/partly-salaries?page=${pageCount}&size=100`);
+      navigate(`/give-salaries?page=${pageCount}&size=100`);
     } else if (pageSize >= 50) {
       setPageData((prev) => {
         return { ...prev, size: 50 };
       });
-      navigate(`/partly-salaries?page=${pageCount}&size=50`);
+      navigate(`/give-salaries?page=${pageCount}&size=50`);
     } else if (pageSize >= 20) {
       setPageData((prev) => {
         return { ...prev, size: 20 };
       });
-      navigate(`/partly-salaries?page=${pageCount}&size=20`);
+      navigate(`/give-salaries?page=${pageCount}&size=20`);
     } else {
       setPageData((prev) => {
         return { ...prev, size: 10 };
       });
-      navigate(`/partly-salaries?page=${pageCount}&size=10`);
+      navigate(`/give-salaries?page=${pageCount}&size=10`);
     }
   }, []);
 
@@ -157,8 +157,8 @@ function GiveSalary({
         .validateFields()
         .then((values) => {
           giveSalary({
-            userId: values.userId,
-            partlySalary: parseFloat(values.partlySalary),
+            id: values.id,
+            withholdingOfDebtIfAny: values?.withholdingOfDebtIfAny,
             paymentType: values.paymentType
           });
           setOnedit(false);
@@ -174,9 +174,9 @@ function GiveSalary({
 
   return (
     <div>
-      <h3 className="text-2xl font-bold mb-5">Maosh haqida</h3>
+      <h3 className="text-2xl font-bold mb-5">Maosh Berish</h3>
       <div className="flex items-center justify-end gap-5 mb-3">
-        {selectedRowKeys[0].length === 1 && (
+        {selectedRowKeys[0].length === -1 && (
           <button
             onClick={() => {
               setOnedit(true);
@@ -305,23 +305,37 @@ function GiveSalary({
                 </Select>
               </Form.Item>
               <Form.Item
-                key="partlySalary"
-                name="partlySalary"
-                label={<span className="text-base font-medium">Maosh</span>}
+                key="withholdingOfDebtIfAny"
+                name="withholdingOfDebtIfAny"
+                label={<span className="text-base font-medium">Qarz</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Maosh kiriting",
+                    message: "Tanlang",
                   },
                 ]}
               >
-                <Input type="number" placeholder="Maoshni kiritng" />
+                {/* <Input addonBefore="+998" type="number" placeholder="Xodim kiriting . . ." /> */}
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Tanlash"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  <Option value="true">Qarz</Option>
+                  <Option value="false">Qarz -</Option>
+                </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item
-                key="userId"
-                name="userId"
+                key="id"
+                name="id"
                 label={<span className="text-base font-medium">Xodim tanlash</span>}
                 rules={[
                   {

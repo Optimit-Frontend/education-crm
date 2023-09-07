@@ -129,7 +129,7 @@ function Salary({
 
   const handleDelete = (arr) => {
     arr?.map((item) => {
-      deleteSalary(item?.user?.phoneNumber);
+      deleteSalary(item?.user?.id);
       return null;
     });
   };
@@ -185,6 +185,7 @@ function Salary({
               form.setFieldValue("date", dayjs(selectedRowKeys[1][0]?.date));
               form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
               form.setFieldValue("fix", selectedRowKeys[1][0]?.fix);
+              form.setFieldValue("userId", selectedRowKeys[1][0]?.user?.id);
               form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalanceId);
               console.log(selectedRowKeys[1][0]);
             }}
