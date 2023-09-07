@@ -259,7 +259,7 @@ function Salary({
         open={visible}
         title={(
           <h3 className="text-xl mb-3 font-semibold">
-            Talaba
+            Jurnal
             {onedit ? "ni taxrirlash" : " qo'shish"}
           </h3>
         )}

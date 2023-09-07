@@ -64,6 +64,15 @@ export const savePartlySalary = (data) => {
     onFail: slice.actions.saveFrom.type,
   });
 };
+export const giveSalary = (data) => {
+  return apiCall({
+    url: `/salary/giveSalary?userId=${data.userId}&partlySalary=${data?.partlySalary}&paymentType=${data?.paymentType}`,
+    method: "post",
+    // data,
+    onSuccess: slice.actions.saveFrom.type,
+    onFail: slice.actions.saveFrom.type,
+  });
+};
 
 export const saveGiveDebtToEmployee = (data) => {
   return apiCall({

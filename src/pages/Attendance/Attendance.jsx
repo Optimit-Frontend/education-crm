@@ -278,8 +278,8 @@ function Attendance({
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  <Option value="true">Keldi</Option>
-                  <Option value="false">Ketdi</Option>
+                  <Option value="true">Keldi +</Option>
+                  <Option value="false">Ketdi -</Option>
                 </Select>
               </Form.Item>
               <Form.Item
@@ -352,7 +352,7 @@ function Attendance({
                 label={<span className="text-base font-medium">Qisqa eslatma</span>}
                 rules={[
                   {
-                    required: true,
+                    required: false,
                     message: "Qisqa eslatma",
                   },
                 ]}

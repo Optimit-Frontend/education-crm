@@ -13,6 +13,7 @@ import LessonSchedule from "../pages/LessonSchedule/LessonSchedule.jsx";
 import Family from "../pages/Students/Family.jsx";
 import FamilyLogin from "../pages/Students/FamilyLogin.jsx";
 import Topic from "../pages/Topic/Topic.jsx";
+import GiveSalary from "../pages/Salary/GiveSalary.jsx";
 
 const Dashboard = lazy(() => {
   return import("../pages/Dashboard/Dashboard");
@@ -134,6 +135,7 @@ function RoutesPage() {
           <Route path="student-debts" element={<StudentDebt />} />
           <Route path="salaries" element={<Salary />} />
           <Route path="partly-salaries" element={<PartlySalary />} />
+          <Route path="give-salaries" element={<GiveSalary />} />
           <Route path="journal" element={<Journal />} />
           <Route path="lesson-schedule" element={<LessonSchedule />} />
           <Route path="student-homework" element={<StudentHomework />} />

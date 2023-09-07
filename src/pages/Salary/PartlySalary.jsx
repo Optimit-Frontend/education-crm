@@ -9,7 +9,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import employeeReducer, { getEmployeeBranchId } from "../../reducer/employeeReducer";
+import employeeReducer, { getEmployeeBranchId, getUserLists } from "../../reducer/employeeReducer";
 import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer";
 import salaryReducer, {
   deleteSalary,
@@ -68,10 +68,10 @@ const columns = [
   },
 ];
 
-function Salary({
+function PartlySalary({
   usersDataReducer,
   getGiveSalary,
-  saveSalary, salaryReducer,
+  saveSalary, salaryReducer, getUserLists, employeeReducer,
   editSalary, balanceReducer, savePartlySalary,
   deleteSalary, getAllBalanceBranch, businessBranchesReducer, getBusinessBranch
 }) {
@@ -93,6 +93,7 @@ function Salary({
 
   useEffect(() => {
     getGiveSalary(usersDataReducer?.branch?.id);
+    getUserLists();
     getAllBalanceBranch(usersDataReducer?.branch?.id);
     getBusinessBranch(usersDataReducer?.branch?.id);
     setVisible(false);
@@ -319,17 +320,34 @@ function Salary({
             </Col>
             <Col span={12}>
               <Form.Item
-                key="phoneNumber"
-                name="phoneNumber"
-                label={<span className="text-base font-medium">Tel raqam</span>}
+                key="userId"
+                name="userId"
+                label={<span className="text-base font-medium">Xodim tanlash</span>}
                 rules={[
                   {
                     required: true,
-                    message: "Tel raqam kiriting",
+                    message: "Xodim kiriting",
                   },
                 ]}
               >
-                <Input addonBefore="+998" type="number" placeholder="Tel raqam kiriting . . ." />
+                {/* <Input addonBefore="+998" type="number" placeholder="Xodim kiriting . . ." /> */}
+                <Select
+                  showSearch
+                  allowClear
+                  placeholder="Xodim tanlash"
+                  optionFilterProp="children"
+                  style={{ width: "100%" }}
+                  key="id"
+                  filterOption={(input, option) => {
+                    return option.children.toLowerCase()?.includes(input.toLowerCase());
+                  }}
+                >
+                  {employeeReducer?.employeesAllBranch?.map((employee) => {
+                    return (
+                      <Option value={employee.id} key={employee.id}>{employee?.name}</Option>
+                    );
+                  })}
+                </Select>
               </Form.Item>
             </Col>
           </Row>
@@ -370,6 +388,7 @@ export default connect(
     editSalary,
     deleteSalary,
     getEmployeeBranchId,
-    getAllBalanceBranch
+    getAllBalanceBranch,
+    getUserLists
   }
-)(Salary);
+)(PartlySalary);
