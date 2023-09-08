@@ -1,0 +1,15 @@
+.div_container{
+  display: flex;
+  justify-content: space-between;
+}
+.div_check{
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.checkInput{
+  margin-top: 4px;
+}
+.block{
+  width: 48%;
+}
