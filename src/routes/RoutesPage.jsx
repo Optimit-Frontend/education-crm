@@ -14,6 +14,7 @@ import Family from "../pages/Students/Family.jsx";
 import FamilyLogin from "../pages/Students/FamilyLogin.jsx";
 import Topic from "../pages/Topic/Topic.jsx";
 import GiveSalary from "../pages/Salary/GiveSalary.jsx";
+import Roles from "../pages/Employee/Roles.jsx";
 
 const Dashboard = lazy(() => {
   return import("../pages/Dashboard/Dashboard");
@@ -123,6 +124,7 @@ function RoutesPage() {
           <Route path="kitchen/dailyconsumedProduct" element={<DailyConsumedProducts />} />
           <Route path="kitchen/dailyConsumedDrink" element={<DailyConsumedDrinks />} />
           <Route path="employee/role" element={<Role />} />
+          <Route path="roles" element={<Roles />} />
           <Route path="employee" element={<Employee />} />
           <Route path="employee/achievement" element={<Achievement />} />
           <Route path="employee/workExpirence" element={<WorkExpirence />} />

@@ -302,6 +302,21 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               Lavozimlar
                             </NavLink>
                           </li>
+                          <li>
+                            <NavLink
+                              to={`/roles?page=1&size=${pageSize}`}
+                              onClick={() => {
+                                return setSidebarOpen(false);
+                              }}
+                              className={({ isActive }) => {
+                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                  isActive && "!text-white"
+                                }`;
+                              }}
+                            >
+                              Lavozim qo`shish
+                            </NavLink>
+                          </li>
                         </ul>
                       </div>
                     </>
