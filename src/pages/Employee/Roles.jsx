@@ -12,6 +12,7 @@ import roleReducer, {
 } from "../../reducer/roleReducer";
 // eslint-disable-next-line import/order
 import { Button, Checkbox } from "antd";
+// eslint-disable-next-line import/order
 import { DownloadOutlined } from "@ant-design/icons";
 
 function Role({
