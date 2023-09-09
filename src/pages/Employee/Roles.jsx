@@ -19,7 +19,10 @@ function Role({
   roleReducer,
   usersDataReducer,
   deleteRole,
-  getRoleBranch
+  saveRole,
+  editRole,
+  getRoleBranch,
+  match
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const location = useLocation();
@@ -34,11 +37,6 @@ function Role({
   });
 
   useEffect(() => {
-    getRoleBranch({
-      page: pageData.page,
-      size: pageData.size,
-      branchId: usersDataReducer?.branch?.id
-    });
     setSelectedRowKeys([[], []]);
   }, [roleReducer?.changeData]);
 
@@ -89,8 +87,106 @@ function Role({
       editRoleChecked: false,
       deleteRole: null,
       deleteRoleChecked: false,
+      // WorkType
+      // AllWorkTypeRoles: false,
+      viewWorkType: null,
+      viewWorkTypeChecked: false,
+      addWorkType: null,
+      addWorkTypeChecked: false,
+      editWorkType: null,
+      editWorkTypeChecked: false,
+      deleteWorkType: null,
+      deleteWorkTypeChecked: false
     }
   );
+
+  const [roles, setRoles] = useState({
+    AllUserRoles: ["addUser", "deleteUser", "editUser", "viewUser"],
+    AllUserRolesValue: ["ADD_USER", "DELETE_USER", "EDIT_USER", "VIEW_USER"],
+    AllRoleRoles: ["addRole", "deleteRole", "editRole", "viewRole"],
+    AllRoleRolesValue: ["ADD_ROLE", "DELETE_ROLE", "EDIT_ROLE", "VIEW_ROLE"],
+    AllWorkTypeRoles: ["addWorkType", "deleteWorkType", "editWorkType", "viewWorkType"],
+    AllWorkTypeValue: ["ADD_WORK_OF_TYPE", "DELETE_WORK_OF_TYPE", "EDIT_WORK_OF_TYPE", "VIEW_WORK_OF_TYPE"]
+  });
+
+  const [permission, setpermission] = useState([]);
+
+  function changeAllUserRoles(e) {
+    if (e.target.checked) {
+      input[e.target.name] = e.target.checked;
+      roles[e.target.name].map((item, index) => {
+        roles[`${e.target.name}Value`].map((value, label) => {
+          if (index === label) {
+            input[item] = value;
+            input[`${item}Checked`] = e.target.checked;
+          }
+        });
+      });
+    } else {
+      input[e.target.name] = e.target.checked;
+      roles[e.target.name].map((item) => {
+        input[item] = null;
+        input[`${item}Checked`] = e.target.checked;
+      });
+    }
+    const a = { ...input };
+    setInput(a);
+  }
+
+  function changeRoles(e) {
+    if (e.target.checked) {
+      input[e.target.name] = e.target.value;
+      input[`${e.target.name}Checked`] = e.target.checked;
+    } else {
+      input[e.target.name] = null;
+      input[`${e.target.name}Checked`] = e.target.checked;
+    }
+    checkPermission();
+  }
+
+  function checkPermission() {
+    input.AllUserRoles = input.addUserChecked && input.editUserChecked && input.deleteUserChecked && input.viewUserChecked;
+    input.AllRoleRoles = input.addRoleChecked && input.editRoleChecked && input.deleteRoleChecked && input.viewRoleChecked;
+    input.AllWorkTypeRoles = input.addWorkTypeChecked && input.editWorkTypeChecked && input.deleteWorkTypeChecked && input.viewWorkTypeChecked;
+
+    const a = { ...input };
+    setInput(a);
+  }
+
+  function saqla() {
+    if (input.name === "") {
+      input.namePlacholder = "Lavozim nomini kiriting...";
+      const b = document.getElementById("inputValudesion");
+      const a = { ...input };
+      setInput(a);
+      b.classList.add("inputValudetion");
+    } else {
+      permission.push(
+        input.viewUser,
+        input.addUser,
+        input.editUser,
+        input.deleteUser,
+        input.viewRole,
+        input.addRole,
+        input.editRole,
+        input.deleteRole,
+        input.viewWorkType,
+        input.addWorkType,
+        input.editWorkType,
+        input.deleteWorkType
+      );
+      const a = [...permission];
+      setpermission(a);
+      if (match.params.id === undefined) {
+        saveRole(
+          {
+            name: input.name,
+            permissions: permission,
+          }
+        );
+      }
+    }
+  }
 
   return (
     <div>
@@ -101,19 +197,24 @@ function Role({
             <h2 className="text-center text-2xl">Hodimlar</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllUserRoles} name="AllUserRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_USER" name="addUser" checked={input.addUserChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Hodim qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_USER" name="viewUser" checked={input.viewUserChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Hodim ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_USER" name="editUser" checked={input.editUserChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Hodim tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_USER" name="deleteUser" checked={input.deleteUserChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Hodim o`chirish</p>
             </div>
           </div>
@@ -121,25 +222,35 @@ function Role({
             <h2 className="text-center text-2xl">Ish turlari</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllWorkTypeRoles} name="AllWorkTypeRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_WORK_OF_TYPE" name="addWorkType" checked={input.addWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish turi qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_WORK_OF_TYPE" name="viewWorkType" checked={input.viewWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish turi ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_WORK_OF_TYPE" name="editWorkType" checked={input.editWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish turi tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_WORK_OF_TYPE" name="deleteWorkType" checked={input.deleteWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish turi o`chirish</p>
             </div>
           </div>
           <div className="border-2 p-3 mt-4">
             <h2 className="text-center text-2xl">Ish Tajribasi</h2>
             <hr />
+            <div className="div_check">
+              <input className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
             <div className="div_check">
               <input className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish tajribasi qo`shish</p>
@@ -297,19 +408,24 @@ function Role({
             <h2 className="text-center text-2xl">Lavozimlar</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllRoleRoles} name="AllRoleRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_ROLE" name="addRole" checked={input.addRoleChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Lavozim qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_ROLE" name="viewRole" checked={input.viewRoleChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Lavozim ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_ROLE" name="editRole" checked={input.editRoleChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Lavozim tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_ROLE" name="deleteRole" checked={input.deleteRoleChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Lavozim o`chirish</p>
             </div>
           </div>
