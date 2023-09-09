@@ -1,26 +1,26 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, InputNumber, Modal, Row, Select,
+  Col, Form, Input, Modal, Row, Select,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
-import employeeReducer, { getEmployeeBranch, getUserLists } from "../../reducer/employeeReducer.js";
-import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer.js";
-import subjectReducer, { getSubject } from "../../reducer/subjectReducer.js";
-import classReducer, { getClassesAll } from "../../reducer/classReducer.js";
-import workExpirenceReducer, {
-  getWorkExperienceByUserId,
-} from "../../reducer/workExpirenceReducer.js";
-import typeOfWork from "../Employee/TypeOfWork.jsx";
-import roomReducer, { getAllRoomBranch } from "../../reducer/roomReducer.js";
+import employeeReducer, { getEmployeeBranch, getUserLists } from "../../reducer/employeeReducer";
+import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer";
+import subjectReducer, { getSubject } from "../../reducer/subjectReducer";
+import classReducer, { getClassesAll } from "../../reducer/classReducer";
+import typeOfWorkReducer, {
+  getAllTypeOfWork,
+} from "../../reducer/typeOfWorkReducer";
+import roomReducer, { getAllRoomBranch } from "../../reducer/roomReducer";
 import lessonScheduleReducer, {
   deleteLessonSchedule,
-  editLessonSchedule, getLessonSchedule,
+  editLessonSchedule,
+  getLessonSchedule,
   saveLessonSchedule,
-} from "../../reducer/lessonScheduleReducer.js";
+} from "../../reducer/lessonScheduleReducer";
 
 const { Option } = Select;
 
@@ -63,9 +63,10 @@ const columns = [
 ];
 
 function LessonSchedule({
-  usersDataReducer, getWorkExperienceByUserId, workExpirenceReducer, getAllRoomBranch, deleteLessonSchedule, editLessonSchedule, saveLessonSchedule,
-  employeeReducer, getUserLists, subjectReducer, getSubject, getClassesAll, classReducer, getLessonSchedule,
-  getBusinessBranch, teachingHourReducer, businessBranchesReducer, roomReducer, lessonScheduleReducer
+  usersDataReducer, getAllTypeOfWork, typeOfWorkReducer, getAllRoomBranch, deleteLessonSchedule,
+  editLessonSchedule, saveLessonSchedule, employeeReducer, getUserLists, subjectReducer, getSubject,
+  getClassesAll, classReducer, getLessonSchedule,
+  getBusinessBranch, businessBranchesReducer, roomReducer, lessonScheduleReducer
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -92,7 +93,7 @@ function LessonSchedule({
       page: pageData.page,
       size: pageData.size
     });
-    getWorkExperienceByUserId(usersDataReducer?.userData?.id);
+    getAllTypeOfWork(usersDataReducer?.branch?.id);
     getClassesAll({ id: usersDataReducer?.branch?.id });
     getAllRoomBranch(usersDataReducer?.branch?.id);
     setVisible(false);
@@ -186,7 +187,6 @@ function LessonSchedule({
               form.setFieldValue("teacherId", selectedRowKeys[1][0]?.teacherId);
               form.setFieldValue("subjectId", selectedRowKeys[1][0]?.subject?.id);
               form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
-              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -463,19 +463,19 @@ function LessonSchedule({
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Ish tajriba tanlash"
+                  placeholder="Ish turini tanlang..."
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
                   {
-                    workExpirenceReducer?.workExpirence?.workExperienceResponses?.map((work) => {
+                    typeOfWorkReducer?.typeOfWork?.map((work) => {
                       return (
                         <Option value={work?.id} key={work?.id}>
-                          {work?.position}
+                          {`${work?.name} ${work?.price}`}
                         </Option>
                       );
                     })
@@ -524,7 +524,7 @@ function LessonSchedule({
         pageSizeOptions={[10, 20, 50, 100]}
         current={pageData?.page}
         pageSize={pageData?.size}
-        tableData={lessonScheduleReducer?.lessonSchedule?.lessonScheduleResponseList?.map((item) => {
+        tableData={lessonScheduleReducer?.lessonSchedule?.map((item) => {
           return ({
             ...item,
             teacher: item.teacher?.name,
@@ -547,15 +547,15 @@ function LessonSchedule({
 
 export default connect(
   (
-    usersDataReducer, employeeReducer, businessBranchesReducer, businessBranchesReducer, subjectReducer, classReducer,
-    workExpirenceReducer, roomReducer, lessonScheduleReducer
+    usersDataReducer, employeeReducer, businessBranchesReducer, businessBranchesReducer,
+    subjectReducer, classReducer, typeOfWorkReducer, roomReducer, lessonScheduleReducer
   ), {
     getEmployeeBranch,
     getUserLists,
     getBusinessBranch,
     getSubject,
     getClassesAll,
-    getWorkExperienceByUserId,
+    getAllTypeOfWork,
     getAllRoomBranch,
     getLessonSchedule,
     saveLessonSchedule,

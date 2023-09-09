@@ -7,7 +7,6 @@ export const slice = createSlice({
   initialState: {
     lessonSchedule: null,
     lessonScheduleAllBarnch: null,
-    lessonScheduleTotalCount: 0,
     message: null,
     changeData: false,
   },
@@ -15,7 +14,6 @@ export const slice = createSlice({
     getFrom: (state, action) => {
       if (action.payload.success) {
         state.lessonSchedule = action.payload?.data;
-        state.lessonScheduleTotalCount = action.payload?.data?.allSize;
       } else {
         state.message = action.payload.message;
         toast.warning(action.payload.message || "Dars jadvalini yuklashda muammo bo'ldi");
