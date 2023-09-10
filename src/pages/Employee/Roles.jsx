@@ -88,7 +88,7 @@ function Role({
       deleteRole: null,
       deleteRoleChecked: false,
       // WorkType
-      // AllWorkTypeRoles: false,
+      AllWorkTypeRoles: false,
       viewWorkType: null,
       viewWorkTypeChecked: false,
       addWorkType: null,
@@ -96,7 +96,37 @@ function Role({
       editWorkType: null,
       editWorkTypeChecked: false,
       deleteWorkType: null,
-      deleteWorkTypeChecked: false
+      deleteWorkTypeChecked: false,
+      //   Hodim yutuqlari
+      AllAchievementRoles: false,
+      viewAchievement: null,
+      viewAchievementChecked: false,
+      addAchievement: null,
+      addAchievementChecked: false,
+      editAchievement: null,
+      editAchievementChecked: false,
+      deleteAchievement: null,
+      deleteAchievementChecked: false,
+      // ish tajribasi
+      AllWorkExperienceRoles: false,
+      viewWorkExperience: null,
+      viewWorkExperienceChecked: false,
+      addWorkExperience: null,
+      addWorkExperienceChecked: false,
+      editWorkExperience: null,
+      editWorkExperienceChecked: false,
+      deleteWorkExperience: null,
+      deleteWorkExperienceChecked: false,
+      // students
+      AllStudentRoles: false,
+      viewStudent: null,
+      viewStudentChecked: false,
+      addStudent: null,
+      addStudentChecked: false,
+      editStudent: null,
+      editStudentChecked: false,
+      deleteStudent: null,
+      deleteStudentChecked: false
     }
   );
 
@@ -106,7 +136,13 @@ function Role({
     AllRoleRoles: ["addRole", "deleteRole", "editRole", "viewRole"],
     AllRoleRolesValue: ["ADD_ROLE", "DELETE_ROLE", "EDIT_ROLE", "VIEW_ROLE"],
     AllWorkTypeRoles: ["addWorkType", "deleteWorkType", "editWorkType", "viewWorkType"],
-    AllWorkTypeValue: ["ADD_WORK_OF_TYPE", "DELETE_WORK_OF_TYPE", "EDIT_WORK_OF_TYPE", "VIEW_WORK_OF_TYPE"]
+    AllWorkTypeRolesValue: ["ADD_WORK_OF_TYPE", "DELETE_WORK_OF_TYPE", "EDIT_WORK_OF_TYPE", "VIEW_WORK_OF_TYPE"],
+    AllAchievementRoles: ["addAchievement", "deleteAchievement", "editAchievement", "viewAchievement"],
+    AllAchievementRolesValue: ["ADD_ACHIEVEMENT", "DELETE_ACHIEVEMENT", "EDIT_ACHIEVEMENT", "VIEW_ACHIEVEMENT"],
+    AllWorkExperienceRoles: ["addWorkExperience", "deleteWorkExperience", "viewWorkExperience", "editWorkExperience"],
+    AllWorkExperienceRolesValue: ["ADD_WORK_EXPERIENCE", "DELETE_WORK_EXPERIENCE", "VIEW_WORK_EXPERIENCE", "EDIT_WORK_EXPERIENCE"],
+    AllStudentRoles: ["addStudent", "deleteStudent", "viewStudent", "editStudent"],
+    AllStudentRolesValue: ["ADD_STUDENT", "DELETE_STUDENT", "VIEW_STUDENT", "EDIT_STUDENT"],
   });
 
   const [permission, setpermission] = useState([]);
@@ -148,6 +184,9 @@ function Role({
     input.AllUserRoles = input.addUserChecked && input.editUserChecked && input.deleteUserChecked && input.viewUserChecked;
     input.AllRoleRoles = input.addRoleChecked && input.editRoleChecked && input.deleteRoleChecked && input.viewRoleChecked;
     input.AllWorkTypeRoles = input.addWorkTypeChecked && input.editWorkTypeChecked && input.deleteWorkTypeChecked && input.viewWorkTypeChecked;
+    input.AllAchievementRoles = input.addAchievementChecked && input.editAchievementChecked && input.deleteAchievementChecked && input.viewAchievementChecked;
+    input.AllWorkExperienceRoles = input.addWorkExperienceChecked && input.editWorkExperienceChecked && input.deleteWorkExperienceChecked && input.viewWorkExperienceChecked;
+    input.AllStudentRoles = input.addStudentChecked && input.editStudentChecked && input.viewStudentChecked && input.deleteStudentChecked;
 
     const a = { ...input };
     setInput(a);
@@ -173,7 +212,15 @@ function Role({
         input.viewWorkType,
         input.addWorkType,
         input.editWorkType,
-        input.deleteWorkType
+        input.deleteWorkType,
+        input.viewAchievement,
+        input.editAchievement,
+        input.deleteAchievement,
+        input.addAchievement,
+        input.addWorkExperience,
+        input.editWorkExperience,
+        input.viewWorkExperience,
+        input.deleteWorkExperience
       );
       const a = [...permission];
       setpermission(a);
@@ -247,24 +294,24 @@ function Role({
             <h2 className="text-center text-2xl">Ish Tajribasi</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllWorkExperienceRoles} name="AllWorkExperienceRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Hammasini belgilash</p>
             </div>
             <br />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="ADD_WORK_EXPERIENCE" name="addWorkExperience" checked={input.addWorkExperienceChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish tajribasi qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_WORK_EXPERIENCE" name="viewWorkExperience" checked={input.viewWorkExperienceChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish tajribasi ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_WORK_EXPERIENCE" name="editWorkExperience" checked={input.editWorkExperienceChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish tajribasi tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_WORK_EXPERIENCE" name="deleteWorkExperience" checked={input.deleteWorkExperienceChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish tajribasi o`chirish</p>
             </div>
           </div>
@@ -434,19 +481,24 @@ function Role({
             <h2 className="text-center text-2xl">Hodim yutuqlari</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllAchievementRoles} name="AllAchievementRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_ACHIEVEMENT" name="addAchievement" checked={input.addAchievementChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Yutuq qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_ACHIEVEMENT" name="viewAchievement" checked={input.viewAchievementChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Yutuq ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_ACHIEVEMENT" name="editAchievement" checked={input.editAchievementChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Yutuq tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_ACHIEVEMENT" name="deleteAchievement" checked={input.deleteAchievementChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Yutuq o`chirish</p>
             </div>
           </div>
@@ -454,19 +506,24 @@ function Role({
             <h2 className="text-center text-2xl">Talabalar</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllStudentRoles} name="AllStudentRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_STUDENT" name="addStudent" checked={input.addStudentChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Talaba qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_STUDENT" name="viewStudent" checked={input.viewStudentChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Talaba ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_STUDENT" name="editStudent" checked={input.editStudentChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Talaba tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_STUDENT" name="deleteStudent" checked={input.deleteStudentChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Talaba o`chirish</p>
             </div>
           </div>
