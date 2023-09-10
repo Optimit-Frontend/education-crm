@@ -166,7 +166,87 @@ function Role({
       editTransaction: null,
       editTransactionChecked: false,
       deleteTransaction: null,
-      deleteTransactionChecked: false
+      deleteTransactionChecked: false,
+      // Family
+      AllFamilyRoles: false,
+      viewFamily: null,
+      viewFamilyChecked: false,
+      addFamily: null,
+      addFamilyChecked: false,
+      editFamily: null,
+      editFamilyChecked: false,
+      deleteFamily: null,
+      deleteFamilyChecked: false,
+      // Salary
+      AllSalaryRoles: false,
+      viewSalary: null,
+      viewSalaryChecked: false,
+      addSalary: null,
+      addSalaryChecked: false,
+      editSalary: null,
+      editSalaryChecked: false,
+      deleteSalary: null,
+      deleteSalaryChecked: false,
+      // Journal
+      AllJournalRoles: false,
+      viewJournal: null,
+      viewJournalChecked: false,
+      addJournal: null,
+      addJournalChecked: false,
+      editJournal: null,
+      editJournalChecked: false,
+      deleteJournal: null,
+      deleteJournalChecked: false,
+      // Score
+      AllScoreRoles: false,
+      viewScore: null,
+      viewScoreChecked: false,
+      addScore: null,
+      addScoreChecked: false,
+      editScore: null,
+      editScoreChecked: false,
+      deleteScore: null,
+      deleteScoreChecked: false,
+      // Attendance
+      AllAttendanceRoles: false,
+      viewAttendance: null,
+      viewAttendanceChecked: false,
+      addAttendance: null,
+      addAttendanceChecked: false,
+      editAttendance: null,
+      editAttendanceChecked: false,
+      deleteAttendance: null,
+      deleteAttendanceChecked: false,
+      // leesonHour
+      AllLessonHourRoles: false,
+      addLessonHour: null,
+      addLessonHourChecked: false,
+      editLessonHour: null,
+      editLessonHourChecked: false,
+      viewLessonHour: null,
+      viewLessonHourChecked: false,
+      deleteLessonHour: null,
+      deleteLessonHourChecked: false,
+      // leesonSchedule
+      AllScheduleRoles: false,
+      addSchedule: null,
+      addScheduleChecked: false,
+      editSchedule: null,
+      editScheduleChecked: false,
+      viewSchedule: null,
+      viewScheduleChecked: false,
+      deleteSchedule: null,
+      deleteScheduleChecked: null,
+      // Mavzu
+      AllThemeRoles: false,
+      addTheme: null,
+      addThemeChecked: false,
+      editTheme: null,
+      editThemeChecked: false,
+      viewTheme: null,
+      viewThemeChecked: false,
+      deleteTheme: null,
+      deleteThemeChecked: null,
     }
   );
 
@@ -191,6 +271,22 @@ function Role({
     AllHomeworkRolesValue: ["ADD_HOMEWORK", "DELETE_HOMEWORK", "VIEW_HOMEWORK", "EDIT_HOMEWORK"],
     AllTransactionRoles: ["addTransaction", "deleteTransaction", "viewTransaction", "editTransaction"],
     AllTransactionRolesValue: ["ADD_TRANSACTION", "DELETE_TRANSACTION", "VIEW_TRANSACTION", "EDIT_TRANSACTION"],
+    AllFamilyRoles: ["addFamily", "deleteFamily", "editFamily", "viewFamily"],
+    AllFamilyRolesValue: ["ADD_FAMILY", "DELETE_FAMILY", "VIEW_FAMILY", "EDIT_FAMILY"],
+    AllSalaryRoles: ["addSalary", "deleteSalary", "editSalary", "viewSalary"],
+    AllSalaryRolesValue: ["ADD_SALARY", "DELETE_SALARY", "VIEW_SALARY", "EDIT_SALARY"],
+    AllJournalRoles: ["addJournal", "deleteJournal", "editJournal", "viewJournal"],
+    AllJournalRolesValue: ["ADD_JOURNAL", "DELETE_JOURNAL", "VIEW_JOURNAL", "EDIT_JOURNAL"],
+    AllScoreRoles: ["addScore", "deleteScore", "viewScore", "editScore"],
+    AllScoreRolesValue: ["ADD_SCORE", "DELETE_SCORE", "VIEW_SCORE", "EDIT_SCORE"],
+    AllAttendanceRoles: ["addAttendance", "deleteAttendance", "viewAttendance", "editAttendance"],
+    AllAttendanceRolesValue: ["ADD_ATTENDANCE", "DELETE_ATTENDANCE", "VIEW_ATTENDANCE", "EDIT_ATTENDANCE"],
+    AllLessonHourRoles: ["addLessonHour", "deleteLessonHour", "viewLessonHour", "editLessonHour"],
+    AllLessonHourRolesValue: ["ADD_LESSON_HOUR", "DELETE_LESSON_HOUR", "VIEW_LESSON_HOUR", "EDIT_LESSON_HOUR"],
+    AllScheduleRoles: ["addSchedule", "deleteSchedule", "viewSchedule", "editSchedule"],
+    AllScheduleRolesValue: ["ADD_LESSON_SCHEDULE", "DELETE_LESSON_SCHEDULE", "VIEW_LESSON_SCHEDULE", "EDIT_LESSON_SCHEDULE"],
+    AllThemeRoles: ["addTheme", "deleteTheme", "viewTheme", "editTheme"],
+    AllThemeRolesValue: ["ADD_THEME", "DELETE_THEME", "VIEW_THEME", "EDIT_THEME"],
   });
 
   const [permission, setpermission] = useState([]);
@@ -238,6 +334,14 @@ function Role({
     input.AllAccountNumberRoles = input.addAccountNumberChecked && input.editAccountNumberChecked && input.deleteAccountNumberChecked && input.viewAccountNumber;
     input.AllHomeworkRoles = input.addHomeworkChecked && input.editHomeworkChecked && input.deleteHomeworkChecked && input.viewHomeworkChecked;
     input.AllTransactionRoles = input.addTransactionChecked && input.editTransactionChecked && input.viewTransactionChecked && input.deleteTransactionChecked;
+    input.AllFamilyRoles = input.addFamilyChecked && input.editFamilyChecked && input.viewFamilyChecked && input.deleteFamilyChecked;
+    input.AllSalaryRoles = input.addSalaryChecked && input.editSalaryChecked && input.deleteSalaryChecked && input.viewSalaryChecked;
+    input.AllJournalRoles = input.addJournalChecked && input.editJournalChecked && input.viewJournalChecked && input.deleteJournalChecked;
+    input.AllScoreRoles = input.addScoreChecked && input.editScoreChecked && input.viewScoreChecked && input.deleteScoreChecked;
+    input.AllAttendanceRoles = input.addAttendanceChecked && input.editAttendanceChecked && input.viewAttendanceChecked && input.deleteAttendanceChecked;
+    input.AllLessonHourRoles = input.addLessonHourChecked && input.editLessonHourChecked && input.viewLessonHourChecked && input.deleteLessonHourChecked;
+    input.AllScheduleRoles = input.addScheduleChecked && input.editScheduleChecked && input.viewScheduleChecked && input.deleteScheduleChecked;
+    input.AllThemeRoles = input.addThemeChecked && input.editThemeChecked && input.viewThemeChecked && input.deleteThemeChecked;
 
     const a = { ...input };
     setInput(a);
@@ -292,6 +396,38 @@ function Role({
         input.addTransaction,
         input.editTransaction,
         input.deleteTransaction,
+        input.viewFamily,
+        input.editFamily,
+        input.addFamily,
+        input.deleteFamily,
+        input.addSalary,
+        input.editSalary,
+        input.deleteSalary,
+        input.viewSalary,
+        input.addJournal,
+        input.editJournal,
+        input.viewJournal,
+        input.deleteJournal,
+        input.viewScore,
+        input.addScore,
+        input.editScore,
+        input.deleteScore,
+        input.viewAttendance,
+        input.editAttendance,
+        input.addAttendance,
+        input.deleteAttendance,
+        input.viewLessonHour,
+        input.editLessonHour,
+        input.addLessonHour,
+        input.deleteLessonHour,
+        input.addSchedule,
+        input.viewSchedule,
+        input.editSchedule,
+        input.deleteSchedule,
+        input.addTheme,
+        input.editTheme,
+        input.deleteTheme,
+        input.viewTheme,
       );
       const a = [...permission];
       setpermission(a);
@@ -448,19 +584,24 @@ function Role({
             <h2 className="text-center text-2xl">Maoshlar</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllSalaryRoles} name="AllSalaryRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_SALARY" name="addSalary" checked={input.addSalaryChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Maosh qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_SALARY" name="viewSalary" checked={input.viewSalaryChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Maosh ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_SALARY" name="editSalary" checked={input.editSalaryChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Maosh tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_SALARY" name="deleteSalary" checked={input.deleteSalaryChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Maosh o`chirish</p>
             </div>
           </div>
@@ -468,19 +609,24 @@ function Role({
             <h2 className="text-center text-2xl">Baholar</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllScoreRoles} name="AllScoreRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_SCORE" name="addScore" checked={input.addScoreChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Baho qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_SCORE" name="viewScore" checked={input.viewScoreChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Baho ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_SCORE" name="editScore" checked={input.editScoreChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Baho tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_SCORE" name="deleteScore" checked={input.deleteScoreChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Baho o`chirish</p>
             </div>
           </div>
@@ -488,19 +634,24 @@ function Role({
             <h2 className="text-center text-2xl">Dars soati</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllLessonHourRoles} name="AllLessonHourRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_LESSON_HOUR" name="addLessonHour" checked={input.addLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Dars soati qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_LESSON_HOUR" name="viewLessonHour" checked={input.viewLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Dars soati ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_LESSON_HOUR" name="editLessonHour" checked={input.editLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Dars soati tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_LESSON_HOUR" name="deleteLessonHour" checked={input.deleteLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Dars soati o`chirish</p>
             </div>
           </div>
@@ -508,19 +659,24 @@ function Role({
             <h2 className="text-center text-2xl">Mavzu</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllThemeRoles} name="AllThemeRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_THEME" name="addTheme" checked={input.addTheme} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Mavzu qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_THEME" name="viewTheme" checked={input.viewTheme} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Mavzu ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_THEME" name="editTheme" checked={input.editTheme} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Mavzu tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_THEME" name="deleteTheme" checked={input.deleteTheme} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Mavzu o`chirish</p>
             </div>
           </div>
@@ -662,19 +818,24 @@ function Role({
             <h2 className="text-center text-2xl">Talaba haqida</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllFamilyRoles} name="AllFamilyRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_FAMILY" name="addFamily" checked={input.addFamilyChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ma`lumot qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_FAMILY" name="viewFamily" checked={input.viewFamilyChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ma`lumot ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_FAMILY" name="editFamily" checked={input.editFamilyChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ma`lumot tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_FAMILY" name="deleteFamily" checked={input.deleteFamilyChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ma`lumot o`chirish</p>
             </div>
           </div>
@@ -682,19 +843,24 @@ function Role({
             <h2 className="text-center text-2xl">Jurnal</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllJournalRoles} name="AllJournalRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_JOURNAL" name="addJournal" checked={input.addJournal} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Jurnal qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_JOURNAL" name="viewJournal" checked={input.viewJournal} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Jurnal ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_JOURNAL" name="editJournal" checked={input.editJournal} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Jurnal tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_JOURNAL" name="deleteJournal" checked={input.deleteJournal} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Jurnal o`chirish</p>
             </div>
           </div>
@@ -702,19 +868,24 @@ function Role({
             <h2 className="text-center text-2xl">Davomad</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllAttendanceRoles} name="AllAttendanceRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_ATTENDANCE" name="addAttendance" checked={input.addAttendanceChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Davomad qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_ATTENDANCE" name="viewAttendance" checked={input.viewAttendanceChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Davomad ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_ATTENDANCE" name="editAttendance" checked={input.editAttendanceChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Davomad tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_ATTENDANCE" name="deleteAttendance" checked={input.deleteAttendanceChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Davomad o`chirish</p>
             </div>
           </div>
@@ -722,19 +893,24 @@ function Role({
             <h2 className="text-center text-2xl">Dars jadvali</h2>
             <hr />
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input checked={input.AllScheduleRoles} name="AllScheduleRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_LESSON_SCHEDULE" name="addSchedule" checked={input.addScheduleChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Dars jadvali qo`shish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="VIEW_LESSON_SCHEDULE" name="viewSchedule" checked={input.viewScheduleChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Dars jadvali ko`rish</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="EDIT_LESSON_SCHEDULE" name="editSchedule" checked={input.editScheduleChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Dars jadvali tahrirlash</p>
             </div>
             <div className="div_check">
-              <input className="checkInput" type="checkbox" />
+              <input value="DELETE_LESSON_SCHEDULE" name="deleteSchedule" checked={input.deleteScheduleChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Dars jadvali o`chirish</p>
             </div>
           </div>
