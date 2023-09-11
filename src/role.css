@@ -13,3 +13,13 @@
 .block{
   width: 48%;
 }
+.roleName{
+  padding: 5px;
+  margin-bottom: 10px;
+  background: transparent;
+  outline: none;
+  border-radius: 5px;
+  border: 1px solid silver;
+  width: 100%;
+  text-align: center;
+}

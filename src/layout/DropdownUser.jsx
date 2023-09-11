@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const UserOne = "https://react-demo.tailadmin.com/assets/user-01-b007ff3f.png";
 
@@ -35,6 +35,13 @@ function DropdownUser() {
       return document.removeEventListener("keydown", keyHandler);
     };
   });
+
+  const navigate = useNavigate();
+  function logOut() {
+    localStorage.clear();
+    sessionStorage.clear();
+    navigate("/login");
+  }
 
   return (
     <div className="relative">
@@ -138,6 +145,7 @@ function DropdownUser() {
           </li>
         </ul>
         <button
+          onClick={logOut}
           type="button"
           className="flex items-center gap-3.5 py-3 px-3 text-sm font-medium duration-300 ease-in-out hover:text-danger lg:text-base"
         >
