@@ -12,13 +12,14 @@ const instance = axios.create({
   },
 });
 
-// instance.interceptors.request.use((config) => {
-//   config.headers = config.headers ?? {};
-//   if (tokenLocal && !config.headers.Authorization) {
-//     config.headers.Authorization = `Bearer ${tokenLocal}`;
-//   }
-//   return config;
-// });
+instance.interceptors.request.use((config) => {
+  config.headers = config.headers ?? {};
+  if (tokenLocal && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${localStorage.getItem("EducationCRM")
+    || sessionStorage.getItem("EducationCRM")}`;
+  }
+  return config;
+});
 
 instance.interceptors.response.use(
   (response) => {
@@ -58,7 +59,10 @@ export const api = ({ dispatch }) => {
         url, method, data, onSuccess, params, onFail, contentType
       } = action.payload;
       instance({
-        headers: { "Content-Type": contentType || "application/json" },
+        headers: {
+          "Content-Type": contentType || "application/json",
+          // Authorization: `Bearer ${localStorage.getItem("EducationCRM") || sessionStorage.getItem("EducationCRM")}`
+        },
         url,
         method,
         data,
