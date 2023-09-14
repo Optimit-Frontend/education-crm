@@ -20,7 +20,6 @@ import { toast } from "react-toastify";
 function Role({
   roleReducer,
   usersDataReducer,
-  deleteRole,
   saveRole,
   editRole,
   getRoleBranch,
