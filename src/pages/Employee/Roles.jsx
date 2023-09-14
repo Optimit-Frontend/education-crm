@@ -14,6 +14,8 @@ import roleReducer, {
 import { Button, Checkbox } from "antd";
 // eslint-disable-next-line import/order
 import { DownloadOutlined } from "@ant-design/icons";
+// eslint-disable-next-line import/order
+import { toast } from "react-toastify";
 
 function Role({
   roleReducer,
@@ -38,7 +40,12 @@ function Role({
 
   useEffect(() => {
     setSelectedRowKeys([[], []]);
-  }, [roleReducer?.changeData]);
+    navigate("/employee/role");
+  }, [roleReducer?.success]);
+
+  useEffect(() => {
+    console.log(usersDataReducer);
+  }, []);
 
   useEffect(() => {
     const pageSize = parseInt(size, 10);
@@ -302,51 +309,51 @@ function Role({
 
   const [roles, setRoles] = useState({
     AllUserRoles: ["addUser", "deleteUser", "editUser", "viewUser"],
-    AllUserRolesValue: ["ADD_USER", "DELETE_USER", "EDIT_USER", "VIEW_USER"],
+    AllUserRolesValue: ["ADD_USER", "DELETE_USER", "EDIT_USER", "GET_USER"],
     AllRoleRoles: ["addRole", "deleteRole", "editRole", "viewRole"],
-    AllRoleRolesValue: ["ADD_ROLE", "DELETE_ROLE", "EDIT_ROLE", "VIEW_ROLE"],
+    AllRoleRolesValue: ["ADD_ROLE", "DELETE_ROLE", "EDIT_ROLE", "GET_ROLE"],
     AllWorkTypeRoles: ["addWorkType", "deleteWorkType", "editWorkType", "viewWorkType"],
-    AllWorkTypeRolesValue: ["ADD_WORK_OF_TYPE", "DELETE_WORK_OF_TYPE", "EDIT_WORK_OF_TYPE", "VIEW_WORK_OF_TYPE"],
+    AllWorkTypeRolesValue: ["ADD_WORK_OF_TYPE", "DELETE_WORK_OF_TYPE", "EDIT_WORK_OF_TYPE", "GET_WORK_OF_TYPE"],
     AllAchievementRoles: ["addAchievement", "deleteAchievement", "editAchievement", "viewAchievement"],
-    AllAchievementRolesValue: ["ADD_ACHIEVEMENT", "DELETE_ACHIEVEMENT", "EDIT_ACHIEVEMENT", "VIEW_ACHIEVEMENT"],
+    AllAchievementRolesValue: ["ADD_ACHIEVEMENT", "DELETE_ACHIEVEMENT", "EDIT_ACHIEVEMENT", "GET_ACHIEVEMENT"],
     AllWorkExperienceRoles: ["addWorkExperience", "deleteWorkExperience", "viewWorkExperience", "editWorkExperience"],
-    AllWorkExperienceRolesValue: ["ADD_WORK_EXPERIENCE", "DELETE_WORK_EXPERIENCE", "VIEW_WORK_EXPERIENCE", "EDIT_WORK_EXPERIENCE"],
+    AllWorkExperienceRolesValue: ["ADD_WORK_EXPERIENCE", "DELETE_WORK_EXPERIENCE", "GET_WORK_EXPERIENCE", "EDIT_WORK_EXPERIENCE"],
     AllStudentRoles: ["addStudent", "deleteStudent", "viewStudent", "editStudent"],
-    AllStudentRolesValue: ["ADD_STUDENT", "DELETE_STUDENT", "VIEW_STUDENT", "EDIT_STUDENT"],
+    AllStudentRolesValue: ["ADD_STUDENT", "DELETE_STUDENT", "GET_STUDENT", "EDIT_STUDENT"],
     AllClassRoles: ["addClass", "deleteClass", "viewClass", "editClass"],
-    AllClassRolesValue: ["ADD_STUDENT_CLASS", "DELETE_STUDENT_CLASS", "VIEW_STUDENT_CLASS", "EDIT_STUDENT_CLASS"],
+    AllClassRolesValue: ["ADD_STUDENT_CLASS", "DELETE_STUDENT_CLASS", "GET_STUDENT_CLASS", "EDIT_STUDENT_CLASS"],
     AllAccountNumberRoles: ["addAccountNumber", "deleteAccountNumber", "viewAccountNumber", "editAccountNumber"],
-    AllAccountNumberRolesValue: ["ADD_ACCOUNT_NUMBER", "DELETE_ACCOUNT_NUMBER", "VIEW_ACCOUNT_NUMBER", "EDIT_ACCOUNT_NUMBER"],
+    AllAccountNumberRolesValue: ["ADD_STUDENT_ACCOUNT", "DELETE_STUDENT_ACCOUNT", "GET_STUDENT_ACCOUNT", "EDIT_STUDENT_ACCOUNT"],
     AllHomeworkRoles: ["addHomework", "deleteHomework", "viewHomework", "editHomework"],
-    AllHomeworkRolesValue: ["ADD_STUDENT_HOMEWORK", "DELETE_STUDENT_HOMEWORK", "VIEW_STUDENT_HOMEWORK", "EDIT_STUDENT_HOMEWORK"],
+    AllHomeworkRolesValue: ["ADD_STUDENT_HOMEWORK", "DELETE_STUDENT_HOMEWORK", "GET_STUDENT_HOMEWORK", "EDIT_STUDENT_HOMEWORK"],
     AllTransactionRoles: ["addTransaction", "deleteTransaction", "viewTransaction", "editTransaction"],
-    AllTransactionRolesValue: ["ADD_TRANSACTION", "DELETE_TRANSACTION", "VIEW_TRANSACTION", "EDIT_TRANSACTION"],
+    AllTransactionRolesValue: ["ADD_TRANSACTION", "DELETE_TRANSACTION", "GET_TRANSACTION", "EDIT_TRANSACTION"],
     AllFamilyRoles: ["addFamily", "deleteFamily", "editFamily", "viewFamily"],
-    AllFamilyRolesValue: ["ADD_FAMILY", "DELETE_FAMILY", "VIEW_FAMILY", "EDIT_FAMILY"],
+    AllFamilyRolesValue: ["ADD_FAMILY", "DELETE_FAMILY", "GET_FAMILY", "EDIT_FAMILY"],
     AllSalaryRoles: ["addSalary", "deleteSalary", "editSalary", "viewSalary"],
-    AllSalaryRolesValue: ["ADD_SALARY", "DELETE_SALARY", "VIEW_SALARY", "EDIT_SALARY"],
+    AllSalaryRolesValue: ["ADD_SALARY", "DELETE_SALARY", "GET_SALARY", "EDIT_SALARY"],
     AllJournalRoles: ["addJournal", "deleteJournal", "editJournal", "viewJournal"],
-    AllJournalRolesValue: ["ADD_JOURNAL", "DELETE_JOURNAL", "VIEW_JOURNAL", "EDIT_JOURNAL"],
+    AllJournalRolesValue: ["ADD_JOURNAL", "DELETE_JOURNAL", "GET_JOURNAL", "EDIT_JOURNAL"],
     AllScoreRoles: ["addScore", "deleteScore", "viewScore", "editScore"],
-    AllScoreRolesValue: ["ADD_SCORE", "DELETE_SCORE", "VIEW_SCORE", "EDIT_SCORE"],
+    AllScoreRolesValue: ["ADD_SCORE", "DELETE_SCORE", "GET_SCORE", "EDIT_SCORE"],
     AllAttendanceRoles: ["addAttendance", "deleteAttendance", "viewAttendance", "editAttendance"],
-    AllAttendanceRolesValue: ["ADD_STAFF_ATTENDANCE", "DELETE_STAFF_ATTENDANCE", "VIEW_STAFF_ATTENDANCE", "EDIT_STAFF_ATTENDANCE"],
+    AllAttendanceRolesValue: ["ADD_STAFF_ATTENDANCE", "DELETE_STAFF_ATTENDANCE", "GET_STAFF_ATTENDANCE", "EDIT_STAFF_ATTENDANCE"],
     AllLessonHourRoles: ["addLessonHour", "deleteLessonHour", "viewLessonHour", "editLessonHour"],
-    AllLessonHourRolesValue: ["ADD_LESSON_HOUR", "DELETE_LESSON_HOUR", "VIEW_LESSON_HOUR", "EDIT_LESSON_HOUR"],
+    AllLessonHourRolesValue: ["ADD_LESSON_HOUR", "DELETE_LESSON_HOUR", "GET_LESSON_HOUR", "EDIT_LESSON_HOUR"],
     AllScheduleRoles: ["addSchedule", "deleteSchedule", "viewSchedule", "editSchedule"],
-    AllScheduleRolesValue: ["ADD_LESSON_SCHEDULE", "DELETE_LESSON_SCHEDULE", "VIEW_LESSON_SCHEDULE", "EDIT_LESSON_SCHEDULE"],
+    AllScheduleRolesValue: ["ADD_LESSON_SCHEDULE", "DELETE_LESSON_SCHEDULE", "GET_LESSON_SCHEDULE", "EDIT_LESSON_SCHEDULE"],
     AllThemeRoles: ["addTheme", "deleteTheme", "viewTheme", "editTheme"],
-    AllThemeRolesValue: ["ADD_TOPIC", "DELETE_TOPIC", "VIEW_TOPIC", "EDIT_TOPIC"],
+    AllThemeRolesValue: ["ADD_TOPIC", "DELETE_TOPIC", "GET_TOPIC", "EDIT_TOPIC"],
     AllBranchRoles: ["addBranch", "deleteBranch", "viewBranch", "editBranch"],
-    AllBranchRolesValue: ["ADD_BRANCH", "DELETE_BRANCH", "VIEW_BRANCH", "EDIT_BRANCH"],
+    AllBranchRolesValue: ["ADD_BRANCH", "DELETE_BRANCH", "GET_BRANCH", "EDIT_BRANCH"],
     AllRoomRoles: ["addRoom", "deleteRoom", "viewRoom", "editRoom"],
-    AllRoomRolesValue: ["ADD_ROOM", "DELETE_ROOM", "VIEW_ROOM", "EDIT_ROOM"],
+    AllRoomRolesValue: ["ADD_ROOM", "DELETE_ROOM", "GET_ROOM", "EDIT_ROOM"],
     AllSubjectRoles: ["addSubject", "deleteSubject", "viewSubject", "editSubject"],
-    AllSubjectRolesValue: ["ADD_SUBJECT", "DELETE_SUBJECT", "VIEW_SUBJECT", "EDIT_SUBJECT"],
+    AllSubjectRolesValue: ["ADD_SUBJECT", "DELETE_SUBJECT", "GET_SUBJECT", "EDIT_SUBJECT"],
     AllBalanceRoles: ["addBalance", "deleteBalance", "viewBalance", "editBalance"],
-    AllBalanceRolesValue: ["ADD_MAIN_BALANCE", "DELETE_MAIN_BALANCE", "VIEW_MAIN_BALANCE", "EDIT_MAIN_BALANCE"],
+    AllBalanceRolesValue: ["ADD_MAIN_BALANCE", "DELETE_MAIN_BALANCE", "GET_MAIN_BALANCE", "EDIT_MAIN_BALANCE"],
     AllWerHouseRoles: ["addWerHouse", "deleteWerHouse", "viewWerHouse", "editWerHouse"],
-    AllWerHouseRolesValue: ["ADD_WAREHOUSE", "DELETE_WAREHOUSE", "VIEW_WAREHOUSE", "EDIT_WAREHOUSE"]
+    AllWerHouseRolesValue: ["ADD_WAREHOUSE", "DELETE_WAREHOUSE", "GET_WAREHOUSE", "EDIT_WAREHOUSE"]
   });
 
   const [permission, setpermission] = useState([]);
@@ -414,8 +421,8 @@ function Role({
   }
 
   function saqla() {
-    if (input.name === "") {
-      input.namePlacholder = "Lavozim nomini kiriting...";
+    if (name === "") {
+      toast.error("Lavozim nomini kiriting");
       const b = document.getElementById("inputValudesion");
       const a = { ...input };
       setInput(a);
@@ -517,15 +524,16 @@ function Role({
       );
       const a = [...permission];
       setpermission(a);
-      if (match.params.id === undefined) {
-        saveRole(
-          {
-            name,
-            branchId: usersDataReducer?.branch?.id,
-            permissions: permission,
-          }
-        );
-      }
+      // if (match.params.id === undefined) {
+      saveRole(
+        {
+          name,
+          branchId: usersDataReducer?.branch?.id,
+          permissions: permission,
+          parentId: null
+        }
+      );
+      // }
     }
   }
 
@@ -537,6 +545,7 @@ function Role({
         onChange={(e) => { return setName(e.target.value); }}
         className="roleName"
         placeholder="Lavozim nomini kiriting..."
+        name="namePlacholder"
         type="text"
       />
       <div className="div_container">
@@ -554,7 +563,7 @@ function Role({
               <p className="ml-4 text-xl">Hodim qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_USER" name="viewUser" checked={input.viewUserChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_USER" name="viewUser" checked={input.viewUserChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Hodim ko`rish</p>
             </div>
             <div className="div_check">
@@ -579,7 +588,7 @@ function Role({
               <p className="ml-4 text-xl">Ish turi qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_WORK_OF_TYPE" name="viewWorkType" checked={input.viewWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_WORK_OF_TYPE" name="viewWorkType" checked={input.viewWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish turi ko`rish</p>
             </div>
             <div className="div_check">
@@ -604,7 +613,7 @@ function Role({
               <p className="ml-4 text-xl">Ish tajribasi qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_WORK_EXPERIENCE" name="viewWorkExperience" checked={input.viewWorkExperienceChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_WORK_EXPERIENCE" name="viewWorkExperience" checked={input.viewWorkExperienceChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish tajribasi ko`rish</p>
             </div>
             <div className="div_check">
@@ -629,7 +638,7 @@ function Role({
               <p className="ml-4 text-xl">Sinf qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_STUDENT_CLASS" name="viewClass" checked={input.viewClass} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_STUDENT_CLASS" name="viewClass" checked={input.viewClass} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Sinf ko`rish</p>
             </div>
             <div className="div_check">
@@ -654,7 +663,7 @@ function Role({
               <p className="ml-4 text-xl">Vazifa qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_STUDENT_HOMEWORK" name="viewHomework" checked={input.viewHomework} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_STUDENT_HOMEWORK" name="viewHomework" checked={input.viewHomework} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Vazifa ko`rish</p>
             </div>
             <div className="div_check">
@@ -687,7 +696,7 @@ function Role({
               <p className="ml-4 text-xl">Maosh qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_SALARY" name="viewSalary" checked={input.viewSalaryChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_SALARY" name="viewSalary" checked={input.viewSalaryChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Maosh ko`rish</p>
             </div>
             <div className="div_check">
@@ -712,7 +721,7 @@ function Role({
               <p className="ml-4 text-xl">Baho qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_SCORE" name="viewScore" checked={input.viewScoreChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_SCORE" name="viewScore" checked={input.viewScoreChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Baho ko`rish</p>
             </div>
             <div className="div_check">
@@ -737,7 +746,7 @@ function Role({
               <p className="ml-4 text-xl">Dars soati qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_LESSON_HOUR" name="viewLessonHour" checked={input.viewLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_LESSON_HOUR" name="viewLessonHour" checked={input.viewLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Dars soati ko`rish</p>
             </div>
             <div className="div_check">
@@ -762,7 +771,7 @@ function Role({
               <p className="ml-4 text-xl">Mavzu qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_TOPIC" name="viewTheme" checked={input.viewThemeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_TOPIC" name="viewTheme" checked={input.viewThemeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Mavzu ko`rish</p>
             </div>
             <div className="div_check">
@@ -787,7 +796,7 @@ function Role({
               <p className="ml-4 text-xl">Fan qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_SUBJECT" name="viewSubject" checked={input.viewSubjectChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_SUBJECT" name="viewSubject" checked={input.viewSubjectChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Fan ko`rish</p>
             </div>
             <div className="div_check">
@@ -812,7 +821,7 @@ function Role({
               <p className="ml-4 text-xl">Xona qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_ROOM" name="viewRoom" checked={input.viewRoomChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_ROOM" name="viewRoom" checked={input.viewRoomChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Xona ko`rish</p>
             </div>
             <div className="div_check">
@@ -824,7 +833,8 @@ function Role({
               <p className="ml-4 text-xl">Xona o`chirish</p>
             </div>
           </div>
-          <Button danger icon={<DownloadOutlined />} className="mt-4 d-flex justify-end text-xl" type="link" size={size}>
+          {/* eslint-disable-next-line react/jsx-no-bind */}
+          <Button onClick={saqla} danger icon={<DownloadOutlined />} className="mt-4 d-flex justify-end text-xl" size={size}>
             Saqlash
           </Button>
         </div>
