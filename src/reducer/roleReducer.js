@@ -10,6 +10,7 @@ export const slice = createSlice({
     allRole: null,
     message: null,
     changeData: false,
+    success: false
   },
   reducers: {
     getFrom: (state, action) => {
@@ -22,6 +23,7 @@ export const slice = createSlice({
         state.role = null;
       }
       state.changeData = false;
+      state.success = false;
     },
     getAllFrom: (state, action) => {
       if (action.payload.success) {
@@ -32,14 +34,17 @@ export const slice = createSlice({
         state.allRole = null;
       }
       state.changeData = false;
+      state.success = false;
     },
     saveFrom: (state, action) => {
       if (action.payload.success) {
         toast.success("Lavozim muvafaqiyatli qo'shildi");
+        state.success = true;
       } else {
         toast.warning(action.payload.message || "Lavozimni qo'shishda muammo bo'ldi");
       }
-      state.changeData = true;
+      // state.changeData = true;
+      state.success = true;
     },
     editFrom: (state, action) => {
       if (action.payload.success) {

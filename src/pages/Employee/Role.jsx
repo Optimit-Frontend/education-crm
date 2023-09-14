@@ -130,6 +130,25 @@ function Role({
           </svg>
           <span>O&apos;chirish</span>
         </button>
+        <button
+          onClick={() => {
+            navigate("/roles");
+          }}
+          type="button"
+          className="flex items-center gap-2 px-4 py-[6px] bg-blue-600 text-white rounded-lg"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-5 h-5"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          <span>Qo&apos;shish</span>
+        </button>
       </div>
       <CustomTable
         columns={columns}
