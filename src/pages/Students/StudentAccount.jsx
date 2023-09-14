@@ -18,6 +18,7 @@ import studentAccountReducer, {
 } from "../../reducer/studentAccountReducer";
 import studentReducer, { getSearchStudents, getStudentsAllByClass } from "../../reducer/studentReducer";
 import classReducer, { getClassesAll } from "../../reducer/classReducer";
+import { numberWithCommas } from "../../utils";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -43,6 +44,9 @@ const columns = [
     key: "balance",
     width: "15%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
   {
     title: "Chegirma",
@@ -50,6 +54,9 @@ const columns = [
     key: "discount",
     width: "10%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
   {
     title: "Sabab",
@@ -71,6 +78,9 @@ const columns = [
     key: "amountOfDebit",
     width: "10%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
 ];
 

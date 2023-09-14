@@ -19,6 +19,7 @@ import roomReducer, { getAllRoomBranch } from "../../reducer/roomReducer";
 import levelReducer, { getLevels } from "../../reducer/levelReducer";
 import employeeReducer, { getEmployeeBranchId } from "../../reducer/employeeReducer";
 import FormLayoutComp from "../../components/FormLayoutComp";
+import { numberWithCommas } from "../../utils";
 
 const { Option } = Select;
 
@@ -36,6 +37,9 @@ const columns = [
     key: "overallSum",
     width: "10%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
   {
     title: "Sinf rahbar",
@@ -296,6 +300,10 @@ function Class({
                   optionFilterProp="children"
                   className="w-full"
                   key="id"
+                  onChange={(e) => {
+                    e > 5 ? form.setFieldValue("overallSum", 3400000)
+                      : form.setFieldValue("overallSum", 3200000);
+                  }}
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
@@ -320,7 +328,13 @@ function Class({
                   },
                 ]}
               >
-                <InputNumber min="0" className="w-full" placeholder="O'qish narxini kiriting..." />
+                <InputNumber
+                  formatter={(value) => { return numberWithCommas(value); }}
+                  parser={(value) => { return value?.replace(/\$\s?|( *)/g, ""); }}
+                  min="0"
+                  className="w-full"
+                  placeholder="O'qish narxini kiriting..."
+                />
               </Form.Item>
             </FormLayoutComp>
             <FormLayoutComp>

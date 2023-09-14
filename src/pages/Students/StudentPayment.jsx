@@ -20,6 +20,7 @@ import studentAccountReducer, { getStudentAccountByBranch } from "../../reducer/
 import FormLayoutComp from "../../components/FormLayoutComp";
 import { expenseType, paymentType } from "../../const";
 import studentReducer, { getSearchStudents } from "../../reducer/studentReducer";
+import { numberWithCommas } from "../../utils";
 
 const { Option } = Select;
 
@@ -32,11 +33,14 @@ const columns = [
     search: true,
   },
   {
-    title: "Otkazma",
+    title: "O'tkazma",
     dataIndex: "moneyAmount",
     key: "moneyAmount",
     width: "30%",
-    search: true,
+    search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
   {
     title: "Tulov usuli",
@@ -67,7 +71,7 @@ const columns = [
     width: "30%",
     search: false,
     render: (eski) => {
-      return moment(eski).format("HH:mm:ss DD:MM:YYYY");
+      return moment(eski).format("HH:mm DD-MM-YYYY");
     }
   },
   {

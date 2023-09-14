@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import studentAccountReducer, { getStudentDebt } from "../../reducer/studentAccountReducer";
 import usersDataReducer from "../../reducer/usersDataReducer";
+import { numberWithCommas } from "../../utils";
 
 const columns = [
   {
@@ -33,6 +34,9 @@ const columns = [
     key: "amountOfDebit",
     width: "15%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
   {
     title: "Chegirma",
@@ -40,6 +44,9 @@ const columns = [
     key: "discount",
     width: "15%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
   {
     title: "Balans",
@@ -47,6 +54,9 @@ const columns = [
     key: "balance",
     width: "15%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
 ];
 
