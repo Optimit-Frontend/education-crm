@@ -4,6 +4,7 @@ import {
   Col, Form, Input, InputNumber, Modal, Row, Select,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -71,6 +72,9 @@ const columns = [
     key: "date",
     width: "15%",
     search: false,
+    render: (eski) => {
+      return dayjs(eski).format("DD-MM-YYYY");
+    }
   },
   {
     title: "Qarz",
@@ -423,7 +427,13 @@ function StudentAccount({
                   },
                 ]}
               >
-                <InputNumber className="w-full" placeholder="Chegirmani so'mda kiriting..." />
+                <InputNumber
+                  formatter={(value) => { return numberWithCommas(value); }}
+                  parser={(value) => { return value?.replace(/\$\s?|( *)/g, ""); }}
+                  min="0"
+                  className="w-full"
+                  placeholder="Chegirmani so'mda kiriting..."
+                />
               </Form.Item>
               <Form.Item
                 key="description"

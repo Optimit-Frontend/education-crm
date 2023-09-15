@@ -58,6 +58,9 @@ const columns = [
     key: "birthDate",
     width: "25%",
     search: false,
+    render: (eski) => {
+      return dayjs(eski).format("DD-MM-YYYY");
+    }
   },
   {
     title: "Passport raqami",
@@ -511,6 +514,7 @@ function Students({
                 ]}
               >
                 <InputNumber
+                  maxLength={9}
                   addonBefore="+998"
                   className="w-full"
                   placeholder="Tel raqam ..."

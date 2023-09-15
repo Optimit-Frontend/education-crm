@@ -54,6 +54,9 @@ const columns = [
     key: "startDate",
     width: "15%",
     search: false,
+    render: (eski) => {
+      return dayjs(eski).format("DD-MM-YYYY");
+    }
   },
   {
     title: "Tugash sana",
@@ -61,6 +64,9 @@ const columns = [
     key: "endDate",
     width: "15%",
     search: false,
+    render: (eski) => {
+      return dayjs(eski).format("DD-MM-YYYY");
+    }
   },
   {
     title: "Bosqich",

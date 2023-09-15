@@ -357,7 +357,7 @@ function StudentHomework({
                   },
                 ]}
               >
-                <InputNumber type="number" className="w-full" placeholder="Baho kiriting ( 1...5 )" />
+                <InputNumber className="w-full" placeholder="Baho kiriting ( 1...5 )" />
               </Form.Item>
             </FormLayoutComp>
             <FormLayoutComp>

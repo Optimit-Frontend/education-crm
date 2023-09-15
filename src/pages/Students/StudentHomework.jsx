@@ -302,7 +302,7 @@ function StudentHomework({
                   },
                 ]}
               >
-                <Input type="number" className="w-full" placeholder="Mavzu raqamini kiriting" />
+                <InputNumber className="w-full" placeholder="Mavzu raqamini kiriting" />
               </Form.Item>
               <Form.Item
                 key="lessonHour"
@@ -315,7 +315,7 @@ function StudentHomework({
                   },
                 ]}
               >
-                <InputNumber type="number" className="w-full" placeholder="Dars vaqti" />
+                <InputNumber className="w-full" placeholder="Dars vaqti" />
               </Form.Item>
               <Form.Item
                 key="date"

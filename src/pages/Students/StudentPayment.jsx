@@ -364,6 +364,9 @@ function StudentPayment({
                 ]}
               >
                 <InputNumber
+                  formatter={(value) => { return numberWithCommas(value); }}
+                  parser={(value) => { return value?.replace(/\$\s?|( *)/g, ""); }}
+                  min="0"
                   className="w-full"
                   placeholder="So`mmani kiriting ..."
                 />

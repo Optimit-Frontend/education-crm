@@ -1,10 +1,9 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, DatePicker, Form, Input, Modal, Row, Select
+  Col, Form, Input, InputNumber, Modal, Row, Select
 } from "antd";
 import dayjs from "dayjs";
-import moment from "moment";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
@@ -51,6 +50,9 @@ const columns = [
     key: "date",
     width: "20%",
     search: false,
+    render: (eski) => {
+      return dayjs(eski).format("DD-MM-YYYY");
+    }
   },
   {
     title: "Maosh ( stabilniy )",
@@ -312,7 +314,7 @@ function Salary({
                   },
                 ]}
               >
-                <Input type="number" placeholder="Maoshni kiritng" />
+                <InputNumber className="w-full" placeholder="Maoshni kiritng" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -327,7 +329,7 @@ function Salary({
                   },
                 ]}
               >
-                <Input type="number" placeholder="Tel raqam kiriting . . ." />
+                <InputNumber className="w-full" placeholder="Tel raqam kiriting . . ." />
               </Form.Item>
             </Col>
           </Row>

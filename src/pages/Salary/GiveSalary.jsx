@@ -1,16 +1,14 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, DatePicker, Form, Input, Modal, Row, Select
+  Form, Modal, Select
 } from "antd";
 import dayjs from "dayjs";
-import moment from "moment";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
 import employeeReducer, { getEmployeeBranchId, getUserLists } from "../../reducer/employeeReducer";
-import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer";
 import salaryReducer, {
   deleteSalary,
   editSalary,
@@ -18,8 +16,10 @@ import salaryReducer, {
   saveGiveDebtToEmployee,
   getGiveSalary,
   savePartlySalary, saveSalary, giveSalary,
-} from "../../reducer/salaryReducer.js";
-import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer.js";
+} from "../../reducer/salaryReducer";
+import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
+import { numberWithCommas } from "../../utils";
+import { paymentType } from "../../const";
 
 const { Option } = Select;
 
@@ -32,18 +32,14 @@ const columns = [
     search: true,
   },
   {
-    title: "Filial",
-    dataIndex: "branchName",
-    key: "branchName",
-    width: "25%",
-    search: false,
-  },
-  {
     title: "Olgan maoshi",
     dataIndex: "cashAdvance",
     key: "cashAdvance",
     width: "30%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
   {
     title: "Sana",
@@ -51,6 +47,9 @@ const columns = [
     key: "date",
     width: "20%",
     search: false,
+    render: (eski) => {
+      return dayjs(eski).format("DD-MM-YYYY");
+    }
   },
   {
     title: "Maosh ( stabilniy )",
@@ -58,6 +57,9 @@ const columns = [
     key: "fix",
     width: "30%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
   {
     title: "Qarzi",
@@ -65,15 +67,22 @@ const columns = [
     key: "amountDebt",
     width: "20%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
 ];
 
 function GiveSalary({
   usersDataReducer,
   getGiveSalary,
-  giveSalary, salaryReducer, getUserLists, employeeReducer,
-  editSalary, balanceReducer, savePartlySalary,
-  deleteSalary, getAllBalanceBranch, businessBranchesReducer, getBusinessBranch
+  giveSalary,
+  salaryReducer,
+  getUserLists,
+  employeeReducer,
+  editSalary,
+  deleteSalary,
+  getAllBalanceBranch
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -95,7 +104,6 @@ function GiveSalary({
     getGiveSalary(usersDataReducer?.branch?.id);
     getUserLists();
     getAllBalanceBranch(usersDataReducer?.branch?.id);
-    getBusinessBranch(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
@@ -158,6 +166,7 @@ function GiveSalary({
         .then((values) => {
           giveSalary({
             id: values.id,
+            branchId: usersDataReducer?.branch?.id,
             withholdingOfDebtIfAny: values?.withholdingOfDebtIfAny,
             paymentType: values.paymentType
           });
@@ -184,10 +193,8 @@ function GiveSalary({
               form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.user?.phoneNumber);
               form.setFieldValue("startDate", dayjs(selectedRowKeys[1][0]?.startDate));
               form.setFieldValue("date", dayjs(selectedRowKeys[1][0]?.date));
-              form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
               form.setFieldValue("fix", selectedRowKeys[1][0]?.fix);
               form.setFieldValue("mainBalanceId", selectedRowKeys[1][0]?.mainBalanceId);
-              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 px-4 py-[6px] bg-yellow-600 text-white rounded-lg"
@@ -274,97 +281,92 @@ function GiveSalary({
         forceRender
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
-          <Row gutter={24}>
-            <Col span={12}>
-              <Form.Item
-                key="paymentType"
-                name="paymentType"
-                label={<span className="text-base font-medium">Maosh turi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Maosh turi kiriting",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Tulov turi tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  <Option value="CASH">Naqd</Option>
-                  <Option value="CARD">Plastik Karta</Option>
-                  <Option value="HISOBDAN_HISOBGA">Hisobdan hisobga</Option>
-                  <Option value="ELEKTRON">Elektron</Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                key="withholdingOfDebtIfAny"
-                name="withholdingOfDebtIfAny"
-                label={<span className="text-base font-medium">Qarz</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Tanlang",
-                  },
-                ]}
-              >
-                {/* <Input addonBefore="+998" type="number" placeholder="Xodim kiriting . . ." /> */}
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Tanlash"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  <Option value="true">Qarz</Option>
-                  <Option value="false">Qarz -</Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                key="id"
-                name="id"
-                label={<span className="text-base font-medium">Xodim tanlash</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Xodim kiriting",
-                  },
-                ]}
-              >
-                {/* <Input addonBefore="+998" type="number" placeholder="Xodim kiriting . . ." /> */}
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Xodim tanlash"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {employeeReducer?.employeesAllBranch?.map((employee) => {
-                    return (
-                      <Option value={employee.id} key={employee.id}>{employee?.name}</Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
+          <Form.Item
+            key="paymentType"
+            name="paymentType"
+            label={<span className="text-base font-medium">Maosh turi</span>}
+            rules={[
+              {
+                required: true,
+                message: "Maosh turi kiriting",
+              },
+            ]}
+          >
+            <Select
+              showSearch
+              allowClear
+              placeholder="Tulov turi tanlang"
+              optionFilterProp="children"
+              style={{ width: "100%" }}
+              key="id"
+              filterOption={(input, option) => {
+                return option.children.toLowerCase()?.includes(input.toLowerCase());
+              }}
+            >
+              {paymentType?.map((option) => {
+                return (
+                  <Option value={option.value} key={option.value}>
+                    {option.name}
+                  </Option>
+                );
+              })}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            key="withholdingOfDebtIfAny"
+            name="withholdingOfDebtIfAny"
+            label={<span className="text-base font-medium">Qarz</span>}
+            rules={[
+              {
+                required: true,
+                message: "Tanlang",
+              },
+            ]}
+          >
+            <Select
+              showSearch
+              allowClear
+              placeholder="Tanlash"
+              optionFilterProp="children"
+              style={{ width: "100%" }}
+              key="id"
+              filterOption={(input, option) => {
+                return option.children.toLowerCase()?.includes(input.toLowerCase());
+              }}
+            >
+              <Option value="true">Qarz</Option>
+              <Option value="false">Qarz -</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            key="id"
+            name="id"
+            label={<span className="text-base font-medium">Xodim tanlash</span>}
+            rules={[
+              {
+                required: true,
+                message: "Xodim kiriting",
+              },
+            ]}
+          >
+            <Select
+              showSearch
+              allowClear
+              placeholder="Xodim tanlash"
+              optionFilterProp="children"
+              style={{ width: "100%" }}
+              key="id"
+              filterOption={(input, option) => {
+                return option.children.toLowerCase()?.includes(input.toLowerCase());
+              }}
+            >
+              {employeeReducer?.employeesAllBranch?.map((employee) => {
+                return (
+                  <Option value={employee.id} key={employee.id}>{employee?.name}</Option>
+                );
+              })}
+            </Select>
+          </Form.Item>
         </Form>
       </Modal>
       <CustomTable
@@ -389,11 +391,8 @@ function GiveSalary({
 }
 
 export default connect(
-  (
-    usersDataReducer,
-    employeeReducer, salaryReducer, balanceReducer, businessBranchesReducer
-  ), {
-    getBusinessBranch,
+  (usersDataReducer, employeeReducer, salaryReducer, balanceReducer),
+  {
     getGiveSalary,
     savePartlySalary,
     saveGiveDebtToEmployee,

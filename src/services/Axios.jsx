@@ -61,7 +61,7 @@ export const api = ({ dispatch }) => {
       instance({
         headers: {
           "Content-Type": contentType || "application/json",
-          // Authorization: `Bearer ${localStorage.getItem("EducationCRM") || sessionStorage.getItem("EducationCRM")}`
+          Authorization: `Bearer ${localStorage.getItem("EducationCRM") || sessionStorage.getItem("EducationCRM")}`
         },
         url,
         method,
