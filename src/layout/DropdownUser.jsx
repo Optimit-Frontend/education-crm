@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { connect } from "react-redux";
+import usersDataReducer, { logOutUser } from "../reducer/usersDataReducer";
 
 const UserOne = "https://react-demo.tailadmin.com/assets/user-01-b007ff3f.png";
 
-function DropdownUser() {
+function DropdownUser({ usersDataReducer, logOutUser }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const trigger = useRef(null);
@@ -38,8 +40,7 @@ function DropdownUser() {
 
   const navigate = useNavigate();
   function logOut() {
-    localStorage.clear();
-    sessionStorage.clear();
+    logOutUser();
     navigate("/login");
   }
 
@@ -54,8 +55,7 @@ function DropdownUser() {
         to="#"
       >
         <span className="hidden text-right lg:block">
-          <span className="block text-sm font-medium text-black dark:text-white">Thomas Anree</span>
-          <span className="block text-xs">UX Designer</span>
+          <span className="text-sm font-medium text-black dark:text-white">{usersDataReducer?.fullName}</span>
         </span>
 
         <span className="h-12 w-12 rounded-full">
@@ -174,4 +174,4 @@ function DropdownUser() {
   );
 }
 
-export default DropdownUser;
+export default connect(usersDataReducer, { logOutUser })(DropdownUser);

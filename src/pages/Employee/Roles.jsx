@@ -1,21 +1,17 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import CustomTable from "../../module/CustomTable";
 import "../../role.css";
-import usersDataReducer from "../../reducer/usersDataReducer";
+import { Button } from "antd";
+import { DownloadOutlined } from "@ant-design/icons";
+import { toast } from "react-toastify";
 import roleReducer, {
   deleteRole,
   editRole,
   getRoleBranch,
   saveRole
 } from "../../reducer/roleReducer";
-// eslint-disable-next-line import/order
-import { Button, Checkbox } from "antd";
-// eslint-disable-next-line import/order
-import { DownloadOutlined } from "@ant-design/icons";
-// eslint-disable-next-line import/order
-import { toast } from "react-toastify";
+import usersDataReducer from "../../reducer/usersDataReducer";
 
 function Role({
   roleReducer,
