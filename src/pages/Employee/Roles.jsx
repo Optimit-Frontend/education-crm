@@ -922,19 +922,19 @@ function Role({
             </div>
             <br />
             <div className="div_check">
-              <input value="ADD_ACCOUNT_NUMBER" name="addAccountNumber" checked={input.addAccountNumberChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="ADD_STUDENT_ACCOUNT" name="addAccountNumber" checked={input.addAccountNumberChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Hisob raqam qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_ACCOUNT_NUMBER" name="viewAccountNumber" checked={input.viewAccountNumberChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="VIEW_STUDENT_ACCOUNT" name="viewAccountNumber" checked={input.viewAccountNumberChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Hisob raqam ko`rish</p>
             </div>
             <div className="div_check">
-              <input value="EDIT_ACCOUNT_NUMBER" name="editAccountNumber" checked={input.editAccountNumberChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="EDIT_STUDENT_ACCOUNT" name="editAccountNumber" checked={input.editAccountNumberChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Hisob raqam tahrirlash</p>
             </div>
             <div className="div_check">
-              <input value="DELETE_ACCOUNT_NUMBER" name="deleteAccountNumber" checked={input.deleteAccountNumberChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="DELETE_STUDENT_ACCOUNT" name="deleteAccountNumber" checked={input.deleteAccountNumberChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Hisob raqam o`chirish</p>
             </div>
           </div>
@@ -951,7 +951,7 @@ function Role({
               <p className="ml-4 text-xl">To`lov qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_TRANSACTION" name="viewTransaction" checked={input.viewTransactionChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_TRANSACTION" name="viewTransaction" checked={input.viewTransactionChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">To`lov ko`rish</p>
             </div>
             <div className="div_check">

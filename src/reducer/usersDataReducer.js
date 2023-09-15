@@ -39,6 +39,41 @@ export const slice = createSlice({
     editStudent: false,
     deleteStudent: false,
     viewStudent: false,
+    // Sinf
+    addClass: false,
+    editClass: false,
+    deleteClass: false,
+    viewClass: false,
+    // Student_account
+    viewAccountNumber: false,
+    addAccountNumber: false,
+    editAccountNumber: false,
+    deleteAccountNumber: false,
+    // Student_Homework
+    addHomework: false,
+    deleteHomework: false,
+    editHomework: false,
+    viewHomework: false,
+    // Transaction
+    viewTransaction: false,
+    editTransaction: false,
+    deleteTransaction: false,
+    addTransaction: false,
+    // Family
+    addFamily: false,
+    editFamily: false,
+    deleteFamily: false,
+    viewFamily: false,
+    // Salary
+    addSalary: false,
+    editSalary: false,
+    deleteSalary: false,
+    viewSalary: false,
+    // Journal
+    addJournal: false,
+    editJournal: false,
+    viewJournal: false,
+    deleteJournal: false,
   },
   reducers: {
     saveUser: (state, action) => {
@@ -121,6 +156,90 @@ export const slice = createSlice({
               break;
             case "DELETE_STUDENT":
               state.deleteStudent = true;
+              break;
+            case "ADD_STUDENT_CLASS":
+              state.addClass = true;
+              break;
+            case "EDIT_STUDENT_CLASS":
+              state.editClass = true;
+              break;
+            case "GET_STUDENT_CLASS":
+              state.viewClass = true;
+              break;
+            case "DELETE_STUDENT_CLASS":
+              state.deleteClass = true;
+              break;
+            case "ADD_STUDENT_ACCOUNT":
+              state.addAccountNumber = true;
+              break;
+            case "EDIT_STUDENT_ACCOUNT":
+              state.editAccountNumber = true;
+              break;
+            case "GET_STUDENT_ACCOUNT":
+              state.viewAccountNumber = true;
+              break;
+            case "DELETE_STUDENT_ACCOUNT":
+              state.deleteAccountNumber = true;
+              break;
+            case "GET_STUDENT_HOMEWORK":
+              state.viewHomework = true;
+              break;
+            case "ADD_STUDENT_HOMEWORK":
+              state.addHomework = true;
+              break;
+            case "EDIT_STUDENT_HOMEWORK":
+              state.editHomework = true;
+              break;
+            case "DELETE_STUDENT_HOMEWORK":
+              state.deleteHomework = true;
+              break;
+            case "GET_TRANSACTION_HISTORY":
+              state.viewTransaction = true;
+              break;
+            case "ADD_TRANSACTION_HISTORY":
+              state.addTransaction = true;
+              break;
+            case "EDIT_TRANSACTION_HISTORY":
+              state.editTransaction = true;
+              break;
+            case "DELETE_TRANSACTION_HISTORY":
+              state.deleteTransaction = true;
+              break;
+            case "ADD_FAMILY":
+              state.addFamily = true;
+              break;
+            case "EDIT_FAMILY":
+              state.editFamily = true;
+              break;
+            case "GET_FAMILY":
+              state.viewFamily = true;
+              break;
+            case "DELETE_FAMILY":
+              state.deleteFamily = true;
+              break;
+            case "ADD_SALARY":
+              state.addSalary = true;
+              break;
+            case "EDIT_SALARY":
+              state.editSalary = true;
+              break;
+            case "DELETE_SALARY":
+              state.deleteSalary = true;
+              break;
+            case "GET_SALARY":
+              state.viewSalary = true;
+              break;
+            case "GET_JOURNAL":
+              state.viewJournal = true;
+              break;
+            case "DELETE_JOURNAL":
+              state.deleteJournal = true;
+              break;
+            case "ADD_JOURNAL":
+              state.addJournal = true;
+              break;
+            case "EDIT_JOURNAL":
+              state.editJournal = true;
               break;
           }
         });

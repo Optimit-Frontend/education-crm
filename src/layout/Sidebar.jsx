@@ -421,111 +421,126 @@ function Sidebar({ sidebarOpen, setSidebarOpen, usersDataReducer }) {
                                 </li>
                               ) : ""
                           }
-                          <li>
-                            <NavLink
-                              to="/class"
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Sinf qo`shish
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/create-account?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Hisob raqam yaratish
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to="/student-homework"
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Talaba vazifalalri
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to="/student-transaction"
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Talaba to`lov qilish
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/student-debts?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Qarzdor talabalar
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to="/family"
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Talaba haqida
-                            </NavLink>
-                          </li>
-                          {/* <li> */}
-                          {/*   <NavLink */}
-                          {/*     to="/family-login" */}
-                          {/*     onClick={() => { */}
-                          {/*       return setSidebarOpen(false); */}
-                          {/*     }} */}
-                          {/*     className={({ isActive }) => { */}
-                          {/*       return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${ */}
-                          {/*         isActive && "!text-white" */}
-                          {/*       }`; */}
-                          {/*     }} */}
-                          {/*   > */}
-                          {/*     Login */}
-                          {/*   </NavLink> */}
-                          {/* </li> */}
+                          {
+                            usersDataReducer?.addClass || usersDataReducer?.editClass || usersDataReducer?.viewClass || usersDataReducer?.deleteClass
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to="/class"
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Sinf qo`shish
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.viewAccountNumber || usersDataReducer?.addAccountNumber || usersDataReducer?.editAccountNumber || usersDataReducer?.deleteAccountNumber
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/create-account?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Hisob raqam yaratish
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.viewHomework || usersDataReducer?.deleteHomework || usersDataReducer?.addHomework || usersDataReducer?.editHomework
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to="/student-homework"
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Talaba vazifalalri
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.addTransaction || usersDataReducer?.editTransaction || usersDataReducer?.deleteTransaction || usersDataReducer?.viewTransaction
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to="/student-transaction"
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Talaba to`lov qilish
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.viewAccountNumber
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/student-debts?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Qarzdor talabalar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.viewFamily || usersDataReducer?.addFamily || usersDataReducer?.deleteFamily || usersDataReducer?.editFamily
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to="/family"
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Talaba haqida
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
                         </ul>
                       </div>
                     </>
@@ -691,53 +706,68 @@ function Sidebar({ sidebarOpen, setSidebarOpen, usersDataReducer }) {
                       {/* <!-- Dropdown Menu Start --> */}
                       <div className={`translate transform overflow-hidden ${!open && "hidden"}`}>
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <NavLink
-                              to={`/salaries?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Maoshlar
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/give-salaries?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              {/* eslint-disable-next-line react/no-unescaped-entities */}
-                              Maosh Berish
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/partly-salaries?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              {/* eslint-disable-next-line react/no-unescaped-entities */}
-                              Maosh ma'lumotlari
-                            </NavLink>
-                          </li>
+                          {
+                            usersDataReducer?.viewSalary || usersDataReducer?.deleteSalary || usersDataReducer?.addSalary || usersDataReducer?.editSalary
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/salaries?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Maoshlar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.viewSalary || usersDataReducer?.deleteSalary || usersDataReducer?.addSalary || usersDataReducer?.editSalary
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/give-salaries?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    {/* eslint-disable-next-line react/no-unescaped-entities */}
+                                    Maosh Berish
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.viewSalary || usersDataReducer?.deleteSalary || usersDataReducer?.addSalary || usersDataReducer?.editSalary
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/partly-salaries?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    {/* eslint-disable-next-line react/no-unescaped-entities */}
+                                    Maosh ma'lumotlari
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
                         </ul>
                       </div>
                     </>
@@ -812,21 +842,26 @@ function Sidebar({ sidebarOpen, setSidebarOpen, usersDataReducer }) {
                       {/* <!-- Dropdown Menu Start --> */}
                       <div className={`translate transform overflow-hidden ${!open && "hidden"}`}>
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <NavLink
-                              to={`/journal?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Jurnal
-                            </NavLink>
-                          </li>
+                          {
+                            usersDataReducer?.addJournal || usersDataReducer?.editJournal || usersDataReducer?.viewJournal || usersDataReducer?.deleteJournal
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/journal?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Jurnal
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
                           <li>
                             <NavLink
                               to={`/scores?page=1&size=${pageSize}`}
