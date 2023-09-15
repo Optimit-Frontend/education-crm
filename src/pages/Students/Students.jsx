@@ -23,6 +23,7 @@ import usersDataReducer from "../../reducer/usersDataReducer";
 import classReducer, { getClassesAll } from "../../reducer/classReducer";
 import { BASE_URL } from "../../services/Axios";
 import FormLayoutComp from "../../components/FormLayoutComp";
+import { numberWithCommas } from "../../utils";
 
 const { Option } = Select;
 
@@ -47,6 +48,9 @@ const columns = [
     key: "paymentAmount",
     width: "25%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
   {
     title: "Tug`ilgan kuni",
@@ -54,6 +58,9 @@ const columns = [
     key: "birthDate",
     width: "25%",
     search: false,
+    render: (eski) => {
+      return dayjs(eski).format("DD-MM-YYYY");
+    }
   },
   {
     title: "Passport raqami",
@@ -507,6 +514,7 @@ function Students({
                 ]}
               >
                 <InputNumber
+                  maxLength={9}
                   addonBefore="+998"
                   className="w-full"
                   placeholder="Tel raqam ..."

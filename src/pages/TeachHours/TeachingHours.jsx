@@ -5,7 +5,6 @@ import {
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
-import moment from "moment";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -30,7 +29,7 @@ const columns = [
   {
     title: "Xodim",
     dataIndex: "teacher",
-    key: "teacehr",
+    key: "teacher",
     width: "30%",
     search: true,
   },
@@ -378,14 +377,14 @@ function TeachingHours({
                   }}
                 >
                   {
-                      classReducer?.class?.map((barnch) => {
-                        return (
-                          <Option value={barnch?.id} key={barnch?.id}>
-                            {barnch?.className}
-                          </Option>
-                        );
-                      })
-                    }
+                    classReducer?.class?.map((barnch) => {
+                      return (
+                        <Option value={barnch?.id} key={barnch?.id}>
+                          {barnch?.className}
+                        </Option>
+                      );
+                    })
+                  }
                 </Select>
               </Form.Item>
             </FormLayoutComp>

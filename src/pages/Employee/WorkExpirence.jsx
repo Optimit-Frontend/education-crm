@@ -4,7 +4,6 @@ import {
   Col, DatePicker, Form, Input, Modal, Row, Select
 } from "antd";
 import dayjs from "dayjs";
-import moment from "moment";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -41,6 +40,9 @@ const columns = [
     key: "startDate",
     width: "15%",
     search: false,
+    render: (eski) => {
+      return dayjs(eski).format("DD-MM-YYYY");
+    }
   },
   {
     title: "Tugash vaqti",
@@ -48,6 +50,9 @@ const columns = [
     key: "endDate",
     width: "15%",
     search: false,
+    render: (eski) => {
+      return dayjs(eski).format("DD-MM-YYYY");
+    }
   },
   {
     title: "Hodim",

@@ -1,16 +1,14 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, DatePicker, Form, Input, Modal, Row, Select
+  Col, Form, InputNumber, Modal, Row, Select
 } from "antd";
 import dayjs from "dayjs";
-import moment from "moment";
 import { useLocation, useNavigate } from "react-router-dom";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
 import employeeReducer, { getEmployeeBranchId, getUserLists } from "../../reducer/employeeReducer";
-import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer";
 import salaryReducer, {
   deleteSalary,
   editSalary,
@@ -18,8 +16,9 @@ import salaryReducer, {
   saveGiveDebtToEmployee,
   getGiveSalary,
   savePartlySalary, saveSalary,
-} from "../../reducer/salaryReducer.js";
-import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer.js";
+} from "../../reducer/salaryReducer";
+import balanceReducer, { getAllBalanceBranch } from "../../reducer/balanceReducer";
+import { numberWithCommas } from "../../utils";
 
 const { Option } = Select;
 
@@ -32,18 +31,14 @@ const columns = [
     search: true,
   },
   {
-    title: "Filial",
-    dataIndex: "branchName",
-    key: "branchName",
-    width: "25%",
-    search: false,
-  },
-  {
     title: "Olgan maoshi",
     dataIndex: "cashAdvance",
     key: "cashAdvance",
     width: "30%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
   {
     title: "Sana",
@@ -51,6 +46,9 @@ const columns = [
     key: "date",
     width: "20%",
     search: false,
+    render: (eski) => {
+      return dayjs(eski).format("DD-MM-YYYY");
+    }
   },
   {
     title: "Maosh ( stabilniy )",
@@ -58,6 +56,9 @@ const columns = [
     key: "fix",
     width: "30%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
   {
     title: "Qarzi",
@@ -65,6 +66,9 @@ const columns = [
     key: "amountDebt",
     width: "20%",
     search: false,
+    render: (eski) => {
+      return numberWithCommas(eski);
+    }
   },
 ];
 
@@ -73,7 +77,7 @@ function PartlySalary({
   getGiveSalary,
   saveSalary, salaryReducer, getUserLists, employeeReducer,
   editSalary, balanceReducer, savePartlySalary,
-  deleteSalary, getAllBalanceBranch, businessBranchesReducer, getBusinessBranch
+  deleteSalary, getAllBalanceBranch
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
@@ -95,7 +99,6 @@ function PartlySalary({
     getGiveSalary(usersDataReducer?.branch?.id);
     getUserLists();
     getAllBalanceBranch(usersDataReducer?.branch?.id);
-    getBusinessBranch(usersDataReducer?.branch?.id);
     setVisible(false);
     form.resetFields();
     setSelectedRowKeys([[], []]);
@@ -315,7 +318,7 @@ function PartlySalary({
                   },
                 ]}
               >
-                <Input type="number" placeholder="Maoshni kiritng" />
+                <InputNumber className="w-full" placeholder="Maoshni kiritng" />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -330,7 +333,6 @@ function PartlySalary({
                   },
                 ]}
               >
-                {/* <Input addonBefore="+998" type="number" placeholder="Xodim kiriting . . ." /> */}
                 <Select
                   showSearch
                   allowClear
@@ -376,10 +378,8 @@ function PartlySalary({
 
 export default connect(
   (
-    usersDataReducer,
-    employeeReducer, salaryReducer, balanceReducer, businessBranchesReducer
+    usersDataReducer, employeeReducer, salaryReducer, balanceReducer
   ), {
-    getBusinessBranch,
     getGiveSalary,
     savePartlySalary,
     saveGiveDebtToEmployee,

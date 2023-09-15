@@ -15,7 +15,6 @@ import {
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
-import moment from "moment";
 import dayjs from "dayjs";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
@@ -51,6 +50,9 @@ const columns = [
     key: "birthDate",
     width: "15%",
     search: false,
+    render: (eski) => {
+      return dayjs(eski).format("DD-MM-YYYY");
+    }
   },
   {
     title: "Email",
