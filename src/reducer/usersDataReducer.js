@@ -47,6 +47,7 @@ export const slice = createSlice({
         localStorage.setItem("userDataCRM", JSON.stringify(action.payload?.object));
         state.userToken = action.payload?.message;
         state.logout = false;
+        state.fullName = `${action.payload?.object?.surname} ${action.payload?.object?.name}`;
         state.businessId = action.payload?.object?.businessId;
         state.branch = action.payload?.object?.branch;
         state.userData = action.payload?.object;
@@ -127,8 +128,48 @@ export const slice = createSlice({
         state.logout = true;
       }
     },
+    logOutUser: (state) => {
+      localStorage.removeItem("EducationCRM");
+      localStorage.removeItem("userDataCRM");
+      state.fullName = null;
+      state.userToken = null;
+      state.userData = null;
+      state.businessId = null;
+      state.branch = null;
+      state.logout = false;
+      // USER
+      state.viewUser = false;
+      state.addUser = false;
+      state.editUser = false;
+      state.deleteUser = false;
+      // Role
+      state.viewRole = false;
+      state.addRole = false;
+      state.editRole = false;
+      state.deleteRole = false;
+      // Ish turlari
+      state.viewWorkType = false;
+      state.editWorkType = false;
+      state.addWorkType = false;
+      state.deleteWorkType = false;
+      // Achievment
+      state.viewAchievement = false;
+      state.editAchievement = false;
+      state.addAchievement = false;
+      state.deleteAchievement = false;
+      // ish tajriba
+      state.viewWorkExperience = false;
+      state.editWorkExperience = false;
+      state.addWorkExperience = false;
+      state.deleteWorkExperience = false;
+      // Talaba
+      state.addStudent = false;
+      state.editStudent = false;
+      state.deleteStudent = false;
+      state.viewStudent = false;
+    }
   },
 });
 
-export const { saveUser } = slice.actions;
+export const { saveUser, logOutUser } = slice.actions;
 export default slice.reducer;

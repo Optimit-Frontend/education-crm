@@ -6,7 +6,7 @@ import { connect } from "react-redux";
 import { twMerge } from "tailwind-merge";
 import { toast } from "react-toastify";
 import usersDataReducer, { saveUser } from "../../reducer/usersDataReducer";
-import instance from "../../services/Axios.jsx";
+import instance from "../../services/Axios";
 
 function Login({ usersDataReducer, saveUser }) {
   const navigate = useNavigate();
@@ -14,6 +14,8 @@ function Login({ usersDataReducer, saveUser }) {
     register,
     handleSubmit,
     formState: { errors },
+    // setValue,
+    // watch
   } = useForm();
 
   useEffect(() => {
@@ -93,7 +95,7 @@ function Login({ usersDataReducer, saveUser }) {
                   <div
                     className={twMerge(
                       classNames(
-                        "mt-2 block w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-gray-700 placeholder-gray-400 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-400 focus:ring-opacity-40 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:placeholder-gray-600",
+                        "mt-2 block w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-gray-700 placeholder-gray-400 focus-within:border-blue-400 focus-within::outline-none focus-within:ring focus-within:ring-blue-400 focus-within:ring-opacity-40 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:placeholder-gray-600",
                         {
                           "border-danger focus:border-danger focus:ring-danger":
                             errors.phone?.type === "required",
@@ -105,9 +107,16 @@ function Login({ usersDataReducer, saveUser }) {
                     <input
                       type="text"
                       id="phone"
+                      maxLength="9"
                       {...register("phone", { required: true })}
-                      placeholder="Telefon nomeringizni kiriting..."
-                      className="w-full max-w-[250px] dark:bg-gray-900 border-none outline-none"
+                      // value={watch("phone")}
+                      // onChange={(e) => {
+                      //   const pattern = /^.*?(\d{2})(\d{3})(\d{4})(?!\d).*$/;
+                      //   setValue("phone", e.target.value.replace(pattern, "($1) $2 $3"), { shouldValidate: true });
+                      // }}
+                      // required
+                      placeholder="Nomeringizni kiriting..."
+                      className="w-full max-w-[170px] dark:bg-gray-900 border-none outline-none"
                     />
                   </div>
                   {errors.phone?.type === "required" && (
