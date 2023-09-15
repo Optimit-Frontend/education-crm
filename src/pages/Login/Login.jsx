@@ -14,8 +14,8 @@ function Login({ usersDataReducer, saveUser }) {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
-    watch
+    // setValue,
+    // watch
   } = useForm();
 
   useEffect(() => {
@@ -108,12 +108,13 @@ function Login({ usersDataReducer, saveUser }) {
                       type="text"
                       id="phone"
                       maxLength="9"
-                      value={watch("phone")}
-                      onChange={(e) => {
-                        const pattern = /^.*?(\d{2})(\d{3})(\d{4})(?!\d).*$/;
-                        setValue("phone", e.target.value.replace(pattern, "($1) $2 $3"), { shouldValidate: true });
-                      }}
-                      required
+                      {...register("phone", { required: true })}
+                      // value={watch("phone")}
+                      // onChange={(e) => {
+                      //   const pattern = /^.*?(\d{2})(\d{3})(\d{4})(?!\d).*$/;
+                      //   setValue("phone", e.target.value.replace(pattern, "($1) $2 $3"), { shouldValidate: true });
+                      // }}
+                      // required
                       placeholder="Nomeringizni kiriting..."
                       className="w-full max-w-[170px] dark:bg-gray-900 border-none outline-none"
                     />
