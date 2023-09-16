@@ -614,25 +614,30 @@ function Sidebar({ sidebarOpen, setSidebarOpen, usersDataReducer }) {
                         </svg>
                       </NavLink>
                       {/* <!-- Dropdown Menu Start --> */}
-                      <div className={`translate transform overflow-hidden ${!open && "hidden"}`}>
-                        <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <NavLink
-                              to={`/businesses?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Bizneslar
-                            </NavLink>
-                          </li>
-                        </ul>
-                      </div>
+                      {
+                        usersDataReducer?.addBusiness || usersDataReducer?.editBusiness || usersDataReducer?.deleteBusiness || usersDataReducer?.viewBusiness
+                          ? (
+                            <div className={`translate transform overflow-hidden ${!open && "hidden"}`}>
+                              <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                                <li>
+                                  <NavLink
+                                    to={`/businesses?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Bizneslar
+                                  </NavLink>
+                                </li>
+                              </ul>
+                            </div>
+                          ) : ""
+                      }
                     </>
                   );
                 }}
@@ -862,83 +867,108 @@ function Sidebar({ sidebarOpen, setSidebarOpen, usersDataReducer }) {
                                 </li>
                               ) : ""
                           }
-                          <li>
-                            <NavLink
-                              to={`/scores?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Baholar
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/attendance?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Keldi-ketdi
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/teaching-hours?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              {/* eslint-disable-next-line react/no-unescaped-entities */}
-                              Dars soati
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/lesson-schedule?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Dars Jadvali
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/topic?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              {/* eslint-disable-next-line react/no-unescaped-entities */}
-                              Mavzu
-                            </NavLink>
-                          </li>
+                          {
+                            usersDataReducer?.viewScore || usersDataReducer?.deleteScore || usersDataReducer?.addScore || usersDataReducer?.editScore
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/scores?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Baholar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.addAttendance || usersDataReducer?.editAttendance || usersDataReducer?.deleteAttendance || usersDataReducer?.viewAttendance
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/attendance?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Keldi-ketdi
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.addLessonHour || usersDataReducer?.editLessonHour || usersDataReducer?.viewLessonHour || usersDataReducer?.deleteLessonHour
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/teaching-hours?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    {/* eslint-disable-next-line react/no-unescaped-entities */}
+                                    Dars soati
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.addSchedule || usersDataReducer?.editSchedule || usersDataReducer?.deleteSchedule || usersDataReducer?.viewSchedule
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/lesson-schedule?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Dars Jadvali
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.addTopic || usersDataReducer?.editTopic || usersDataReducer?.deleteTopic || usersDataReducer?.editTopic
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/topic?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    {/* eslint-disable-next-line react/no-unescaped-entities */}
+                                    Mavzu
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
                         </ul>
                       </div>
                     </>
@@ -1110,41 +1140,46 @@ function Sidebar({ sidebarOpen, setSidebarOpen, usersDataReducer }) {
                 }}
               </SidebarLinkGroup>
 
-              <li>
-                <NavLink
-                  to="/transactions"
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes("transactions") && "bg-graydark dark:bg-meta-4"
-                  }`}
-                >
-                  <svg
-                    className="fill-current"
-                    width="18"
-                    height="19"
-                    viewBox="0 0 18 19"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <g clipPath="url(#clip0_130_9756)">
-                      <path
-                        d="M15.7501 0.55835H2.2501C1.29385 0.55835 0.506348 1.34585 0.506348 2.3021V15.8021C0.506348 16.7584 1.29385 17.574 2.27822 17.574H15.7782C16.7345 17.574 17.5501 16.7865 17.5501 15.8021V2.3021C17.522 1.34585 16.7063 0.55835 15.7501 0.55835ZM6.69385 10.599V6.4646H11.3063V10.5709H6.69385V10.599ZM11.3063 11.8646V16.3083H6.69385V11.8646H11.3063ZM1.77197 6.4646H5.45635V10.5709H1.77197V6.4646ZM12.572 6.4646H16.2563V10.5709H12.572V6.4646ZM2.2501 1.82397H15.7501C16.0313 1.82397 16.2563 2.04897 16.2563 2.33022V5.2271H1.77197V2.3021C1.77197 2.02085 1.96885 1.82397 2.2501 1.82397ZM1.77197 15.8021V11.8646H5.45635V16.3083H2.2501C1.96885 16.3083 1.77197 16.0834 1.77197 15.8021ZM15.7501 16.3083H12.572V11.8646H16.2563V15.8021C16.2563 16.0834 16.0313 16.3083 15.7501 16.3083Z"
-                        fill=""
-                      />
-                    </g>
-                    <defs>
-                      <clipPath id="clip0_130_9756">
-                        <rect
+              {
+                usersDataReducer?.editTransaction || usersDataReducer?.deleteTransaction || usersDataReducer?.addTransaction || usersDataReducer?.viewTransaction
+                  ? (
+                    <li>
+                      <NavLink
+                        to="/transactions"
+                        className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                          pathname.includes("transactions") && "bg-graydark dark:bg-meta-4"
+                        }`}
+                      >
+                        <svg
+                          className="fill-current"
                           width="18"
-                          height="18"
-                          fill="white"
-                          transform="translate(0 0.052124)"
-                        />
-                      </clipPath>
-                    </defs>
-                  </svg>
-                  Transaction
-                </NavLink>
-              </li>
+                          height="19"
+                          viewBox="0 0 18 19"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <g clipPath="url(#clip0_130_9756)">
+                            <path
+                              d="M15.7501 0.55835H2.2501C1.29385 0.55835 0.506348 1.34585 0.506348 2.3021V15.8021C0.506348 16.7584 1.29385 17.574 2.27822 17.574H15.7782C16.7345 17.574 17.5501 16.7865 17.5501 15.8021V2.3021C17.522 1.34585 16.7063 0.55835 15.7501 0.55835ZM6.69385 10.599V6.4646H11.3063V10.5709H6.69385V10.599ZM11.3063 11.8646V16.3083H6.69385V11.8646H11.3063ZM1.77197 6.4646H5.45635V10.5709H1.77197V6.4646ZM12.572 6.4646H16.2563V10.5709H12.572V6.4646ZM2.2501 1.82397H15.7501C16.0313 1.82397 16.2563 2.04897 16.2563 2.33022V5.2271H1.77197V2.3021C1.77197 2.02085 1.96885 1.82397 2.2501 1.82397ZM1.77197 15.8021V11.8646H5.45635V16.3083H2.2501C1.96885 16.3083 1.77197 16.0834 1.77197 15.8021ZM15.7501 16.3083H12.572V11.8646H16.2563V15.8021C16.2563 16.0834 16.0313 16.3083 15.7501 16.3083Z"
+                              fill=""
+                            />
+                          </g>
+                          <defs>
+                            <clipPath id="clip0_130_9756">
+                              <rect
+                                width="18"
+                                height="18"
+                                fill="white"
+                                transform="translate(0 0.052124)"
+                              />
+                            </clipPath>
+                          </defs>
+                        </svg>
+                        Transaction
+                      </NavLink>
+                    </li>
+                  ) : ""
+              }
               {/* <!-- Menu Item Tables --> */}
 
               {/* <!-- Menu Item Settings --> */}
@@ -1216,96 +1251,126 @@ function Sidebar({ sidebarOpen, setSidebarOpen, usersDataReducer }) {
                       {/* <!-- Dropdown Menu Start --> */}
                       <div className={`translate transform overflow-hidden ${!open && "hidden"}`}>
                         <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <NavLink
-                              to="/settings/branches"
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Filiallar
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to="/settings/warehouse"
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Omborlar
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to="/settings/balance"
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Balanslar
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to="/settings/roomType"
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Xona turlari
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/settings/room?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Xonalar
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to="/settings/subjects"
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Fanlar
-                            </NavLink>
-                          </li>
+                          {
+                            usersDataReducer?.addBranch || usersDataReducer?.editBranch || usersDataReducer?.deleteBranch || usersDataReducer?.viewBranch
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to="/settings/branches"
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Filiallar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.addWerHouse || usersDataReducer?.deleteWerHouse || usersDataReducer?.viewWerHouse || usersDataReducer?.editWerHouse
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to="/settings/warehouse"
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Omborlar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.addBalance || usersDataReducer?.editBalance || usersDataReducer?.deleteBalance || usersDataReducer?.viewBalance
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to="/settings/balance"
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Balanslar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.addRoom || usersDataReducer?.editRoom || usersDataReducer?.deleteRoom || usersDataReducer?.viewRoom
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to="/settings/roomType"
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Xona turlari
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.addRoom || usersDataReducer?.editRoom || usersDataReducer?.deleteRoom || usersDataReducer?.viewRoom
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/settings/room?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Xonalar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer?.addSubject || usersDataReducer?.editSubject || usersDataReducer?.deleteSubject || usersDataReducer?.viewSubject
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to="/settings/subjects"
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Fanlar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
                           <li>
                             <NavLink
                               to={`/settings/subjectsForLevel?page=1&size=${pageSize}`}

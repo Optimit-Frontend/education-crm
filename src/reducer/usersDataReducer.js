@@ -74,6 +74,56 @@ export const slice = createSlice({
     editJournal: false,
     viewJournal: false,
     deleteJournal: false,
+    // Score
+    addScore: false,
+    deleteScore: false,
+    editScore: false,
+    viewScore: false,
+    // addAttendance
+    addAttendance: false,
+    editAttendance: false,
+    deleteAttendance: false,
+    viewAttendance: false,
+    // LessonHour
+    addLessonHour: false,
+    editLessonHour: false,
+    deleteLessonHour: false,
+    viewLessonHour: false,
+    // dars jadvali
+    addSchedule: false,
+    editSchedule: false,
+    deleteSchedule: false,
+    viewSchedule: false,
+    // Mavzu
+    addTopic: false,
+    editTopic: false,
+    deleteTopic: false,
+    viewTopic: false,
+    // Filial
+    addBranch: false,
+    editBranch: false,
+    deleteBranch: false,
+    viewBranch: false,
+    // Warehouse
+    addWerHouse: false,
+    editWerHouse: false,
+    deleteWerHouse: false,
+    viewWerHouse: false,
+    // Balance
+    addBalance: false,
+    editBalance: false,
+    deleteBalance: false,
+    viewBalance: false,
+    // Xona
+    addRoom: false,
+    editRoom: false,
+    deleteRoom: false,
+    viewRoom: false,
+    // Fan
+    addSubject: false,
+    editSubject: false,
+    deleteSubject: false,
+    viewSubject: false,
   },
   reducers: {
     saveUser: (state, action) => {
@@ -240,6 +290,126 @@ export const slice = createSlice({
               break;
             case "EDIT_JOURNAL":
               state.editJournal = true;
+              break;
+            case "EDIT_SCORE":
+              state.editScore = true;
+              break;
+            case "ADD_SCORE":
+              state.addScore = true;
+              break;
+            case "GET_SCORE":
+              state.viewScore = true;
+              break;
+            case "DELETE_SCORE":
+              state.deleteScore = true;
+              break;
+            case "ADD_STAFF_ATTENDANCE":
+              state.addAttendance = true;
+              break;
+            case "EDIT_STAFF_ATTENDANCE":
+              state.editAttendance = true;
+              break;
+            case "GET_STAFF_ATTENDANCE":
+              state.viewAttendance = true;
+              break;
+            case "DELETE_STAFF_ATTENDANCE":
+              state.deleteAttendance = true;
+              break;
+            case "ADD_TEACHING_HOURS":
+              state.addLessonHour = true;
+              break;
+            case "EDIT_TEACHING_HOURS":
+              state.editLessonHour = true;
+              break;
+            case "DELETE_TEACHING_HOURS":
+              state.deleteLessonHour = true;
+              break;
+            case "GET_TEACHING_HOURS":
+              state.viewLessonHour = true;
+              break;
+            case "ADD_LESSON_SCHEDULE":
+              state.addSchedule = true;
+              break;
+            case "EDIT_LESSON_SCHEDULE":
+              state.editSchedule = true;
+              break;
+            case "DELETE_LESSON_SCHEDULE":
+              state.deleteSchedule = true;
+              break;
+            case "GET_LESSON_SCHEDULE":
+              state.viewSchedule = true;
+              break;
+            case "ADD_TOPIC":
+              state.addTopic = true;
+              break;
+            case "EDIT_TOPIC":
+              state.editTopic = true;
+              break;
+            case "DELETE_TOPIC":
+              state.deleteTopic = true;
+              break;
+            case "GET_TOPIC":
+              state.viewTopic = true;
+              break;
+            case "GET_BRANCH":
+              state.viewBranch = true;
+              break;
+            case "ADD_BRANCH":
+              state.addBranch = true;
+              break;
+            case "EDIT_BRANCH":
+              state.editBranch = true;
+              break;
+            case "DELETE_BRANCH":
+              state.deleteBranch = true;
+              break;
+            case "ADD_WAREHOUSE":
+              state.addWerHouse = true;
+              break;
+            case "EDIT_WAREHOUSE":
+              state.editWerHouse = true;
+              break;
+            case "GET_WAREHOUSE":
+              state.viewWerHouse = true;
+              break;
+            case "DELETE_WAREHOUSE":
+              state.deleteWerHouse = true;
+              break;
+            case "DELETE_MAIN_BALANCE":
+              state.deleteBalance = true;
+              break;
+            case "ADD_MAIN_BALANCE":
+              state.addBalance = true;
+              break;
+            case "EDIT_MAIN_BALANCE":
+              state.editBalance = true;
+              break;
+            case "GET_MAIN_BALANCE":
+              state.viewBalance = true;
+              break;
+            case "GET_ROOM":
+              state.viewRoom = true;
+              break;
+            case "ADD_ROOM":
+              state.addRoom = true;
+              break;
+            case "EDIT_ROOM":
+              state.editRoom = true;
+              break;
+            case "DELETE_ROOM":
+              state.deleteRoom = true;
+              break;
+            case "DELETE_SUBJECT":
+              state.deleteSubject = true;
+              break;
+            case "EDIT_SUBJECT":
+              state.editSubject = true;
+              break;
+            case "ADD_SUBJECT":
+              state.addSubject = true;
+              break;
+            case "GET_SUBJECT":
+              state.viewSubject = true;
               break;
           }
         });
