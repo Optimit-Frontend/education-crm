@@ -444,6 +444,370 @@ function Roles({
           input.deleteUserChecked = true;
           input.deleteUser = "DELETE_USER";
           break;
+        case "ADD_ROLE":
+          input.addRoleChecked = true;
+          input.addRole = "ADD_ROLE";
+          break;
+        case "EDIT_ROLE":
+          input.editRoleChecked = true;
+          input.editRole = "EDIT_ROLE";
+          break;
+        case "DELETE_ROLE":
+          input.deleteRoleChecked = true;
+          input.deleteRole = "DELETE_ROLE";
+          break;
+        case "ADD_TYPE_OF_WORK":
+          input.addWorkTypeChecked = true;
+          input.addWorkType = "ADD_TYPE_OF_WORK";
+          break;
+        case "EDIT_TYPE_OF_WORK":
+          input.editWorkTypeChecked = true;
+          input.editWorkType = "EDIT_TYPE_OF_WORK";
+          break;
+        case "GET_TYPE_OF_WORK":
+          input.viewWorkTypeChecked = true;
+          input.viewWorkType = "GET_TYPE_OF_WORK";
+          break;
+        case "DELETE_TYPE_OF_WORK":
+          input.deleteWorkTypeChecked = true;
+          input.deleteWorkType = "DELETE_TYPE_OF_WORK";
+          break;
+        case "ADD_ACHIEVEMENT":
+          input.addAchievementChecked = true;
+          input.addAchievement = "ADD_ACHIEVEMENT";
+          break;
+        case "EDIT_ACHIEVEMENT":
+          input.editAchievementChecked = true;
+          input.editAchievement = "EDIT_ACHIEVEMENT";
+          break;
+        case "GET_ACHIEVEMENT":
+          input.viewAchievementChecked = true;
+          input.viewAchievement = "GET_ACHIEVEMENT";
+          break;
+        case "DELETE_ACHIEVEMENT":
+          input.deleteAchievementChecked = true;
+          input.deleteAchievement = "DELETE_ACHIEVEMENT";
+          break;
+        case "ADD_WORK_EXPERIENCE":
+          input.addWorkExperienceChecked = true;
+          input.addWorkExperience = "ADD_WORK_EXPERIENCE";
+          break;
+        case "EDIT_WORK_EXPERIENCE":
+          input.editWorkExperienceChecked = true;
+          input.editWorkExperience = "EDIT_WORK_EXPERIENCE";
+          break;
+        case "GET_WORK_EXPERIENCE":
+          input.viewWorkExperienceChecked = true;
+          input.viewWorkExperience = "GET_WORK_EXPERIENCE";
+          break;
+        case "DELETE_WORK_EXPERIENCE":
+          input.deleteWorkExperienceChecked = true;
+          input.deleteWorkExperience = "DELETE_WORK_EXPERIENCE";
+          break;
+        case "ADD_STUDENT":
+          input.addStudentChecked = true;
+          input.addStudent = "ADD_STUDENT";
+          break;
+        case "EDIT_STUDENT":
+          input.editStudentChecked = true;
+          input.editStudent = "EDIT_STUDENT";
+          break;
+        case "GET_STUDENT":
+          input.viewStudentChecked = true;
+          input.viewStudent = "GET_STUDENT";
+          break;
+        case "DELETE_STUDENT":
+          input.deleteStudentChecked = true;
+          input.deleteStudent = "DELETE_STUDENT";
+          break;
+        case "ADD_STUDENT_CLASS":
+          input.addClassChecked = true;
+          input.addClass = "ADD_STUDENT_CLASS";
+          break;
+        case "EDIT_STUDENT_CLASS":
+          input.editClassChecked = true;
+          input.editClass = "EDIT_STUDENT_CLASS";
+          break;
+        case "GET_STUDENT_CLASS":
+          input.viewClassChecked = true;
+          input.viewClass = "GET_STUDENT_CLASS";
+          break;
+        case "DELETE_STUDENT_CLASS":
+          input.deleteClassChecked = true;
+          input.deleteClass = "DELETE_STUDENT_CLASS";
+          break;
+        case "ADD_STUDENT_ACCOUNT":
+          input.addAccountNumberChecked = true;
+          input.addAccountNumber = "ADD_STUDENT_ACCOUNT";
+          break;
+        case "EDIT_STUDENT_ACCOUNT":
+          input.editAccountNumberChecked = true;
+          input.editAccountNumber = "EDIT_STUDENT_ACCOUNT";
+          break;
+        case "GET_STUDENT_ACCOUNT":
+          input.viewAccountNumberChecked = true;
+          input.viewAccountNumber = "GET_STUDENT_ACCOUNT";
+          break;
+        case "DELETE_STUDENT_ACCOUNT":
+          input.deleteAccountNumberChecked = true;
+          input.deleteAccountNumber = "DELETE_STUDENT_ACCOUNT";
+          break;
+        case "GET_STUDENT_HOMEWORK":
+          input.viewHomeworkChecked = true;
+          input.viewHomework = "GET_STUDENT_HOMEWORK";
+          break;
+        case "ADD_STUDENT_HOMEWORK":
+          input.addHomeworkChecked = true;
+          input.addHomework = "ADD_STUDENT_HOMEWORK";
+          break;
+        case "EDIT_STUDENT_HOMEWORK":
+          input.editHomeworkChecked = true;
+          input.editHomework = "EDIT_STUDENT_HOMEWORK";
+          break;
+        case "DELETE_STUDENT_HOMEWORK":
+          input.deleteHomeworkChecked = true;
+          input.deleteHomework = "DELETE_STUDENT_HOMEWORK";
+          break;
+        case "GET_TRANSACTION_HISTORY":
+          input.viewTransactionChecked = true;
+          input.viewTransaction = "GET_TRANSACTION_HISTORY";
+          break;
+        case "ADD_TRANSACTION_HISTORY":
+          input.addTransactionChecked = true;
+          input.addTransaction = "ADD_TRANSACTION_HISTORY";
+          break;
+        case "EDIT_TRANSACTION_HISTORY":
+          input.editTransactionChecked = true;
+          input.editTransaction = "EDIT_TRANSACTION_HISTORY";
+          break;
+        case "DELETE_TRANSACTION_HISTORY":
+          input.deleteTransactionChecked = true;
+          input.deleteTransaction = "DELETE_TRANSACTION_HISTORY";
+          break;
+        case "ADD_FAMILY":
+          input.addFamilyChecked = true;
+          input.addFamily = "ADD_FAMILY";
+          break;
+        case "EDIT_FAMILY":
+          input.editFamilyChecked = true;
+          input.editFamily = "EDIT_FAMILY";
+          break;
+        case "GET_FAMILY":
+          input.viewFamilyChecked = true;
+          input.viewFamily = "GET_FAMILY";
+          break;
+        case "DELETE_FAMILY":
+          input.deleteFamilyChecked = true;
+          input.deleteFamily = "DELETE_FAMILY";
+          break;
+        case "ADD_SALARY":
+          input.addSalaryChecked = true;
+          input.addSalary = "ADD_SALARY";
+          break;
+        case "EDIT_SALARY":
+          input.editSalaryChecked = true;
+          input.editSalary = "ADD_SALARY";
+          break;
+        case "DELETE_SALARY":
+          input.deleteSalaryChecked = true;
+          input.deleteSalary = "DELETE_SALARY";
+          break;
+        case "GET_SALARY":
+          input.viewSalaryChecked = true;
+          input.viewSalary = "GET_SALARY";
+          break;
+        case "GET_JOURNAL":
+          input.viewJournalChecked = true;
+          input.viewJournal = "GET_JOURNAL";
+          break;
+        case "DELETE_JOURNAL":
+          input.deleteJournalChecked = true;
+          input.deleteJournal = "DELETE_JOURNAL";
+          break;
+        case "ADD_JOURNAL":
+          input.addJournalChecked = true;
+          input.addJournal = "ADD_JOURNAL";
+          break;
+        case "EDIT_JOURNAL":
+          input.editJournalChecked = true;
+          input.editJournal = "EDIT_JOURNAL";
+          break;
+        case "EDIT_SCORE":
+          input.editScoreChecked = true;
+          input.editScore = "EDIT_SCORE";
+          break;
+        case "ADD_SCORE":
+          input.addScoreChecked = true;
+          input.addScore = "ADD_SCORE";
+          break;
+        case "GET_SCORE":
+          input.viewScoreChecked = true;
+          input.viewScore = "GET_SCORE";
+          break;
+        case "DELETE_SCORE":
+          input.deleteScoreChecked = true;
+          input.deleteScore = "DELETE_SCORE";
+          break;
+        case "ADD_STAFF_ATTENDANCE":
+          input.addAttendanceChecked = true;
+          input.addAttendance = "ADD_STAFF_ATTENDANCE";
+          break;
+        case "EDIT_STAFF_ATTENDANCE":
+          input.editAttendanceChecked = true;
+          input.editAttendance = "EDIT_STAFF_ATTENDANCE";
+          break;
+        case "GET_STAFF_ATTENDANCE":
+          input.viewAttendanceChecked = true;
+          input.viewAttendance = "GET_STAFF_ATTENDANCE";
+          break;
+        case "DELETE_STAFF_ATTENDANCE":
+          input.deleteAttendanceChecked = true;
+          input.deleteAttendance = "DELETE_STAFF_ATTENDANCE";
+          break;
+        case "ADD_TEACHING_HOURS":
+          input.addLessonHourChecked = true;
+          input.addLessonHour = "ADD_TEACHING_HOURS";
+          break;
+        case "EDIT_TEACHING_HOURS":
+          input.editLessonHourChecked = true;
+          input.editLessonHour = "EDIT_TEACHING_HOURS";
+          break;
+        case "DELETE_TEACHING_HOURS":
+          input.deleteLessonHourChecked = true;
+          input.deleteLessonHour = "DELETE_TEACHING_HOURS";
+          break;
+        case "GET_TEACHING_HOURS":
+          input.viewLessonHourChecked = true;
+          input.viewLessonHour = "GET_TEACHING_HOURS";
+          break;
+        case "ADD_LESSON_SCHEDULE":
+          input.addScheduleChecked = true;
+          input.addSchedule = "ADD_LESSON_SCHEDULE";
+          break;
+        case "EDIT_LESSON_SCHEDULE":
+          input.editScheduleChecked = true;
+          input.editSchedule = "EDIT_LESSON_SCHEDULE";
+          break;
+        case "DELETE_LESSON_SCHEDULE":
+          input.deleteScheduleChecked = true;
+          input.deleteSchedule = "DELETE_LESSON_SCHEDULE";
+          break;
+        case "GET_LESSON_SCHEDULE":
+          input.viewScheduleChecked = true;
+          input.viewSchedule = "GET_LESSON_SCHEDULE";
+          break;
+        case "ADD_TOPIC":
+          input.addThemeChecked = true;
+          input.addTheme = "ADD_TOPIC";
+          break;
+        case "EDIT_TOPIC":
+          input.editThemeChecked = true;
+          input.editTheme = "EDIT_TOPIC";
+          break;
+        case "DELETE_TOPIC":
+          input.deleteThemeChecked = true;
+          input.deleteTheme = "DELETE_TOPIC";
+          break;
+        case "GET_TOPIC":
+          input.viewThemeChecked = true;
+          input.viewTheme = true;
+          break;
+        case "GET_BRANCH":
+          input.viewBranchChecked = true;
+          input.viewBranch = "GET_BRANCH";
+          break;
+        case "ADD_BRANCH":
+          input.addBranchChecked = true;
+          input.addBranch = "ADD_BRANCH";
+          break;
+        case "EDIT_BRANCH":
+          input.editBranchChecked = true;
+          input.editBranch = "EDIT_BRANCH";
+          break;
+        case "DELETE_BRANCH":
+          input.deleteBranchChecked = true;
+          input.deleteBranch = "DELETE_BRANCH";
+          break;
+        case "ADD_WAREHOUSE":
+          input.addWerHouseChecked = true;
+          input.addWerHouse = "ADD_WAREHOUSE";
+          break;
+        case "EDIT_WAREHOUSE":
+          input.editWerHouseChecked = true;
+          input.editWerHouse = "EDIT_WAREHOUSE";
+          break;
+        case "GET_WAREHOUSE":
+          input.viewWerHouseChecked = true;
+          input.viewWerHouse = "GET_WAREHOUSE";
+          break;
+        case "DELETE_WAREHOUSE":
+          input.deleteWerHouseChecked = true;
+          input.deleteWerHouse = "DELETE_WAREHOUSE";
+          break;
+        case "DELETE_MAIN_BALANCE":
+          input.deleteBalanceChecked = true;
+          input.deleteBalance = "DELETE_MAIN_BALANCE";
+          break;
+        case "ADD_MAIN_BALANCE":
+          input.addBalanceChecked = true;
+          input.addBalance = "ADD_MAIN_BALANCE";
+          break;
+        case "EDIT_MAIN_BALANCE":
+          input.editBalanceChecked = true;
+          input.editBalance = "EDIT_MAIN_BALANCE";
+          break;
+        case "GET_MAIN_BALANCE":
+          input.viewBalanceChecked = true;
+          input.viewBalance = "GET_MAIN_BALANCE";
+          break;
+        case "GET_ROOM":
+          input.viewRoomChecked = true;
+          input.viewRoom = "GET_ROOM";
+          break;
+        case "ADD_ROOM":
+          input.addRoomChecked = true;
+          input.addRoom = "ADD_ROOM";
+          break;
+        case "EDIT_ROOM":
+          input.editRoomChecked = true;
+          input.editRoom = "EDIT_ROOM";
+          break;
+        case "DELETE_ROOM":
+          input.deleteRoomChecked = true;
+          input.deleteRoom = "DELETE_ROOM";
+          break;
+        case "DELETE_SUBJECT":
+          input.deleteSubjectChecked = true;
+          input.deleteSubject = "DELETE_SUBJECT";
+          break;
+        case "EDIT_SUBJECT":
+          input.editSubjectChecked = true;
+          input.editSubject = "EDIT_SUBJECT";
+          break;
+        case "ADD_SUBJECT":
+          input.addSubjectChecked = true;
+          input.addSubject = "ADD_SUBJECT";
+          break;
+        case "GET_SUBJECT":
+          input.viewSubjectChecked = true;
+          input.viewSubject = "GET_SUBJECT";
+          break;
+        case "ADD_BUSINESS":
+          input.addBusinessChecked = true;
+          input.addBusiness = "ADD_BUSINESS";
+          break;
+        case "EDIT_BUSINESS":
+          input.editBusinessChecked = true;
+          input.editBusiness = "EDIT_BUSINESS";
+          break;
+        case "DELETE_BUSINESS":
+          input.deleteBusinessChecked = true;
+          input.deleteBusiness = "DELETE_BUSINESS";
+          break;
+        case "GET_BUSINESS":
+          input.viewBusinessChecked = true;
+          input.viewBusiness = "GET_BUSINESS";
+          break;
       }
     });
     checkPermission();
