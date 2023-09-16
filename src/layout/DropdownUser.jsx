@@ -54,13 +54,14 @@ function DropdownUser({ usersDataReducer, logOutUser }) {
         className="flex items-center gap-4"
         to="#"
       >
-        <span className="hidden text-right lg:block">
-          <span className="text-sm font-medium text-black dark:text-white">{usersDataReducer?.fullName}</span>
-        </span>
 
         <span className="h-12 w-12 rounded-full">
           <img src={UserOne} alt="User" />
         </span>
+
+        <div>
+          <h5>{usersDataReducer?.fullName}</h5>
+        </div>
 
         <svg
           className={`hidden fill-current sm:block ${dropdownOpen ? "rotate-180" : ""}`}
