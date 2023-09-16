@@ -124,6 +124,11 @@ export const slice = createSlice({
     editSubject: false,
     deleteSubject: false,
     viewSubject: false,
+    // business
+    addBusiness: false,
+    editBusiness: false,
+    viewBusiness: false,
+    deleteBusiness: false,
   },
   reducers: {
     saveUser: (state, action) => {
@@ -411,6 +416,18 @@ export const slice = createSlice({
             case "GET_SUBJECT":
               state.viewSubject = true;
               break;
+            case "ADD_BUSINESS":
+              state.addBusiness = true;
+              break;
+            case "EDIT_BUSINESS":
+              state.editBusiness = true;
+              break;
+            case "DELETE_BUSINESS":
+              state.deleteBusiness = true;
+              break;
+            case "GET_BUSINESS":
+              state.viewBusiness = true;
+              break;
           }
         });
       } else {
@@ -456,6 +473,96 @@ export const slice = createSlice({
       state.editStudent = false;
       state.deleteStudent = false;
       state.viewStudent = false;
+      // sinf
+      state.addClass = false;
+      state.editClass = false;
+      state.deleteClass = false;
+      state.viewClass = false;
+      // accountNumber
+      state.addAccountNumber = false;
+      state.editAccountNumber = false;
+      state.deleteAccountNumber = false;
+      state.viewAccountNumber = false;
+      // homework
+      state.addHomework = false;
+      state.editHomework = false;
+      state.deleteHomework = false;
+      state.viewHomework = false;
+      // transaction
+      state.addTransaction = false;
+      state.editTransaction = false;
+      state.deleteTransaction = false;
+      state.viewTransaction = false;
+      // family
+      state.addFamily = false;
+      state.editFamily = false;
+      state.deleteFamily = false;
+      state.viewFamily = false;
+      // maoshlar
+      state.addSalary = false;
+      state.editSalary = false;
+      state.deleteSalary = false;
+      state.viewSalary = false;
+      // jurnal
+      state.addJournal = false;
+      state.editJournal = false;
+      state.deleteJournal = false;
+      state.viewJournal = false;
+      // baho
+      state.addScore = false;
+      state.editScore = false;
+      state.deleteScore = false;
+      state.viewScore = false;
+      // attendance
+      state.addAttendance = false;
+      state.editAttendance = false;
+      state.deleteAttendance = false;
+      state.viewAttendance = false;
+      // dars soati
+      state.addLessonHour = false;
+      state.editLessonHour = false;
+      state.deleteLessonHour = false;
+      state.viewLessonHour = false;
+      // dars jadvali
+      state.addSchedule = false;
+      state.editSchedule = false;
+      state.deleteSchedule = false;
+      state.viewSchedule = false;
+      // Mavzu
+      state.addTopic = false;
+      state.editTopic = false;
+      state.deleteTopic = false;
+      state.viewTopic = false;
+      // branch
+      state.addBranch = false;
+      state.editBranch = false;
+      state.deleteBranch = false;
+      state.viewBranch = false;
+      // warehouse
+      state.addWarehouse = false;
+      state.editWarehouse = false;
+      state.deleteWarehouse = false;
+      state.viewWarehouse = false;
+      // balance
+      state.addBalance = false;
+      state.editBalance = false;
+      state.deleteBalance = false;
+      state.viewBalance = false;
+      // room
+      state.addRoom = false;
+      state.editRoom = false;
+      state.deleteRoom = false;
+      state.viewRoom = false;
+      // fan
+      state.addSubject = false;
+      state.editSubject = false;
+      state.deleteSubject = false;
+      state.viewSubject = false;
+      // business
+      state.addBusiness = false;
+      state.editBusiness = false;
+      state.deleteBusiness = false;
+      state.viewBusiness = false;
     }
   },
 });
