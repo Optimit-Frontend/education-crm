@@ -124,6 +124,7 @@ function RoutesPage() {
           <Route path="kitchen/dailyconsumedProduct" element={<DailyConsumedProducts />} />
           <Route path="kitchen/dailyConsumedDrink" element={<DailyConsumedDrinks />} />
           <Route path="employee/role" element={<Role />} />
+          <Route path="roles/:roleId" element={<Roles />} />
           <Route path="roles" element={<Roles />} />
           <Route path="employee" element={<Employee />} />
           <Route path="employee/achievement" element={<Achievement />} />

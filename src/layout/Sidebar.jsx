@@ -421,7 +421,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen, usersDataReducer }) {
                                 </li>
                               ) : ""
                           }
-                          {console.log(usersDataReducer?.addClass || usersDataReducer?.editClass || usersDataReducer?.viewClass || usersDataReducer?.deleteClass)}
                           {
                             usersDataReducer?.addClass || usersDataReducer?.editClass || usersDataReducer?.viewClass || usersDataReducer?.deleteClass
                               ? (
