@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "../../role.css";
 import { Button } from "antd";
 import { DownloadOutlined } from "@ant-design/icons";
@@ -13,60 +13,22 @@ import roleReducer, {
 } from "../../reducer/roleReducer";
 import usersDataReducer from "../../reducer/usersDataReducer";
 
-function Role({
+function Roles({
   roleReducer,
   usersDataReducer,
   saveRole,
-  editRole,
-  getRoleBranch,
-  match
+  editRole
 }) {
-  const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
-  const location = useLocation();
   const navigate = useNavigate();
-  const searchParams = new URLSearchParams(location.search);
-  const page = searchParams.get("page");
-  const size = searchParams.get("size");
-  const [pageData, setPageData] = useState({
-    page: parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1,
-    size: size ? parseInt(size, 10) : 10,
-    loading: false,
-  });
+  const { roleId } = useParams();
 
   useEffect(() => {
-    setSelectedRowKeys([[], []]);
-    navigate("/employee/role");
-  }, [roleReducer?.success]);
-
-  useEffect(() => {
-    console.log(usersDataReducer);
+    roleId && editl();
   }, []);
 
   useEffect(() => {
-    const pageSize = parseInt(size, 10);
-    const pageCount = parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1;
-    if (pageSize >= 100) {
-      setPageData((prev) => {
-        return { ...prev, size: 100 };
-      });
-      navigate(`/roles?page=${pageCount}&size=100`);
-    } else if (pageSize >= 50) {
-      setPageData((prev) => {
-        return { ...prev, size: 50 };
-      });
-      navigate(`/roles?page=${pageCount}&size=50`);
-    } else if (pageSize >= 20) {
-      setPageData((prev) => {
-        return { ...prev, size: 20 };
-      });
-      navigate(`/roles?page=${pageCount}&size=20`);
-    } else {
-      setPageData((prev) => {
-        return { ...prev, size: 10 };
-      });
-      navigate(`/roles?page=${pageCount}&size=10`);
-    }
-  }, []);
+    roleReducer?.changeData && navigate("/employee/role");
+  }, [roleReducer?.changeData]);
 
   const [input, setInput] = useState(
     {
@@ -400,32 +362,91 @@ function Role({
   }
 
   function checkPermission() {
-    input.AllUserRoles = input.addUserChecked && input.editUserChecked && input.deleteUserChecked && input.viewUserChecked;
-    input.AllRoleRoles = input.addRoleChecked && input.editRoleChecked && input.deleteRoleChecked && input.viewRoleChecked;
-    input.AllWorkTypeRoles = input.addWorkTypeChecked && input.editWorkTypeChecked && input.deleteWorkTypeChecked && input.viewWorkTypeChecked;
-    input.AllAchievementRoles = input.addAchievementChecked && input.editAchievementChecked && input.deleteAchievementChecked && input.viewAchievementChecked;
-    input.AllWorkExperienceRoles = input.addWorkExperienceChecked && input.editWorkExperienceChecked && input.deleteWorkExperienceChecked && input.viewWorkExperienceChecked;
-    input.AllStudentRoles = input.addStudentChecked && input.editStudentChecked && input.viewStudentChecked && input.deleteStudentChecked;
-    input.AllAccountNumberRoles = input.addAccountNumberChecked && input.editAccountNumberChecked && input.deleteAccountNumberChecked && input.viewAccountNumber;
-    input.AllHomeworkRoles = input.addHomeworkChecked && input.editHomeworkChecked && input.deleteHomeworkChecked && input.viewHomeworkChecked;
-    input.AllTransactionRoles = input.addTransactionChecked && input.editTransactionChecked && input.viewTransactionChecked && input.deleteTransactionChecked;
-    input.AllFamilyRoles = input.addFamilyChecked && input.editFamilyChecked && input.viewFamilyChecked && input.deleteFamilyChecked;
-    input.AllSalaryRoles = input.addSalaryChecked && input.editSalaryChecked && input.deleteSalaryChecked && input.viewSalaryChecked;
-    input.AllJournalRoles = input.addJournalChecked && input.editJournalChecked && input.viewJournalChecked && input.deleteJournalChecked;
-    input.AllScoreRoles = input.addScoreChecked && input.editScoreChecked && input.viewScoreChecked && input.deleteScoreChecked;
-    input.AllAttendanceRoles = input.addAttendanceChecked && input.editAttendanceChecked && input.viewAttendanceChecked && input.deleteAttendanceChecked;
-    input.AllLessonHourRoles = input.addLessonHourChecked && input.editLessonHourChecked && input.viewLessonHourChecked && input.deleteLessonHourChecked;
-    input.AllScheduleRoles = input.addScheduleChecked && input.editScheduleChecked && input.viewScheduleChecked && input.deleteScheduleChecked;
-    input.AllThemeRoles = input.addThemeChecked && input.editThemeChecked && input.viewThemeChecked && input.deleteThemeChecked;
-    input.AllBranchRoles = input.addBranchChecked && input.editBranchChecked && input.viewBranchChecked && input.deleteBranchChecked;
-    input.AllRoomRoles = input.addRoomChecked && input.editRoomChecked && input.viewRoomChecked && input.deleteRoomChecked;
-    input.AllSubjectRoles = input.addSubjectChecked && input.editSubjectChecked && input.viewSubjectChecked && input.deleteSubjectChecked;
-    input.AllBalanceRoles = input.addBalanceChecked && input.editBalanceChecked && input.viewBalanceChecked && input.deleteBalanceChecked;
-    input.AllWerkRoles = input.addWerHouseChecked && input.editWerHouseChecked && input.viewWerHouseChecked && input.deleteWerHouseChecked;
-    input.AllBusinessRoles = input.addBusinessChecked && input.editBusinessChecked && input.viewBusinessChecked && input.deleteBusinessChecked;
+    input.AllUserRoles = input.addUserChecked && input.editUserChecked
+      && input.deleteUserChecked && input.viewUserChecked;
+    input.AllRoleRoles = input.addRoleChecked && input.editRoleChecked
+      && input.deleteRoleChecked && input.viewRoleChecked;
+    input.AllWorkTypeRoles = input.addWorkTypeChecked && input.editWorkTypeChecked
+      && input.deleteWorkTypeChecked && input.viewWorkTypeChecked;
+    input.AllAchievementRoles = input.addAchievementChecked && input.editAchievementChecked
+      && input.deleteAchievementChecked && input.viewAchievementChecked;
+    input.AllWorkExperienceRoles = input.addWorkExperienceChecked && input.editWorkExperienceChecked
+      && input.deleteWorkExperienceChecked && input.viewWorkExperienceChecked;
+    input.AllStudentRoles = input.addStudentChecked && input.editStudentChecked
+      && input.viewStudentChecked && input.deleteStudentChecked;
+    input.AllAccountNumberRoles = input.addAccountNumberChecked
+      && input.editAccountNumberChecked && input.deleteAccountNumberChecked && input.viewAccountNumber;
+    input.AllHomeworkRoles = input.addHomeworkChecked && input.editHomeworkChecked
+      && input.deleteHomeworkChecked && input.viewHomeworkChecked;
+    input.AllTransactionRoles = input.addTransactionChecked && input.editTransactionChecked
+      && input.viewTransactionChecked && input.deleteTransactionChecked;
+    input.AllFamilyRoles = input.addFamilyChecked && input.editFamilyChecked
+      && input.viewFamilyChecked && input.deleteFamilyChecked;
+    input.AllSalaryRoles = input.addSalaryChecked && input.editSalaryChecked
+      && input.deleteSalaryChecked && input.viewSalaryChecked;
+    input.AllJournalRoles = input.addJournalChecked && input.editJournalChecked
+      && input.viewJournalChecked && input.deleteJournalChecked;
+    input.AllScoreRoles = input.addScoreChecked && input.editScoreChecked
+      && input.viewScoreChecked && input.deleteScoreChecked;
+    input.AllAttendanceRoles = input.addAttendanceChecked && input.editAttendanceChecked
+      && input.viewAttendanceChecked && input.deleteAttendanceChecked;
+    input.AllLessonHourRoles = input.addLessonHourChecked && input.editLessonHourChecked
+      && input.viewLessonHourChecked && input.deleteLessonHourChecked;
+    input.AllScheduleRoles = input.addScheduleChecked && input.editScheduleChecked
+      && input.viewScheduleChecked && input.deleteScheduleChecked;
+    input.AllThemeRoles = input.addThemeChecked && input.editThemeChecked
+      && input.viewThemeChecked && input.deleteThemeChecked;
+    input.AllBranchRoles = input.addBranchChecked && input.editBranchChecked
+      && input.viewBranchChecked && input.deleteBranchChecked;
+    input.AllRoomRoles = input.addRoomChecked && input.editRoomChecked
+      && input.viewRoomChecked && input.deleteRoomChecked;
+    input.AllSubjectRoles = input.addSubjectChecked && input.editSubjectChecked
+      && input.viewSubjectChecked && input.deleteSubjectChecked;
+    input.AllBalanceRoles = input.addBalanceChecked && input.editBalanceChecked
+      && input.viewBalanceChecked && input.deleteBalanceChecked;
+    input.AllWerkRoles = input.addWerHouseChecked && input.editWerHouseChecked
+      && input.viewWerHouseChecked && input.deleteWerHouseChecked;
+    input.AllBusinessRoles = input.addBusinessChecked && input.editBusinessChecked
+      && input.viewBusinessChecked && input.deleteBusinessChecked;
 
     const a = { ...input };
     setInput(a);
+  }
+
+  function editl() {
+    if (roleReducer.role) {
+      roleReducer.role?.map((item) => {
+        if (parseInt(roleId, 10) === item.id) {
+          editl2(item);
+        }
+      });
+    }
+  }
+
+  function editl2(item) {
+    const a = item.permissions;
+    setName(item.name);
+    a.map((item) => {
+      switch (item) {
+        case "ADD_USER":
+          input.addUserChecked = true;
+          input.addUser = "ADD_USER";
+          break;
+        case "GET_USER":
+          input.viewUserChecked = true;
+          input.viewUser = "GET_USER";
+          break;
+        case "EDIT_USER":
+          input.editUserChecked = true;
+          input.editUser = "EDIT_USER";
+          break;
+        case "DELETE_USER":
+          input.deleteUserChecked = true;
+          input.deleteUser = "DELETE_USER";
+          break;
+      }
+    });
+    checkPermission();
   }
 
   function saqla() {
@@ -536,16 +557,26 @@ function Role({
       );
       const a = [...permission];
       setpermission(a);
-      // if (match.params.id === undefined) {
-      saveRole(
-        {
-          name,
-          branchId: usersDataReducer?.branch?.id,
-          permissions: permission,
-          parentId: null
-        }
-      );
-      // }
+      if (!roleId) {
+        saveRole(
+          {
+            name,
+            branchId: usersDataReducer?.branch?.id,
+            permissions: permission,
+            parentId: null
+          }
+        );
+      } else {
+        editRole(
+          {
+            name,
+            id: roleId,
+            branchId: usersDataReducer?.branch?.id,
+            permissions: permission,
+            parentId: null
+          }
+        );
+      }
     }
   }
 
@@ -846,7 +877,7 @@ function Role({
             </div>
           </div>
           {/* eslint-disable-next-line react/jsx-no-bind */}
-          <Button onClick={saqla} danger icon={<DownloadOutlined />} className="mt-4 d-flex justify-end text-xl" size={size}>
+          <Button onClick={saqla} danger icon={<DownloadOutlined />} className="mt-4 d-flex justify-end text-xl">
             Saqlash
           </Button>
         </div>
@@ -1166,4 +1197,4 @@ export default connect((roleReducer, usersDataReducer), {
   saveRole,
   deleteRole,
   editRole
-})(Role);
+})(Roles);
