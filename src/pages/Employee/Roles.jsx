@@ -298,7 +298,17 @@ function Role({
       viewWerHouse: null,
       viewWerHouseChecked: false,
       deleteWerHouse: null,
-      deleteWerHouseChecked: false
+      deleteWerHouseChecked: false,
+      // Bizneslar
+      AllBusinessRoles: false,
+      addBusiness: null,
+      addBusinessChecked: false,
+      editBusiness: null,
+      editBusinessChecked: false,
+      deleteBusiness: null,
+      deleteBusinessChecked: false,
+      viewBusiness: null,
+      viewBusinessChecked: false
     }
   );
 
@@ -334,7 +344,7 @@ function Role({
     AllAttendanceRoles: ["addAttendance", "deleteAttendance", "viewAttendance", "editAttendance"],
     AllAttendanceRolesValue: ["ADD_STAFF_ATTENDANCE", "DELETE_STAFF_ATTENDANCE", "GET_STAFF_ATTENDANCE", "EDIT_STAFF_ATTENDANCE"],
     AllLessonHourRoles: ["addLessonHour", "deleteLessonHour", "viewLessonHour", "editLessonHour"],
-    AllLessonHourRolesValue: ["ADD_LESSON_HOUR", "DELETE_LESSON_HOUR", "GET_LESSON_HOUR", "EDIT_LESSON_HOUR"],
+    AllLessonHourRolesValue: ["ADD_TEACHING_HOURS", "DELETE_TEACHING_HOURS", "GET_TEACHING_HOURS", "EDIT_TEACHING_HOURS"],
     AllScheduleRoles: ["addSchedule", "deleteSchedule", "viewSchedule", "editSchedule"],
     AllScheduleRolesValue: ["ADD_LESSON_SCHEDULE", "DELETE_LESSON_SCHEDULE", "GET_LESSON_SCHEDULE", "EDIT_LESSON_SCHEDULE"],
     AllThemeRoles: ["addTheme", "deleteTheme", "viewTheme", "editTheme"],
@@ -348,7 +358,9 @@ function Role({
     AllBalanceRoles: ["addBalance", "deleteBalance", "viewBalance", "editBalance"],
     AllBalanceRolesValue: ["ADD_MAIN_BALANCE", "DELETE_MAIN_BALANCE", "GET_MAIN_BALANCE", "EDIT_MAIN_BALANCE"],
     AllWerHouseRoles: ["addWerHouse", "deleteWerHouse", "viewWerHouse", "editWerHouse"],
-    AllWerHouseRolesValue: ["ADD_WAREHOUSE", "DELETE_WAREHOUSE", "GET_WAREHOUSE", "EDIT_WAREHOUSE"]
+    AllWerHouseRolesValue: ["ADD_WAREHOUSE", "DELETE_WAREHOUSE", "GET_WAREHOUSE", "EDIT_WAREHOUSE"],
+    AllBusinessRoles: ["addBusiness", "deleteBusiness", "viewBusiness", "editBusiness"],
+    AllBusinessRolesValue: ["ADD_BUSINESS", "DELETE_BUSINESS", "GET_BUSINESS", "EDIT_BUSINESS"]
   });
 
   const [permission, setpermission] = useState([]);
@@ -410,6 +422,7 @@ function Role({
     input.AllSubjectRoles = input.addSubjectChecked && input.editSubjectChecked && input.viewSubjectChecked && input.deleteSubjectChecked;
     input.AllBalanceRoles = input.addBalanceChecked && input.editBalanceChecked && input.viewBalanceChecked && input.deleteBalanceChecked;
     input.AllWerkRoles = input.addWerHouseChecked && input.editWerHouseChecked && input.viewWerHouseChecked && input.deleteWerHouseChecked;
+    input.AllBusinessRoles = input.addBusinessChecked && input.editBusinessChecked && input.viewBusinessChecked && input.deleteBusinessChecked;
 
     const a = { ...input };
     setInput(a);
@@ -516,6 +529,10 @@ function Role({
         input.editWerHouse,
         input.deleteWerHouse,
         input.addWerHouse,
+        input.addBusiness,
+        input.editBusiness,
+        input.deleteBusiness,
+        input.viewBusiness,
       );
       const a = [...permission];
       setpermission(a);
@@ -737,19 +754,19 @@ function Role({
             </div>
             <br />
             <div className="div_check">
-              <input value="ADD_LESSON_HOUR" name="addLessonHour" checked={input.addLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="ADD_TEACHING_HOURS" name="addLessonHour" checked={input.addLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Dars soati qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="GET_LESSON_HOUR" name="viewLessonHour" checked={input.viewLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_TEACHING_HOURS" name="viewLessonHour" checked={input.viewLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Dars soati ko`rish</p>
             </div>
             <div className="div_check">
-              <input value="EDIT_LESSON_HOUR" name="editLessonHour" checked={input.editLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="EDIT_TEACHING_HOURS" name="editLessonHour" checked={input.editLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Dars soati tahrirlash</p>
             </div>
             <div className="div_check">
-              <input value="DELETE_LESSON_HOUR" name="deleteLessonHour" checked={input.deleteLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="DELETE_TEACHING_HOURS" name="deleteLessonHour" checked={input.deleteLessonHourChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Dars soati o`chirish</p>
             </div>
           </div>
