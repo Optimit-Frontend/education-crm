@@ -75,6 +75,14 @@ export const getAllByStudentClass = (data) => {
     onFail: slice.actions.getAllFrom.type,
   });
 };
+export const getAllByTeacherId = (data) => {
+  return apiCall({
+    url: `/schedule/getAllByTeacherId/${data}`,
+    method: "get",
+    onSuccess: slice.actions.getAllFrom.type,
+    onFail: slice.actions.getAllFrom.type,
+  });
+};
 
 export const saveLessonSchedule = (data) => {
   return apiCall({

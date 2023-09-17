@@ -1,98 +1,44 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
-  Col, Form, Input, Modal, Row, Select,
+  Form, Input, Modal, Row, Select, TimePicker,
 } from "antd";
-import { useLocation, useNavigate } from "react-router-dom";
-import CustomTable from "../../module/CustomTable";
+import dayjs from "dayjs";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
 import employeeReducer, { getEmployeeBranch, getUserLists } from "../../reducer/employeeReducer";
-import businessBranchesReducer, { getBusinessBranch } from "../../reducer/businessBranchesReducer";
-import subjectReducer, { getSubject } from "../../reducer/subjectReducer";
 import classReducer, { getClassesAll } from "../../reducer/classReducer";
-import typeOfWorkReducer, {
-  getAllTypeOfWork,
-} from "../../reducer/typeOfWorkReducer";
+import typeOfWorkReducer, { getAllTypeOfWork } from "../../reducer/typeOfWorkReducer";
 import roomReducer, { getAllRoomBranch } from "../../reducer/roomReducer";
 import lessonScheduleReducer, {
   deleteLessonSchedule,
   editLessonSchedule,
-  getLessonSchedule,
+  getAllByTeacherId,
   saveLessonSchedule,
 } from "../../reducer/lessonScheduleReducer";
+import { week } from "../../const";
+import FormLayoutComp from "../../components/FormLayoutComp";
+import subjectForLevelReducer, { getSubjectForLevelAllByBranchId } from "../../reducer/subjectForLevelReducer";
 
 const { Option } = Select;
-
-const columns = [
-  {
-    title: "Xodim",
-    dataIndex: "teacher",
-    key: "teacehr",
-    width: "30%",
-    search: true,
-  },
-  {
-    title: "Dars soati",
-    dataIndex: "lessonHour",
-    key: "lessonHour",
-    width: "30%",
-    search: true,
-  },
-  {
-    title: "Talaba xona",
-    dataIndex: "studentClass",
-    key: "studentClass",
-    width: "30%",
-    search: false,
-  },
-  {
-    title: "Filial",
-    dataIndex: "branchId",
-    key: "branchId",
-    width: "20%",
-    search: false,
-  },
-  {
-    title: "Fan",
-    dataIndex: "subjectId",
-    key: "subjectId",
-    width: "20%",
-    search: false,
-  }
-];
+const format = "HH:mm";
 
 function LessonSchedule({
   usersDataReducer, getAllTypeOfWork, typeOfWorkReducer, getAllRoomBranch, deleteLessonSchedule,
-  editLessonSchedule, saveLessonSchedule, employeeReducer, getUserLists, subjectReducer, getSubject,
-  getClassesAll, classReducer, getLessonSchedule,
-  getBusinessBranch, businessBranchesReducer, roomReducer, lessonScheduleReducer
+  editLessonSchedule, saveLessonSchedule, employeeReducer, getUserLists, subjectForLevelReducer,
+  getSubjectForLevelAllByBranchId, getClassesAll, classReducer, getAllByTeacherId,
+  roomReducer, lessonScheduleReducer
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [onedit, setOnedit] = useState(false);
   const enter = useKeyPress("Enter");
-  const size = localStorage.getItem("PageSize") || 10;
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const navigate = useNavigate();
-  const page = searchParams.get("page");
-  const [pageData, setPageData] = useState({
-    page: 1,
-    size,
-    loading: false,
-  });
+  const [selectData, setSelectData] = useState(null);
 
   useEffect(() => {
-    getBusinessBranch(usersDataReducer?.branch?.id);
-    getSubject(usersDataReducer?.branch?.id);
+    getSubjectForLevelAllByBranchId(usersDataReducer?.branch?.id);
     getUserLists();
-    getLessonSchedule({
-      branchId: usersDataReducer.branch?.id,
-      page: pageData.page,
-      size: pageData.size
-    });
     getAllTypeOfWork(usersDataReducer?.branch?.id);
     getClassesAll({ id: usersDataReducer?.branch?.id });
     getAllRoomBranch(usersDataReducer?.branch?.id);
@@ -101,42 +47,11 @@ function LessonSchedule({
     setSelectedRowKeys([[], []]);
   }, [lessonScheduleReducer?.changeData]);
 
-  useEffect(() => {
-    const pageSize = parseInt(size, 10);
-    const pageCount = parseInt(page, 10) >= 1 ? parseInt(page, 10) : 1;
-    if (pageSize >= 100) {
-      setPageData((prev) => {
-        return { ...prev, size: 100 };
-      });
-      navigate(`/lesson-schedule?page=${pageCount}&size=100`);
-    } else if (pageSize >= 50) {
-      setPageData((prev) => {
-        return { ...prev, size: 50 };
-      });
-      navigate(`/lesson-schedule?page=${pageCount}&size=50`);
-    } else if (pageSize >= 20) {
-      setPageData((prev) => {
-        return { ...prev, size: 20 };
-      });
-      navigate(`/lesson-schedule?page=${pageCount}&size=20`);
-    } else {
-      setPageData((prev) => {
-        return { ...prev, size: 10 };
-      });
-      navigate(`/lesson-schedule?page=${pageCount}&size=10`);
-    }
-  }, []);
-
   const handleDelete = (arr) => {
     arr?.map((item) => {
       deleteLessonSchedule(item.id);
       return null;
     });
-  };
-
-  const onChange = (pageNumber, page) => {
-    setPageData({ size: page, page: pageNumber, loading: false });
-    localStorage.setItem("PageSize", page);
   };
 
   const formValidate = () => {
@@ -146,7 +61,10 @@ function LessonSchedule({
         .then((values) => {
           selectedRowKeys[1][0]?.id && editLessonSchedule({
             ...values,
-            id: selectedRowKeys[1][0]?.id
+            id: selectedRowKeys[1][0]?.id,
+            startTime: dayjs(values?.startTime).format("HH:mm"),
+            endTime: dayjs(values?.endTime).format("HH:mm"),
+            branchId: selectedRowKeys[1][0]?.branch?.id
           });
           setOnedit(false);
         })
@@ -158,7 +76,9 @@ function LessonSchedule({
         .then((values) => {
           saveLessonSchedule({
             ...values,
-            lessonHour: parseInt(values.lessonHour, 10)
+            startTime: dayjs(values?.startTime).format("HH:mm"),
+            endTime: dayjs(values?.endTime).format("HH:mm"),
+            branchId: usersDataReducer?.branch?.id
           });
           setOnedit(false);
         })
@@ -174,8 +94,57 @@ function LessonSchedule({
   return (
     <div>
       <h3 className="text-2xl font-bold mb-5">Dars Jadvali</h3>
-      <div className="flex items-center justify-end gap-5 mb-3">
-        {selectedRowKeys[0].length === 1 && usersDataReducer?.editSchedule && (
+      <div className="flex items-center justify-between gap-5 mb-3">
+        <div className="flex items-center gap-2">
+          <div className="w-40">
+            <Select
+              onChange={(e) => {
+                e && getAllByTeacherId(e);
+                e ? setSelectData(e) : setSelectData(null);
+              }}
+              showSearch
+              allowClear
+              placeholder="Sinfni tanlang..."
+              optionFilterProp="children"
+              className="w-full"
+              key="id"
+              filterOption={(input, option) => {
+                return option.children.toLowerCase()?.includes(input.toLowerCase());
+              }}
+            >
+              {classReducer?.class?.map((room) => {
+                return (
+                  <Option value={room.id} key={room.id}>{room?.className}</Option>
+                );
+              })}
+            </Select>
+          </div>
+          <div className="w-40">
+            <Select
+              onChange={(e) => {
+                e && getAllByTeacherId(e);
+                e ? setSelectData(e) : setSelectData(null);
+              }}
+              showSearch
+              allowClear
+              placeholder="O'qituvchini tanlang..."
+              optionFilterProp="children"
+              className="w-full"
+              key="id"
+              filterOption={(input, option) => {
+                return option.children.toLowerCase()?.includes(input.toLowerCase());
+              }}
+            >
+              {employeeReducer?.employeesAllBranch?.map((employee) => {
+                return (
+                  <Option value={employee.id} key={employee.id}>{employee?.name}</Option>
+                );
+              })}
+            </Select>
+          </div>
+        </div>
+        <div className="flex items-center justify-end gap-5 mb-3">
+          {selectedRowKeys[0].length === 1 && usersDataReducer?.editSchedule && (
           <button
             onClick={() => {
               setOnedit(true);
@@ -185,7 +154,7 @@ function LessonSchedule({
               form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
               form.setFieldValue("lessonHour", selectedRowKeys[1][0]?.lessonHour);
               form.setFieldValue("teacherId", selectedRowKeys[1][0]?.teacherId);
-              form.setFieldValue("subjectId", selectedRowKeys[1][0]?.subject?.id);
+              form.setFieldValue("subjectLevelId", selectedRowKeys[1][0]?.subject?.id);
               form.setFieldValue("studentClassId", selectedRowKeys[1][0]?.studentClassId);
             }}
             type="button"
@@ -207,60 +176,61 @@ function LessonSchedule({
             </svg>
             <span>Taxrirlsh</span>
           </button>
-        )}
-        {
-          usersDataReducer?.addSchedule
-            ? (
-              <button
-                onClick={() => {
-                  setVisible(true);
-                }}
-                type="button"
-                className="flex items-center gap-2 px-4 py-[6px] bg-blue-600 text-white rounded-lg"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5"
+          )}
+          {
+            usersDataReducer?.addSchedule
+              ? (
+                <button
+                  onClick={() => {
+                    setVisible(true);
+                  }}
+                  type="button"
+                  className="flex items-center gap-2 px-4 py-[6px] bg-blue-600 text-white rounded-lg"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                <span>Qo&apos;shish</span>
-              </button>
-            ) : ""
-        }
-        {
-          usersDataReducer?.deleteSchedule
-            ? (
-              <button
-                onClick={() => {
-                  handleDelete(selectedRowKeys[1]);
-                  setSelectedRowKeys([[], []]);
-                }}
-                type="button"
-                className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5"
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  <span>Qo&apos;shish</span>
+                </button>
+              ) : ""
+          }
+          {
+            usersDataReducer?.deleteSchedule
+              ? (
+                <button
+                  onClick={() => {
+                    handleDelete(selectedRowKeys[1]);
+                    setSelectedRowKeys([[], []]);
+                  }}
+                  type="button"
+                  className="flex items-center gap-2 px-4 py-[6px] bg-red-600 text-white rounded-lg"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                  />
-                </svg>
-                <span>O&apos;chirish</span>
-              </button>
-            ) : ""
-        }
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-5 h-5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                    />
+                  </svg>
+                  <span>O&apos;chirish</span>
+                </button>
+              ) : ""
+          }
+        </div>
       </div>
       <Modal
         open={visible}
@@ -273,7 +243,7 @@ function LessonSchedule({
         okText={onedit ? "Taxrirlsh" : "Qo'shish"}
         okButtonProps={{ className: "bg-blue-600" }}
         cancelText="Bekor qilish"
-        width={600}
+        width={700}
         onCancel={() => {
           setVisible(false);
           setOnedit(false);
@@ -284,10 +254,10 @@ function LessonSchedule({
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
           <Row gutter={24}>
-            <Col span={12}>
+            <FormLayoutComp>
               <Form.Item
-                key="subjectId"
-                name="subjectId"
+                key="subjectLevelId"
+                name="subjectLevelId"
                 label={<span className="text-base font-medium">Fan tanlash</span>}
                 rules={[
                   {
@@ -301,23 +271,25 @@ function LessonSchedule({
                   allowClear
                   placeholder="Fan tanlang"
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
                   {
-                    subjectReducer?.subjects?.map((barnch) => {
+                    subjectForLevelReducer?.subjectForLevelAllBranch?.map((barnch) => {
                       return (
                         <Option value={barnch?.id} key={barnch?.id}>
-                          {barnch?.name}
+                          {`${barnch?.level?.level}-sinf ${barnch?.subject?.name}`}
                         </Option>
                       );
                     })
                   }
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="studentClassId"
                 name="studentClassId"
@@ -334,7 +306,7 @@ function LessonSchedule({
                   allowClear
                   placeholder="Xona tanlash"
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
@@ -351,6 +323,8 @@ function LessonSchedule({
                   }
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="weekDays"
                 name="weekDays"
@@ -365,58 +339,25 @@ function LessonSchedule({
                 <Select
                   showSearch
                   allowClear
-                  placeholder="Hafta kunini tanlang"
+                  placeholder="Hafta kunini tanlang..."
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
                   }}
                 >
-                  <Option value="MONDAY">Dushanba</Option>
-                  <Option value="TUESDAY">Seshanba</Option>
-                  <Option value="WEDNESDAY">Chorshanba</Option>
-                  <Option value="THURSDAY">Payshanba</Option>
-                  <Option value="FRIDAY">Juma</Option>
-                  <Option value="SATURDAY">Shanba</Option>
-                  <Option value="SUNDAY">Yakshanba</Option>
+                  {week?.map((option) => {
+                    return (
+                      <Option value={option.value} key={option.value}>
+                        {option.name}
+                      </Option>
+                    );
+                  })}
                 </Select>
               </Form.Item>
-              <Form.Item
-                key="branchId"
-                name="branchId"
-                label={<span className="text-base font-medium">Filial</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Filial kiriting",
-                  },
-                ]}
-              >
-                <Select
-                  showSearch
-                  allowClear
-                  placeholder="Filial tanlang"
-                  optionFilterProp="children"
-                  style={{ width: "100%" }}
-                  key="id"
-                  filterOption={(input, option) => {
-                    return option.children.toLowerCase()?.includes(input.toLowerCase());
-                  }}
-                >
-                  {
-                    businessBranchesReducer?.businessBranch?.map((barnch) => {
-                      return (
-                        <Option value={barnch?.id} key={barnch?.id}>
-                          {barnch?.name}
-                        </Option>
-                      );
-                    })
-                  }
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="teacherId"
                 name="teacherId"
@@ -433,7 +374,7 @@ function LessonSchedule({
                   allowClear
                   placeholder="Xodim tanlash"
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
@@ -446,6 +387,8 @@ function LessonSchedule({
                   })}
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="lessonHour"
                 name="lessonHour"
@@ -459,6 +402,38 @@ function LessonSchedule({
               >
                 <Input placeholder="Dars soati" />
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
+              <Form.Item
+                key="startTime"
+                name="startTime"
+                label={<span className="text-base font-medium">Boshlanish vaqti</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Boshlanish vaqtini kiriting",
+                  },
+                ]}
+              >
+                <TimePicker className="w-full" format={format} />
+              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
+              <Form.Item
+                key="endTime"
+                name="endTime"
+                label={<span className="text-base font-medium">Tugash vaqti</span>}
+                rules={[
+                  {
+                    required: true,
+                    message: "Tugash vaqtini kiriting",
+                  },
+                ]}
+              >
+                <TimePicker className="w-full" format={format} />
+              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="typeOfWorkId"
                 name="typeOfWorkId"
@@ -492,6 +467,8 @@ function LessonSchedule({
                   }
                 </Select>
               </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="roomId"
                 name="roomId"
@@ -508,7 +485,7 @@ function LessonSchedule({
                   allowClear
                   placeholder="Xona tanlang"
                   optionFilterProp="children"
-                  style={{ width: "100%" }}
+                  className="w-full"
                   key="id"
                   filterOption={(input, option) => {
                     return option.children.toLowerCase()?.includes(input.toLowerCase());
@@ -518,56 +495,34 @@ function LessonSchedule({
                     roomReducer?.roomAllBarnch?.map((room) => {
                       return (
                         <Option value={room?.id} key={room?.id}>
-                          {room?.roomType?.name}
+                          {`${room?.roomNumber} ${room?.roomType?.name}`}
                         </Option>
                       );
                     })
                   }
                 </Select>
               </Form.Item>
-            </Col>
+            </FormLayoutComp>
           </Row>
         </Form>
       </Modal>
-      <CustomTable
-        columns={columns}
-        pageSizeOptions={[10, 20, 50, 100]}
-        current={pageData?.page}
-        pageSize={pageData?.size}
-        tableData={lessonScheduleReducer?.lessonSchedule?.map((item) => {
-          return ({
-            ...item,
-            teacher: item.teacher?.name,
-            studentClass: item.studentClass?.className,
-            teacherId: item.teacher?.id,
-            branchId: item.branch?.name,
-            subjectId: item.subject?.name,
-            studentClassId: item.studentClass?.id,
-            typeOfWorkId: item.typeOfWork?.id,
-          });
-        })}
-        loading={pageData?.loading}
-        setSelectedRowKeys={setSelectedRowKeys}
-        selectedRowKeys={selectedRowKeys}
-        onChange={onChange}
-      />
+
     </div>
   );
 }
 
 export default connect(
   (
-    usersDataReducer, employeeReducer, businessBranchesReducer, businessBranchesReducer,
-    subjectReducer, classReducer, typeOfWorkReducer, roomReducer, lessonScheduleReducer
+    usersDataReducer, employeeReducer, subjectForLevelReducer, classReducer, typeOfWorkReducer,
+    roomReducer, lessonScheduleReducer
   ), {
     getEmployeeBranch,
     getUserLists,
-    getBusinessBranch,
-    getSubject,
+    getSubjectForLevelAllByBranchId,
     getClassesAll,
     getAllTypeOfWork,
     getAllRoomBranch,
-    getLessonSchedule,
+    getAllByTeacherId,
     saveLessonSchedule,
     editLessonSchedule,
     deleteLessonSchedule
