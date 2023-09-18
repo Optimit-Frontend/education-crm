@@ -52,7 +52,7 @@ export const slice = createSlice({
       } else {
         toast.warning(action.payload.message || "Lavozimni taxrirlashda muammo bo'ldi");
       }
-      state.changeData = true;
+      state.success = true;
     },
     deleteFrom: (state, action) => {
       if (action.payload.success) {

@@ -1028,111 +1028,146 @@ function Sidebar({ sidebarOpen, setSidebarOpen, usersDataReducer }) {
                       {/* <!-- Dropdown Menu Start --> */}
                       <div className={`translate transform overflow-hidden ${!open && "hidden"}`}>
                         <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
-                          <li>
-                            <NavLink
-                              to={`/kitchen/dailyMeal?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Kunlik ovqatlar
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/kitchen/purchasedProduct?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Sotib olingan mahsulotlar
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/kitchen/purchasedDrink?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Sotib olingan ichimliklar
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/kitchen/dailyconsumedProduct?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Ishlatilgan mahsulotlar
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/kitchen/dailyConsumedDrink?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Ishlatilgan ichimliklar
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/kitchen/product?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Mahsuloatlar
-                            </NavLink>
-                          </li>
-                          <li>
-                            <NavLink
-                              to={`/kitchen/drinks?page=1&size=${pageSize}`}
-                              onClick={() => {
-                                return setSidebarOpen(false);
-                              }}
-                              className={({ isActive }) => {
-                                return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
-                                  isActive && "!text-white"
-                                }`;
-                              }}
-                            >
-                              Ichimliklar
-                            </NavLink>
-                          </li>
+                          {
+                            usersDataReducer.viewMeal || usersDataReducer.editMeal || usersDataReducer.deleteMeal || usersDataReducer.addMeal
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/kitchen/dailyMeal?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Kunlik ovqatlar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer.addProduct || usersDataReducer.editProduct || usersDataReducer.viewProduct || usersDataReducer.deleteProduct
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/kitchen/purchasedProduct?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Sotib olingan mahsulotlar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer.viewPurchasedDrink || usersDataReducer.deletePurchasedDrink || usersDataReducer.addPurchasedDrink || usersDataReducer.editPurchasedDrink
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/kitchen/purchasedDrink?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Sotib olingan ichimliklar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer.addProduct || usersDataReducer.editProduct || usersDataReducer.viewProduct || usersDataReducer.deleteProduct
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/kitchen/dailyconsumedProduct?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Ishlatilgan mahsulotlar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer.viewPurchasedDrink || usersDataReducer.editPurchasedDrink || usersDataReducer.deletePurchasedDrink || usersDataReducer.addPurchasedDrink
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/kitchen/dailyConsumedDrink?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Ishlatilgan ichimliklar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer.addProduct || usersDataReducer.editProduct || usersDataReducer.viewProduct || usersDataReducer.deleteProduct
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/kitchen/product?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Mahsuloatlar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
+                          {
+                            usersDataReducer.viewPurchasedDrink || usersDataReducer.editPurchasedDrink || usersDataReducer.deletePurchasedDrink || usersDataReducer.addPurchasedDrink
+                              ? (
+                                <li>
+                                  <NavLink
+                                    to={`/kitchen/drinks?page=1&size=${pageSize}`}
+                                    onClick={() => {
+                                      return setSidebarOpen(false);
+                                    }}
+                                    className={({ isActive }) => {
+                                      return `group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ${
+                                        isActive && "!text-white"
+                                      }`;
+                                    }}
+                                  >
+                                    Ichimliklar
+                                  </NavLink>
+                                </li>
+                              ) : ""
+                          }
                         </ul>
                       </div>
                     </>
