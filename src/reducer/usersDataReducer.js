@@ -129,6 +129,21 @@ export const slice = createSlice({
     editBusiness: false,
     viewBusiness: false,
     deleteBusiness: false,
+    // ichimlik
+    addPurchasedDrink: false,
+    editPurchasedDrink: false,
+    deletePurchasedDrink: false,
+    viewPurchasedDrink: false,
+    // ovqatlar
+    addMeal: false,
+    editMeal: false,
+    deleteMeal: false,
+    viewMeal: false,
+    // Mahsulot
+    addProduct: false,
+    editProduct: false,
+    deleteProduct: false,
+    viewProduct: false,
   },
   reducers: {
     saveUser: (state, action) => {
@@ -428,6 +443,42 @@ export const slice = createSlice({
             case "GET_BUSINESS":
               state.viewBusiness = true;
               break;
+            case "GET_PURCHASED_DRINK":
+              state.viewPurchasedDrink = true;
+              break;
+            case "DELETE_PURCHASED_DRINK":
+              state.deletePurchasedDrink = true;
+              break;
+            case "ADD_PURCHASED_DRINK":
+              state.addPurchasedDrink = true;
+              break;
+            case "EDIT_PURCHASED_DRINK":
+              state.editPurchasedDrink = true;
+              break;
+            case "EDIT_DAILY_MEAL":
+              state.editMeal = true;
+              break;
+            case "ADD_DAILY_MEAL":
+              state.addMeal = true;
+              break;
+            case "DELETE_DAILY_MEAL":
+              state.deleteMeal = true;
+              break;
+            case "GET_DAILY_MEAL":
+              state.viewMeal = true;
+              break;
+            case "DELETE_PURCHASED_PRODUCT":
+              state.deleteProduct = true;
+              break;
+            case "ADD_PURCHASED_PRODUCT":
+              state.addProduct = true;
+              break;
+            case "EDIT_PURCHASED_PRODUCT":
+              state.editProduct = true;
+              break;
+            case "GET_PURCHASED_PRODUCT":
+              state.viewProduct = true;
+              break;
           }
         });
       } else {
@@ -563,6 +614,21 @@ export const slice = createSlice({
       state.editBusiness = false;
       state.deleteBusiness = false;
       state.viewBusiness = false;
+      // drink
+      state.addPurchasedDrink = false;
+      state.editPurchasedDrink = false;
+      state.viewPurchasedDrink = false;
+      state.deletePurchasedDrink = false;
+      // meal
+      state.addMeal = false;
+      state.editMeal = false;
+      state.deleteMeal = false;
+      state.viewMeal = false;
+      // Product
+      state.addProduct = false;
+      state.editProduct = false;
+      state.deleteProduct = false;
+      state.viewProduct = false;
     }
   },
 });

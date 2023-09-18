@@ -27,8 +27,8 @@ function Roles({
   }, []);
 
   useEffect(() => {
-    roleReducer?.changeData && navigate("/employee/role");
-  }, [roleReducer?.changeData]);
+    roleReducer?.success && navigate("/employee/role");
+  }, [roleReducer?.success]);
 
   const [input, setInput] = useState(
     {
@@ -270,7 +270,37 @@ function Roles({
       deleteBusiness: null,
       deleteBusinessChecked: false,
       viewBusiness: null,
-      viewBusinessChecked: false
+      viewBusinessChecked: false,
+      // Drink
+      AllPurchasedDrinkRoles: false,
+      addPurchasedDrink: null,
+      addPurchasedDrinkChecked: false,
+      editPurchasedDrink: null,
+      editPurchasedDrinkChecked: false,
+      deletePurchasedDrink: null,
+      deletePurchasedDrinkChecked: false,
+      viewPurchasedDrink: null,
+      viewPurchasedDrinkChecked: false,
+      // Meal
+      AllMealRoles: false,
+      addMeal: null,
+      addMealChecked: false,
+      editMeal: null,
+      editMealChecked: false,
+      viewMeal: null,
+      viewMealChecked: false,
+      deleteMeal: null,
+      deleteMealChecked: false,
+      // Maxsulotlar
+      AllProductRoles: false,
+      addProduct: null,
+      addProductChecked: false,
+      editProduct: null,
+      editProductChecked: false,
+      deleteProduct: null,
+      deleteProductChecked: false,
+      viewProduct: null,
+      viewProductChecked: false
     }
   );
 
@@ -322,7 +352,13 @@ function Roles({
     AllWerHouseRoles: ["addWerHouse", "deleteWerHouse", "viewWerHouse", "editWerHouse"],
     AllWerHouseRolesValue: ["ADD_WAREHOUSE", "DELETE_WAREHOUSE", "GET_WAREHOUSE", "EDIT_WAREHOUSE"],
     AllBusinessRoles: ["addBusiness", "deleteBusiness", "viewBusiness", "editBusiness"],
-    AllBusinessRolesValue: ["ADD_BUSINESS", "DELETE_BUSINESS", "GET_BUSINESS", "EDIT_BUSINESS"]
+    AllBusinessRolesValue: ["ADD_BUSINESS", "DELETE_BUSINESS", "GET_BUSINESS", "EDIT_BUSINESS"],
+    AllPurchasedDrinkRoles: ["addPurchasedDrink", "deletePurchasedDrink", "viewPurchasedDrink", "editPurchasedDrink"],
+    AllPurchasedDrinkRolesValue: ["ADD_PURCHASED_DRINK", "EDIT_PURCHASED_DRINK", "DELETE_PURCHASED_DRINK", "GET_PURCHASED_DRINK"],
+    AllMealRoles: ["addMeal", "deleteMeal", "viewMeal", "editMeal"],
+    AllMealRolesValue: ["ADD_DAILY_MEAL", "DELETE_DAILY_MEAL", "EDIT_DAILY_MEAL", "GET_DAILY_MEAL"],
+    AllProductRoles: ["addProduct", "deleteProduct", "viewProduct", "editProduct"],
+    AllProductRolesValue: ["ADD_PURCHASED_PRODUCT", "EDIT_PURCHASED_PRODUCT", "GET_PURCHASED_PRODUCT", "DELETE_PURCHASED_PRODUCT"]
   });
 
   const [permission, setpermission] = useState([]);
@@ -408,6 +444,9 @@ function Roles({
       && input.viewWerHouseChecked && input.deleteWerHouseChecked;
     input.AllBusinessRoles = input.addBusinessChecked && input.editBusinessChecked
       && input.viewBusinessChecked && input.deleteBusinessChecked;
+    input.AllPurchasedDrinkRoles = input.addPurchasedDrinkChecked && input.editPurchasedDrinkChecked && input.viewPurchasedDrinkChecked && input.deletePurchasedDrinkChecked;
+    input.AllMealRoles = input.addMealChecked && input.editMealChecked && input.deleteMealChecked && input.viewMealChecked;
+    input.AllProductRoles = input.addProductChecked && input.editProductChecked && input.viewProductChecked && input.deleteProductChecked;
 
     const a = { ...input };
     setInput(a);
@@ -808,6 +847,54 @@ function Roles({
           input.viewBusinessChecked = true;
           input.viewBusiness = "GET_BUSINESS";
           break;
+        case "ADD_PURCHASED_DRINK":
+          input.addPurchasedDrinkChecked = true;
+          input.addPurchasedDrink = "ADD_PURCHASED_DRINK";
+          break;
+        case "EDIT_PURCHASED_DRINK":
+          input.editPurchasedDrinkChecked = true;
+          input.editPurchasedDrink = "EDIT_PURCHASED_DRINK";
+          break;
+        case "DELETE_PURCHASED_DRINK":
+          input.deletePurchasedDrinkChecked = true;
+          input.deletePurchasedDrink = "DELETE_PURCHASED_DRINK";
+          break;
+        case "GET_PURCHASED_DRINK":
+          input.viewPurchasedDrinkChecked = true;
+          input.viewPurchasedDrink = "GET_PURCHASED_DRINK";
+          break;
+        case "GET_DAILY_MEAL":
+          input.viewMealChecked = true;
+          input.viewMeal = "GET_DAILY_MEAL";
+          break;
+        case "DELETE_DAILY_MEAL":
+          input.deleteMealChecked = true;
+          input.deleteMeal = "DELETE_DAILY_MEAL";
+          break;
+        case "ADD_DAILY_MEAL":
+          input.addMealChecked = true;
+          input.addMeal = "ADD_DAILY_MEAL";
+          break;
+        case "EDIT_DAILY_MEAL":
+          input.editMealChecked = true;
+          input.editMeal = "EDIT_DAILY_MEAL";
+          break;
+        case "ADD_PURCHASED_PRODUCT":
+          input.addProductChecked = true;
+          input.addProduct = "ADD_PURCHASED_PRODUCT";
+          break;
+        case "EDIT_PURCHASED_PRODUCT":
+          input.editProductChecked = true;
+          input.editProduct = "EDIT_PURCHASED_PRODUCT";
+          break;
+        case "GET_PURCHASED_PRODUCT":
+          input.viewProductChecked = true;
+          input.viewProduct = "GET_PURCHASED_PRODUCT";
+          break;
+        case "DELETE_PURCHASED_PRODUCT":
+          input.deleteProductChecked = true;
+          input.deleteProduct = "DELETE_PURCHASED_PRODUCT";
+          break;
       }
     });
     checkPermission();
@@ -918,6 +1005,18 @@ function Roles({
         input.editBusiness,
         input.deleteBusiness,
         input.viewBusiness,
+        input.addPurchasedDrink,
+        input.editPurchasedDrink,
+        input.deletePurchasedDrink,
+        input.viewPurchasedDrink,
+        input.addMeal,
+        input.editMeal,
+        input.deleteMeal,
+        input.viewMeal,
+        input.addProduct,
+        input.editProduct,
+        input.deleteProduct,
+        input.viewProduct
       );
       const a = [...permission];
       setpermission(a);
@@ -1240,6 +1339,57 @@ function Roles({
               <p className="ml-4 text-xl">Xona o`chirish</p>
             </div>
           </div>
+
+          <div className="border-2 p-3 mt-4">
+            <h2 className="text-center text-2xl">Ichimliklar</h2>
+            <hr />
+            <div className="div_check">
+              <input checked={input.AllPurchasedDrinkRoles} name="AllPurchasedDrinkRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_PURCHASED_DRINK" name="addPurchasedDrink" checked={input.addPurchasedDrinkChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Ichimlik qo`shish</p>
+            </div>
+            <div className="div_check">
+              <input value="GET_PURCHASED_DRINK" name="viewPurchasedDrink" checked={input.viewPurchasedDrinkChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Ichimlik ko`rish</p>
+            </div>
+            <div className="div_check">
+              <input value="EDIT_PURCHASED_DRINK" name="editPurchasedDrink" checked={input.editPurchasedDrinkChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Ichimlik tahrirlash</p>
+            </div>
+            <div className="div_check">
+              <input value="DELETE_PURCHASED_DRINK" name="deletePurchasedDrink" checked={input.deletePurchasedDrinkChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Ichimlik o`chirish</p>
+            </div>
+          </div>
+          <div className="border-2 p-3 mt-4">
+            <h2 className="text-center text-2xl">Maxsulotlar</h2>
+            <hr />
+            <div className="div_check">
+              <input checked={input.AllProductRoles} name="AllProductRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_PURCHASED_PRODUCT" name="addProduct" checked={input.addProductChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Ichimlik qo`shish</p>
+            </div>
+            <div className="div_check">
+              <input value="GET_PURCHASED_PRODUCT" name="viewProduct" checked={input.viewProductChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Ichimlik ko`rish</p>
+            </div>
+            <div className="div_check">
+              <input value="EDIT_PURCHASED_PRODUCT" name="editProduct" checked={input.editProductChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Ichimlik tahrirlash</p>
+            </div>
+            <div className="div_check">
+              <input value="DELETE_PURCHASED_PRODUCT" name="deleteProduct" checked={input.deleteProductChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Ichimlik o`chirish</p>
+            </div>
+          </div>
           {/* eslint-disable-next-line react/jsx-no-bind */}
           <Button onClick={saqla} danger icon={<DownloadOutlined />} className="mt-4 d-flex justify-end text-xl">
             Saqlash
@@ -1547,6 +1697,31 @@ function Roles({
             </div>
             <div className="div_check">
               <input value="DELETE_WAREHOUSE" name="deleteWerHouse" checked={input.deleteWerHouseChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Ombor o`chirish</p>
+            </div>
+          </div>
+          <div className="border-2 p-3 mt-4">
+            <h2 className="text-center text-2xl">Ovqat</h2>
+            <hr />
+            <div className="div_check">
+              <input checked={input.AllMealRoles} name="AllMealRoles" onChange={changeAllUserRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Hammasini belgilash</p>
+            </div>
+            <br />
+            <div className="div_check">
+              <input value="ADD_DAILY_MEAL" name="addMeal" checked={input.addMealChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Ombor qo`shish</p>
+            </div>
+            <div className="div_check">
+              <input value="VIEW_DAILY_MEAL" name="viewMeal" checked={input.viewMealChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Ombor ko`rish</p>
+            </div>
+            <div className="div_check">
+              <input value="EDIT_DAILY_MEAL" name="editMeal" checked={input.editMealChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <p className="ml-4 text-xl">Ombor tahrirlash</p>
+            </div>
+            <div className="div_check">
+              <input value="DELETE_DAILY_MEAL" name="deleteMeal" checked={input.deleteMealChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ombor o`chirish</p>
             </div>
           </div>
