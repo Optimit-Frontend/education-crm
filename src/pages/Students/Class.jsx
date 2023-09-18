@@ -317,7 +317,7 @@ function Class({
                   className="w-full"
                   key="id"
                   onChange={(e) => {
-                    e > 5 ? form.setFieldValue("overallSum", 3400000)
+                    e >= 5 ? form.setFieldValue("overallSum", 3400000)
                       : form.setFieldValue("overallSum", 3200000);
                   }}
                   filterOption={(input, option) => {
