@@ -16,6 +16,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+import axios from "axios";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -23,8 +24,10 @@ import employeeReducer, {
   deleteEmployee,
   getEmployeeBranch,
   saveEmployee,
+  editEmployee
 } from "../../reducer/employeeReducer";
 import roleReducer, { getAllRoleByBranch } from "../../reducer/roleReducer";
+import { BASE_URL } from "../../services/Axios";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -84,6 +87,7 @@ function Employee({
   getAllRoleByBranch,
   getEmployeeBranch,
   saveEmployee,
+  editEmployee,
   deleteEmployee,
 }) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([[], []]);
@@ -160,11 +164,14 @@ function Employee({
       ? form
         .validateFields()
         .then((values) => {
-          // selectedRowKeys[1][0]?.id && editRoom({
-          //   ...values,
-          //   roomId: selectedRowKeys[1][0]?.id,
-          //   branchId: usersDataReducer?.branch?.id
-          // });
+          const profilePhotoId = values?.photoCertificateId?.file?.response;
+          selectedRowKeys[1][0]?.id && editEmployee({
+            ...values,
+            id: selectedRowKeys[1][0]?.id,
+            branchId: usersDataReducer?.branch?.id,
+            birthDate: dayjs(values?.birthDate).format("YYYY-MM-DD"),
+            profilePhotoId: profilePhotoId || selectedRowKeys[1][0]?.profilePhotoId,
+          });
           setOnedit(false);
         })
         .catch((info) => {
@@ -173,32 +180,13 @@ function Employee({
       : form
         .validateFields()
         .then((values) => {
-          const fmData = new FormData();
-          values?.file && values?.file?.fileList?.map((item) => {
-            return fmData.append("file", item?.response);
+          const profilePhotoId = values?.profilePhotoId?.file?.response;
+          saveEmployee({
+            ...values,
+            birthDate: dayjs(values?.birthDate).format("YYYY-MM-DD"),
+            branchId: usersDataReducer?.branch?.id,
+            profilePhotoId
           });
-          fmData.append("email", values?.email);
-          fmData.append("phoneNumber", values?.phoneNumber);
-          fmData.append("fatherName", values?.fatherName);
-          fmData.append("surname", values?.surname);
-          fmData.append("name", values?.name);
-          fmData.append(
-            "birthDate",
-            dayjs(values?.birthDate).format("YYYY-MM-DD")
-          );
-          fmData.append("biography", values?.biography);
-          fmData.append("inps", values?.inps);
-          fmData.append("inn", values?.inn);
-          fmData.append("password", values?.password);
-          fmData.append("branchId", usersDataReducer?.branch?.id);
-          fmData.append("married", values?.married);
-          fmData.append("roleId", values?.roleId);
-          values?.profilePhoto && values?.profilePhoto?.fileList?.map((item) => {
-            return fmData.append("profilePhoto", item?.response);
-          });
-          fmData.append("gender", values?.gender);
-          fmData.append("workDays", values?.workDays);
-          saveEmployee(fmData);
           setOnedit(false);
         })
         .catch((info) => {
@@ -388,12 +376,6 @@ function Employee({
                 key="married"
                 name="married"
                 label={<span className="text-base font-medium">Turmush qurganmi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Turmush qurganmi",
-                  },
-                ]}
               >
                 <Radio.Group>
                   <Radio value="true"> Turmush qurgan </Radio>
@@ -406,13 +388,6 @@ function Employee({
                 key="email"
                 name="email"
                 label={<span className="text-base font-medium">Hodim emaili</span>}
-                rules={[
-                  {
-                    type: "email",
-                    required: true,
-                    message: "Hodim emailini kiriting",
-                  },
-                ]}
               >
                 <Input placeholder="Hodim emailini kiriting..." />
               </Form.Item>
@@ -441,12 +416,6 @@ function Employee({
                 key="inn"
                 name="inn"
                 label={<span className="text-base font-medium">Hodim INNsi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Hodim INNsini kiriting",
-                  },
-                ]}
               >
                 <InputNumber className="w-full" placeholder="Hodim INNsini kiriting..." />
               </Form.Item>
@@ -456,12 +425,6 @@ function Employee({
                 key="inps"
                 name="inps"
                 label={<span className="text-base font-medium">Hodim INPSi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Hodim INPSini kiriting",
-                  },
-                ]}
               >
                 <InputNumber className="w-full" placeholder="Hodim INPSini kiriting..." />
               </Form.Item>
@@ -565,20 +528,20 @@ function Employee({
             </Col>
             <Col span={12}>
               <Form.Item
-                key="profilePhoto"
-                name="profilePhoto"
+                key="profilePhotoId"
+                name="profilePhotoId"
                 label={<span className="text-base font-medium">Hodim rasmi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Hodim rasmini kiriting",
-                  },
-                ]}
               >
                 <Upload
                   customRequest={async (options) => {
                     const { onSuccess, file } = options;
-                    onSuccess(file);
+                    const files = new FormData();
+                    files.append("file", file);
+                    axios.post(`${BASE_URL}/attachment/upload`, files).then((data) => {
+                      data.data.success && onSuccess(data.data?.data?.id);
+                    }).catch((err) => {
+                      console.error(err);
+                    });
                   }}
                   listType="picture"
                   multiple={false}
@@ -597,12 +560,6 @@ function Employee({
                 key="biography"
                 name="biography"
                 label={<span className="text-base font-medium">Hodim haqida ma&apos;lumot</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Hodim haqida ma'lumot kiriting",
-                  },
-                ]}
               >
                 <TextArea rows={3} placeholder="Hodim haqida ma'lumot kiriting..." />
               </Form.Item>
@@ -635,5 +592,6 @@ export default connect((employeeReducer, roleReducer, usersDataReducer), {
   getAllRoleByBranch,
   getEmployeeBranch,
   saveEmployee,
+  editEmployee,
   deleteEmployee,
 })(Employee);

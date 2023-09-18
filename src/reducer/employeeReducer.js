@@ -90,17 +90,15 @@ export const saveEmployee = (data) => {
   return apiCall({
     url: "/user/register",
     method: "post",
-    // eslint-disable-next-line no-underscore-dangle
-    contentType: `multipart/form-data; boundary=${data._boundary}`,
     data,
     onSuccess: slice.actions.saveFrom.type,
     onFail: slice.actions.saveFrom.type,
   });
 };
 
-export const editRoom = (data) => {
+export const editEmployee = (data) => {
   return apiCall({
-    url: "/room/update",
+    url: "/user/update",
     method: "put",
     data,
     onSuccess: slice.actions.editFrom.type,

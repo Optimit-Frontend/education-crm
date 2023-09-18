@@ -30,15 +30,15 @@ const { Option } = Select;
 const columns = [
   {
     title: "Ismi",
-    dataIndex: "firstName",
-    key: "firstName",
+    dataIndex: "ismi",
+    key: "ismi",
     width: "30%",
     search: true,
   },
   {
     title: "Sinf",
-    dataIndex: "studentClass",
-    key: "studentClass",
+    dataIndex: "studentClassName",
+    key: "studentClassName",
     width: "25%",
     search: false,
   },
@@ -49,7 +49,8 @@ const columns = [
     width: "25%",
     search: false,
     render: (eski) => {
-      return numberWithCommas(eski);
+      return `${numberWithCommas(eski.paymentAmount)} /
+      ${(100 - (eski.paymentAmount / eski.studentClassOveralSum) * 100)}%`;
     }
   },
   {
@@ -729,10 +730,14 @@ function Students({
         tableData={studentReducer?.students?.map((student) => {
           return {
             ...student,
-            studentClass: student?.studentClass?.className,
+            studentClassName: student?.studentClass?.className,
             studentClassId: student?.studentClass?.id,
             photo: student?.photo,
-            Ismi: `${student?.firstName} ${student?.lastName} ${student?.fatherName}`,
+            paymentAmount: {
+              paymentAmount: student?.paymentAmount,
+              studentClassOveralSum: student?.studentClass?.overallSum,
+            },
+            ismi: `${student?.firstName} ${student?.lastName} ${student?.fatherName}`,
             branchId: student?.branch?.id,
           };
         })}

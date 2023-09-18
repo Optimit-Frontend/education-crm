@@ -151,7 +151,6 @@ function LessonSchedule({
               setVisible(true);
               form.setFieldValue("typeOfWorkId", selectedRowKeys[1][0]?.typeOfWorkId);
               form.setFieldValue("roomId", selectedRowKeys[1][0]?.room?.roomType?.id);
-              form.setFieldValue("branchId", selectedRowKeys[1][0]?.branch?.id);
               form.setFieldValue("lessonHour", selectedRowKeys[1][0]?.lessonHour);
               form.setFieldValue("teacherId", selectedRowKeys[1][0]?.teacherId);
               form.setFieldValue("subjectLevelId", selectedRowKeys[1][0]?.subject?.id);
@@ -293,11 +292,11 @@ function LessonSchedule({
               <Form.Item
                 key="studentClassId"
                 name="studentClassId"
-                label={<span className="text-base font-medium">Talabalar xonasi</span>}
+                label={<span className="text-base font-medium">Sinf</span>}
                 rules={[
                   {
                     required: false,
-                    message: "Xona kiriting",
+                    message: "Sinfni tanlang",
                   },
                 ]}
               >
