@@ -56,8 +56,9 @@ const columns = [
     width: "10%",
     search: false,
     render: (eski) => {
-      return numberWithCommas(eski);
-    }
+      return `${numberWithCommas(eski.discount)} /
+      ${(eski.discount / eski.overallSum) * 100}%`;
+    },
   },
   {
     title: "Sabab",
@@ -559,7 +560,11 @@ function StudentAccount({
             ...item,
             branchId: item.branch?.name,
             studentName: item.student?.firstName,
-            studentId: item.student?.id
+            studentId: item.student?.id,
+            discount: {
+              discount: item.discount,
+              overallSum: item.student?.studentClass?.overallSum
+            }
           });
         })}
         loading={pageData?.loading}
