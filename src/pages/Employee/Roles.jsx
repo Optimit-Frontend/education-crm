@@ -310,7 +310,7 @@ function Roles({
     AllRoleRoles: ["addRole", "deleteRole", "editRole", "viewRole"],
     AllRoleRolesValue: ["ADD_ROLE", "DELETE_ROLE", "EDIT_ROLE", "GET_ROLE"],
     AllWorkTypeRoles: ["addWorkType", "deleteWorkType", "editWorkType", "viewWorkType"],
-    AllWorkTypeRolesValue: ["ADD_WORK_OF_TYPE", "DELETE_WORK_OF_TYPE", "EDIT_WORK_OF_TYPE", "GET_WORK_OF_TYPE"],
+    AllWorkTypeRolesValue: ["ADD_TYPE_OF_WORK", "DELETE_TYPE_OF_WORK", "EDIT_TYPE_OF_WORK", "GET_TYPE_OF_WORK"],
     AllAchievementRoles: ["addAchievement", "deleteAchievement", "editAchievement", "viewAchievement"],
     AllAchievementRolesValue: ["ADD_ACHIEVEMENT", "DELETE_ACHIEVEMENT", "EDIT_ACHIEVEMENT", "GET_ACHIEVEMENT"],
     AllWorkExperienceRoles: ["addWorkExperience", "deleteWorkExperience", "viewWorkExperience", "editWorkExperience"],
@@ -486,6 +486,10 @@ function Roles({
         case "ADD_ROLE":
           input.addRoleChecked = true;
           input.addRole = "ADD_ROLE";
+          break;
+        case "GET_ROLE":
+          input.viewRoleChecked = true;
+          input.viewRole = "GET_ROLE";
           break;
         case "EDIT_ROLE":
           input.editRoleChecked = true;
@@ -1090,19 +1094,19 @@ function Roles({
             </div>
             <br />
             <div className="div_check">
-              <input value="ADD_WORK_OF_TYPE" name="addWorkType" checked={input.addWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="ADD_TYPE_OF_WORK" name="addWorkType" checked={input.addWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish turi qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="GET_WORK_OF_TYPE" name="viewWorkType" checked={input.viewWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_TYPE_OF_WORK" name="viewWorkType" checked={input.viewWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish turi ko`rish</p>
             </div>
             <div className="div_check">
-              <input value="EDIT_WORK_OF_TYPE" name="editWorkType" checked={input.editWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="EDIT_TYPE_OF_WORK" name="editWorkType" checked={input.editWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish turi tahrirlash</p>
             </div>
             <div className="div_check">
-              <input value="DELETE_WORK_OF_TYPE" name="deleteWorkType" checked={input.deleteWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="DELETE_TYPE_OF_WORK" name="deleteWorkType" checked={input.deleteWorkTypeChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Ish turi o`chirish</p>
             </div>
           </div>
@@ -1412,7 +1416,7 @@ function Roles({
               <p className="ml-4 text-xl">Lavozim qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_ROLE" name="viewRole" checked={input.viewRoleChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_ROLE" name="viewRole" checked={input.viewRoleChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Lavozim ko`rish</p>
             </div>
             <div className="div_check">
@@ -1438,7 +1442,7 @@ function Roles({
               <p className="ml-4 text-xl">Yutuq qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_ACHIEVEMENT" name="viewAchievement" checked={input.viewAchievementChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_ACHIEVEMENT" name="viewAchievement" checked={input.viewAchievementChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Yutuq ko`rish</p>
             </div>
             <div className="div_check">
@@ -1463,7 +1467,7 @@ function Roles({
               <p className="ml-4 text-xl">Talaba qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="VIEW_STUDENT" name="viewStudent" checked={input.viewStudentChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_STUDENT" name="viewStudent" checked={input.viewStudentChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Talaba ko`rish</p>
             </div>
             <div className="div_check">
@@ -1513,7 +1517,7 @@ function Roles({
               <p className="ml-4 text-xl">To`lov qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="GET_TRANSACTION_HISTOR" name="viewTransaction" checked={input.viewTransactionChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_TRANSACTION_HISTORY" name="viewTransaction" checked={input.viewTransactionChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">To`lov ko`rish</p>
             </div>
             <div className="div_check">
