@@ -324,7 +324,7 @@ function Roles({
     AllHomeworkRoles: ["addHomework", "deleteHomework", "viewHomework", "editHomework"],
     AllHomeworkRolesValue: ["ADD_STUDENT_HOMEWORK", "DELETE_STUDENT_HOMEWORK", "GET_STUDENT_HOMEWORK", "EDIT_STUDENT_HOMEWORK"],
     AllTransactionRoles: ["addTransaction", "deleteTransaction", "viewTransaction", "editTransaction"],
-    AllTransactionRolesValue: ["ADD_TRANSACTION", "DELETE_TRANSACTION", "GET_TRANSACTION", "EDIT_TRANSACTION"],
+    AllTransactionRolesValue: ["ADD_TRANSACTION_HISTORY", "DELETE_TRANSACTION_HISTORY", "GET_TRANSACTION_HISTORY", "EDIT_TRANSACTION_HISTORY"],
     AllFamilyRoles: ["addFamily", "deleteFamily", "editFamily", "viewFamily"],
     AllFamilyRolesValue: ["ADD_FAMILY", "DELETE_FAMILY", "GET_FAMILY", "EDIT_FAMILY"],
     AllSalaryRoles: ["addSalary", "deleteSalary", "editSalary", "viewSalary"],
@@ -1509,19 +1509,19 @@ function Roles({
             </div>
             <br />
             <div className="div_check">
-              <input value="ADD_TRANSACTION" name="addTransaction" checked={input.addTransactionChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="ADD_TRANSACTION_HISTORY" name="addTransaction" checked={input.addTransactionChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">To`lov qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="GET_TRANSACTION" name="viewTransaction" checked={input.viewTransactionChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_TRANSACTION_HISTOR" name="viewTransaction" checked={input.viewTransactionChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">To`lov ko`rish</p>
             </div>
             <div className="div_check">
-              <input value="EDIT_TRANSACTION" name="editTransaction" checked={input.editTransactionChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="EDIT_TRANSACTION_HISTORY" name="editTransaction" checked={input.editTransactionChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">To`lov tahrirlash</p>
             </div>
             <div className="div_check">
-              <input value="DELETE_TRANSACTION" name="deleteTransaction" checked={input.deleteTransactionChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="DELETE_TRANSACTION_HISTORY" name="deleteTransaction" checked={input.deleteTransactionChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">To`lov o`chirish</p>
             </div>
           </div>
