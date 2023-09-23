@@ -1,8 +1,8 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import {
+  Avatar,
   Button,
-  Col,
   DatePicker,
   Form,
   Input,
@@ -14,9 +14,10 @@ import {
   Upload,
 } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
-import { UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined, UserOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import axios from "axios";
+import moment from "moment";
 import CustomTable from "../../module/CustomTable";
 import useKeyPress from "../../hooks/UseKeyPress";
 import usersDataReducer from "../../reducer/usersDataReducer";
@@ -28,11 +29,24 @@ import employeeReducer, {
 } from "../../reducer/employeeReducer";
 import roleReducer, { getAllRoleByBranch } from "../../reducer/roleReducer";
 import { BASE_URL } from "../../services/Axios";
+import FormLayoutComp from "../../components/FormLayoutComp";
 
 const { TextArea } = Input;
 const { Option } = Select;
 
 const columns = [
+  {
+    title: "Rasm",
+    dataIndex: "profilePhotoId",
+    key: "profilePhotoId",
+    width: "8%",
+    search: false,
+    render: (eski) => {
+      return (
+        <Avatar shape="square" src={`${BASE_URL}/attachment/download/${eski}`} size="large" icon={<UserOutlined />} />
+      );
+    }
+  },
   {
     title: "FIO",
     dataIndex: "fio",
@@ -46,6 +60,9 @@ const columns = [
     key: "phoneNumber",
     width: "20%",
     search: false,
+    render: (eski) => {
+      return `+998${eski}`;
+    }
   },
   {
     title: "Tug'ilgan kuni",
@@ -58,13 +75,6 @@ const columns = [
     }
   },
   {
-    title: "Email",
-    dataIndex: "emailAddress",
-    key: "emailAddress",
-    width: "15%",
-    search: false,
-  },
-  {
     title: "INN",
     dataIndex: "inn",
     key: "inn",
@@ -72,10 +82,10 @@ const columns = [
     search: false,
   },
   {
-    title: "INPS",
-    dataIndex: "inps",
-    key: "inps",
-    width: "10%",
+    title: "Lavozimi",
+    dataIndex: "roleName",
+    key: "roleName",
+    width: "17%",
     search: false,
   },
 ];
@@ -183,7 +193,7 @@ function Employee({
           const profilePhotoId = values?.profilePhotoId?.file?.response;
           saveEmployee({
             ...values,
-            birthDate: dayjs(values?.birthDate).format("YYYY-MM-DD"),
+            birthDate: moment(values?.birthDate).format(),
             branchId: usersDataReducer?.branch?.id,
             profilePhotoId
           });
@@ -306,7 +316,7 @@ function Employee({
       >
         <Form form={form} layout="vertical" name="table_adddata_modal">
           <Row gutter={12}>
-            <Col span={12}>
+            <FormLayoutComp>
               <Form.Item
                 key="name"
                 name="name"
@@ -320,8 +330,8 @@ function Employee({
               >
                 <Input placeholder="Hodim ismini kiriting..." />
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="surname"
                 name="surname"
@@ -335,8 +345,8 @@ function Employee({
               >
                 <Input placeholder="Hodim familiyasini kiriting..." />
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="fatherName"
                 name="fatherName"
@@ -350,8 +360,8 @@ function Employee({
               >
                 <Input placeholder="Hodim sharifini kiriting..." />
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="phoneNumber"
                 name="phoneNumber"
@@ -370,29 +380,8 @@ function Employee({
                   placeholder="Hodim nomerini kiriting..."
                 />
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                key="married"
-                name="married"
-                label={<span className="text-base font-medium">Turmush qurganmi</span>}
-              >
-                <Radio.Group>
-                  <Radio value="true"> Turmush qurgan </Radio>
-                  <Radio value="false"> Turmush qurmagan </Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                key="email"
-                name="email"
-                label={<span className="text-base font-medium">Hodim emaili</span>}
-              >
-                <Input placeholder="Hodim emailini kiriting..." />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="password"
                 name="password"
@@ -410,26 +399,8 @@ function Employee({
               >
                 <Input placeholder="Parolni kiriting..." />
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                key="inn"
-                name="inn"
-                label={<span className="text-base font-medium">Hodim INNsi</span>}
-              >
-                <InputNumber className="w-full" placeholder="Hodim INNsini kiriting..." />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                key="inps"
-                name="inps"
-                label={<span className="text-base font-medium">Hodim INPSi</span>}
-              >
-                <InputNumber className="w-full" placeholder="Hodim INPSini kiriting..." />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="birthDate"
                 name="birthDate"
@@ -446,8 +417,8 @@ function Employee({
                   placeholder="Hodim tug'ilgan kunini kiriting..."
                 />
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="gender"
                 name="gender"
@@ -474,8 +445,8 @@ function Employee({
                   <Option value="AYOL">Ayol</Option>
                 </Select>
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="roleId"
                 name="roleId"
@@ -507,26 +478,65 @@ function Employee({
                   })}
                 </Select>
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="workDays"
                 name="workDays"
                 label={<span className="text-base font-medium">Bir oyda necha kun ishlashi</span>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Bir oyda necha kun ishlashini kiriting",
-                  },
-                ]}
               >
                 <InputNumber
                   className="w-full"
                   placeholder="Bir oyda necha kun ishlashini kiriting..."
                 />
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
+              <Form.Item
+                key="inn"
+                name="inn"
+                label={<span className="text-base font-medium">Hodim INNsi</span>}
+              >
+                <InputNumber className="w-full" placeholder="Hodim INNsini kiriting..." />
+              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
+              <Form.Item
+                key="inps"
+                name="inps"
+                label={<span className="text-base font-medium">Hodim INPSi</span>}
+              >
+                <InputNumber className="w-full" placeholder="Hodim INPSini kiriting..." />
+              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
+              <Form.Item
+                key="married"
+                name="married"
+                label={<span className="text-base font-medium">Turmush qurganmi</span>}
+              >
+                <Radio.Group>
+                  <Radio value="true"> Turmush qurgan </Radio>
+                  <Radio value="false"> Turmush qurmagan </Radio>
+                </Radio.Group>
+              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
+              <Form.Item
+                key="email"
+                name="email"
+                label={<span className="text-base font-medium">Hodim emaili</span>}
+                rules={[
+                  {
+                    type: "email",
+                    message: "Noto'g'ri email kiritdingiz",
+                  },
+                ]}
+              >
+                <Input placeholder="Hodim emailini kiriting..." />
+              </Form.Item>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="profilePhotoId"
                 name="profilePhotoId"
@@ -554,8 +564,8 @@ function Employee({
                   </Button>
                 </Upload>
               </Form.Item>
-            </Col>
-            <Col span={12}>
+            </FormLayoutComp>
+            <FormLayoutComp>
               <Form.Item
                 key="biography"
                 name="biography"
@@ -563,7 +573,7 @@ function Employee({
               >
                 <TextArea rows={3} placeholder="Hodim haqida ma'lumot kiriting..." />
               </Form.Item>
-            </Col>
+            </FormLayoutComp>
           </Row>
         </Form>
       </Modal>
@@ -577,6 +587,7 @@ function Employee({
           return {
             ...employee,
             fio: `${employee?.surname} ${employee?.name} ${employee?.fatherName}`,
+            roleName: employee?.role?.name,
           };
         })}
         loading={pageData?.loading}
