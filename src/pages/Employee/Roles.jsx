@@ -411,7 +411,8 @@ function Roles({
     input.AllStudentRoles = input.addStudentChecked && input.editStudentChecked
       && input.viewStudentChecked && input.deleteStudentChecked;
     input.AllAccountNumberRoles = input.addAccountNumberChecked
-      && input.editAccountNumberChecked && input.deleteAccountNumberChecked && input.viewAccountNumber;
+      && input.editAccountNumberChecked && input.deleteAccountNumberChecked
+      && input.viewAccountNumber;
     input.AllHomeworkRoles = input.addHomeworkChecked && input.editHomeworkChecked
       && input.deleteHomeworkChecked && input.viewHomeworkChecked;
     input.AllTransactionRoles = input.addTransactionChecked && input.editTransactionChecked
@@ -440,13 +441,19 @@ function Roles({
       && input.viewSubjectChecked && input.deleteSubjectChecked;
     input.AllBalanceRoles = input.addBalanceChecked && input.editBalanceChecked
       && input.viewBalanceChecked && input.deleteBalanceChecked;
-    input.AllWerkRoles = input.addWerHouseChecked && input.editWerHouseChecked
+    input.AllWerHouseRoles = input.addWerHouseChecked && input.editWerHouseChecked
       && input.viewWerHouseChecked && input.deleteWerHouseChecked;
     input.AllBusinessRoles = input.addBusinessChecked && input.editBusinessChecked
       && input.viewBusinessChecked && input.deleteBusinessChecked;
-    input.AllPurchasedDrinkRoles = input.addPurchasedDrinkChecked && input.editPurchasedDrinkChecked && input.viewPurchasedDrinkChecked && input.deletePurchasedDrinkChecked;
-    input.AllMealRoles = input.addMealChecked && input.editMealChecked && input.deleteMealChecked && input.viewMealChecked;
-    input.AllProductRoles = input.addProductChecked && input.editProductChecked && input.viewProductChecked && input.deleteProductChecked;
+    input.AllClassRoles = input.addClassChecked && input.editClassChecked
+      && input.viewClassChecked && input.deleteClassChecked;
+    input.AllPurchasedDrinkRoles = input.addPurchasedDrinkChecked
+      && input.editPurchasedDrinkChecked && input.viewPurchasedDrinkChecked
+      && input.deletePurchasedDrinkChecked;
+    input.AllMealRoles = input.addMealChecked && input.editMealChecked
+      && input.deleteMealChecked && input.viewMealChecked;
+    input.AllProductRoles = input.addProductChecked && input.editProductChecked
+      && input.viewProductChecked && input.deleteProductChecked;
 
     const a = { ...input };
     setInput(a);
@@ -483,9 +490,13 @@ function Roles({
           input.deleteUserChecked = true;
           input.deleteUser = "DELETE_USER";
           break;
-        case "ADD_ROLE":
+        case "GET_ROLE":
           input.addRoleChecked = true;
-          input.addRole = "ADD_ROLE";
+          input.addRole = "GET_ROLE";
+          break;
+        case "ADD_ROLE":
+          input.viewRoleChecked = true;
+          input.viewRole = "ADD_ROLE";
           break;
         case "GET_ROLE":
           input.viewRoleChecked = true;
@@ -1144,19 +1155,19 @@ function Roles({
             </div>
             <br />
             <div className="div_check">
-              <input value="ADD_STUDENT_CLASS" name="addClass" checked={input.addClass} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="ADD_STUDENT_CLASS" name="addClass" checked={input.addClassChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Sinf qo`shish</p>
             </div>
             <div className="div_check">
-              <input value="GET_STUDENT_CLASS" name="viewClass" checked={input.viewClass} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="GET_STUDENT_CLASS" name="viewClass" checked={input.viewClassChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Sinf ko`rish</p>
             </div>
             <div className="div_check">
-              <input value="EDIT_STUDENT_CLASS" name="editClass" checked={input.editClass} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="EDIT_STUDENT_CLASS" name="editClass" checked={input.editClassChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Sinf tahrirlash</p>
             </div>
             <div className="div_check">
-              <input value="DELETE_STUDENT_CLASS" name="deleteClass" checked={input.deleteClass} onChange={changeRoles} className="checkInput" type="checkbox" />
+              <input value="DELETE_STUDENT_CLASS" name="deleteClass" checked={input.deleteClassChecked} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Sinf o`chirish</p>
             </div>
           </div>
@@ -1183,14 +1194,6 @@ function Roles({
             <div className="div_check">
               <input value="DELETE_STUDENT_HOMEWORK" name="deleteHomework" checked={input.deleteHomework} onChange={changeRoles} className="checkInput" type="checkbox" />
               <p className="ml-4 text-xl">Vazifa o`chirish</p>
-            </div>
-          </div>
-          <div className="border-2 p-3 mt-4">
-            <h2 className="text-center text-2xl">Qarzdor talabalar</h2>
-            <hr />
-            <div className="div_check">
-              <input className="checkInput" type="checkbox" />
-              <p className="ml-4 text-xl">Qarzdorlarni ko`rish</p>
             </div>
           </div>
           <div className="border-2 p-3 mt-4">
@@ -1395,7 +1398,7 @@ function Roles({
             </div>
           </div>
           {/* eslint-disable-next-line react/jsx-no-bind */}
-          <Button onClick={saqla} danger icon={<DownloadOutlined />} className="mt-4 d-flex justify-end text-xl">
+          <Button type="button" onClick={saqla} className="mt-4 px-10 h-10 bg-blue-600 d-flex justify-end text-lg">
             Saqlash
           </Button>
         </div>
