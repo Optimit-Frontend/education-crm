@@ -230,6 +230,7 @@ function Employee({
               form.setFieldValue("gender", selectedRowKeys[1][0]?.gender);
               form.setFieldValue("workDays", selectedRowKeys[1][0]?.workDays);
               form.setFieldValue("surname", selectedRowKeys[1][0]?.surname);
+              form.setFieldValue("email", selectedRowKeys[1][0]?.email);
               console.log(selectedRowKeys[1][0]);
             }}
             type="button"
