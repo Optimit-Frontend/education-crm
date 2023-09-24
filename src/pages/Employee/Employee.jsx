@@ -219,6 +219,18 @@ function Employee({
               setVisible(true);
               form.setFieldValue("roomNumber", selectedRowKeys[1][0]?.roomNumber);
               form.setFieldValue("roomTypeId", selectedRowKeys[1][0]?.roomType?.id);
+              form.setFieldValue("biography", selectedRowKeys[1][0]?.biography);
+              form.setFieldValue("name", selectedRowKeys[1][0]?.name);
+              form.setFieldValue("phoneNumber", selectedRowKeys[1][0]?.phoneNumber);
+              form.setFieldValue("roleId", selectedRowKeys[1][0]?.role?.id);
+              form.setFieldValue("inn", selectedRowKeys[1][0]?.inn);
+              form.setFieldValue("inps", selectedRowKeys[1][0]?.inps);
+              form.setFieldValue("fatherName", selectedRowKeys[1][0]?.fatherName);
+              form.setFieldValue("birthDate", dayjs(selectedRowKeys[1][0]?.birthDate));
+              form.setFieldValue("gender", selectedRowKeys[1][0]?.gender);
+              form.setFieldValue("workDays", selectedRowKeys[1][0]?.workDays);
+              form.setFieldValue("surname", selectedRowKeys[1][0]?.surname);
+              console.log(selectedRowKeys[1][0]);
             }}
             type="button"
             className="flex items-center gap-2 rounded-lg bg-yellow-600 px-4 py-[6px] text-white"
